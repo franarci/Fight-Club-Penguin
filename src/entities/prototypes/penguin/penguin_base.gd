@@ -1,94 +1,123 @@
 extends CharacterBody2D
+class_name Penguin
 
-@onready var SPEED = 0.0
+
 @onready var body: AnimatedSprite2D = $Body
-@onready var dash_timer: Timer = $DashTimer
-@onready var dash_cooldown_timer: Timer = $DashCooldown
+@onready var movement_state_machine: Node = $MovementStateMachine
 
-@export_category("Stats")
-@export var base_speed: float
-@export var dash_speed: float
-@export var dash_cooldown: float
 
-@export_category("Animation") 
+
+@export_category("Movement")
+@export var base_speed: float = 180.0
+
+# Físicas de hielo
+@export var ice_acceleration: float = 400.0
+@export var ice_friction: float = 100.0
+
+
+@export_category("Dash")
+@export var dash_speed: float = 500.0
+@export var dash_duration: float = 0.18
+@export var dash_cooldown: float = 0.8
+
+
+@export_category("Animation")
 @export var p_spriteframes: SpriteFrames
 @export var p_autoplay: String
-#@export var body_texture: CompressedTexture2D
-#@export var v_frames: int
-#@export var h_frames: int
-#@export var par_frame: int
-#@export var par_frame_coords: Vector2
 
-var last_direction = "right"
-var last_x_direction = "right"
-var is_dashing = false
-var can_dash = true
+
+var facing: StringName = &"right"
+
+var dash_direction: Vector2 = Vector2.RIGHT
+var can_dash := true
+var dash_cooldown_left := 0.0
+
 
 func _ready() -> void:
-	SPEED = base_speed
 	body.sprite_frames = p_spriteframes
-	body.autoplay = p_autoplay
 	body.play(p_autoplay)
-	dash_cooldown_timer.wait_time = dash_cooldown
-	#body.texture = body_texture
-	#body.hframes = h_frames
-	#body.vframes = v_frames
-	#body.frame = par_frame
-	#body.frame_coords = par_frame_coords
-	
-	
-func _physics_process(_delta: float) -> void:
-	movement_loop()
+
+	movement_state_machine.init(self)
+
+
+func _physics_process(delta: float) -> void:
+	update_dash_cooldown(delta)
+
+	movement_state_machine.physics_update(delta)
+
 	move_and_slide()
-	
-func movement_loop():
-	
-	if not is_dashing:
-		#we should have 4 animations for movement: right, left, top, down
-		var input_dir = Input.get_vector("p1_left", "p1_right", "p1_up", "p1_down")
-		
-		if input_dir == Vector2.ZERO:
-			velocity = Vector2.ZERO
-			update_animation("idle")
-			return
-		
-		if Input.is_action_just_pressed("p1_dash") and can_dash:
-			start_dash(input_dir)
-			return
-		
-		if abs(input_dir.x) > abs(input_dir.y):
-			last_direction = "right"
-			if input_dir.x < 0:
-				body.flip_h = true
-			else:
-				body.flip_h = false
-				
+
+
+func get_input_direction() -> Vector2:
+	return Input.get_vector(
+		"p1_left",
+		"p1_right",
+		"p1_up",
+		"p1_down"
+	)
+
+
+# -------------------------
+# ICE MOVEMENT
+# -------------------------
+
+func apply_ice_movement(input_dir: Vector2, delta: float) -> void:
+	var target_velocity := input_dir * base_speed
+
+	velocity = velocity.move_toward(
+		target_velocity,
+		ice_acceleration * delta
+	)
+
+
+func apply_ice_friction(delta: float) -> void:
+	velocity = velocity.move_toward(
+		Vector2.ZERO,
+		ice_friction * delta
+	)
+
+
+# -------------------------
+# DIRECTION / ANIMATION
+# -------------------------
+
+func update_facing(input_dir: Vector2) -> void:
+	if input_dir == Vector2.ZERO:
+		return
+
+	if abs(input_dir.x) > abs(input_dir.y):
+		if input_dir.x > 0:
+			facing = &"right"
 		else:
-			if input_dir.y > 0:
-				last_direction = last_x_direction
-			else:
-				last_direction = "up"
-				
-		update_animation("walk")
-		velocity = input_dir * SPEED
-		
+			facing = &"left"
+	else:
+		if input_dir.y > 0:
+			facing = &"down"
+		else:
+			facing = &"up"
 
-	
-func update_animation(state):
-	body.play(state + "_" + last_direction)
 
-func start_dash(dir):
-	is_dashing = true
+func play_animation(state: StringName) -> void:
+	var animation_name := String(state) + "_" + String(facing)
+
+	if body.animation != animation_name:
+		body.play(animation_name)
+
+
+# -------------------------
+# DASH COOLDOWN
+# -------------------------
+
+func start_dash_cooldown() -> void:
 	can_dash = false
-	velocity = dir * dash_speed
-	update_animation("dash")
-	dash_timer.start()
-	dash_cooldown_timer.start()
-
-func _on_dash_timer_timeout() -> void:
-	is_dashing = false
-	velocity = Vector2.ZERO
+	dash_cooldown_left = dash_cooldown
 
 
-func _on_dash_cooldown_timeout() -> void:
-	can_dash = true
+func update_dash_cooldown(delta: float) -> void:
+	if can_dash:
+		return
+
+	dash_cooldown_left -= delta
+
+	if dash_cooldown_left <= 0.0:
+		can_dash = true

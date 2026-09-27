@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://1p0rrharlx4b"]
 
 [ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/entities/prototypes/penguin/penguin_base.gd" id="1_s4b7q"]
+[ext_resource type="Script" uid="uid://2x3w5i81derj" path="res://src/entities/prototypes/penguin/movement_state.gd" id="2_7wuhw"]
+[ext_resource type="Script" uid="uid://cypcexwkq7j7u" path="res://src/entities/prototypes/penguin/idle.gd" id="3_heltl"]
+[ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
+[ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
 animations = []
@@ -8,6 +12,7 @@ animations = []
 [node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
 motion_mode = 1
 script = ExtResource("1_s4b7q")
+ice_friction = 80.815
 metadata/_edit_group_ = true
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
@@ -22,6 +27,19 @@ one_shot = true
 
 [node name="DashCooldown" type="Timer" parent="." unique_id=255640351]
 one_shot = true
+
+[node name="MovementStateMachine" type="Node" parent="." unique_id=1228045068 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("2_7wuhw")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="MovementStateMachine" unique_id=1615664095]
+script = ExtResource("3_heltl")
+
+[node name="Walk" type="Node" parent="MovementStateMachine" unique_id=564205640]
+script = ExtResource("4_3sbks")
+
+[node name="Dash" type="Node" parent="MovementStateMachine" unique_id=763498626]
+script = ExtResource("5_ypmey")
 
 [connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
 [connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]
