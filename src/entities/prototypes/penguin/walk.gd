@@ -15,7 +15,7 @@ func physics_update(delta: float) -> void:
 
 	player.update_facing(input_dir)
 
-	if Input.is_action_just_pressed("p1_dash") and player.can_dash:
+	if MultiplayerInput.is_action_just_pressed(player.device, "p1_dash") and player.can_dash:
 		player.dash_direction = input_dir.normalized()
 		state_machine.change_state(&"Dash")
 		return

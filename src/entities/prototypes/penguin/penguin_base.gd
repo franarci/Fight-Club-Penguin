@@ -5,7 +5,9 @@ class_name Penguin
 @onready var body: AnimatedSprite2D = $Body
 @onready var movement_state_machine: Node = $MovementStateMachine
 
-
+@export_category("Player")
+@export var player_index: int
+@export var device: int
 
 @export_category("Movement")
 @export var base_speed: float = 180.0
@@ -49,7 +51,8 @@ func _physics_process(delta: float) -> void:
 
 
 func get_input_direction() -> Vector2:
-	return Input.get_vector(
+	return MultiplayerInput.get_vector(
+		device,
 		"p1_left",
 		"p1_right",
 		"p1_up",

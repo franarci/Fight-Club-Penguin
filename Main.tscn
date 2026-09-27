@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bl3hpmrg541rr"]
 
 [ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://b05vo5uhchgr" path="res://main.gd" id="1_r0du0"]
 [ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_uu6xs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gb15f"]
@@ -402,6 +403,7 @@ animations = [{
 }]
 
 [node name="Main" type="Node" unique_id=532874773]
+script = ExtResource("1_r0du0")
 
 [node name="Ground" type="ColorRect" parent="." unique_id=354157110]
 anchors_preset = 15
@@ -414,6 +416,8 @@ color = Color(6.738305e-07, 0.75269306, 0.75269306, 1)
 [node name="Gunner" parent="." unique_id=1683410569 instance=ExtResource("1_glv2v")]
 position = Vector2(356, 323)
 scale = Vector2(2, 2)
+player_index = 1
+device = -1
 base_speed = 300.0
 dash_speed = 600.0
 dash_cooldown = 3.0
@@ -421,7 +425,9 @@ p_spriteframes = SubResource("SpriteFrames_7wuhw")
 p_autoplay = "idle_right"
 
 [node name="Demolisher" parent="." unique_id=832846254 instance=ExtResource("1_glv2v")]
+position = Vector2(779, 334)
 scale = Vector2(2, 2)
+player_index = 2
 dash_cooldown = 2.165
 p_spriteframes = SubResource("SpriteFrames_uu6xs")
 p_autoplay = "idle_right"
