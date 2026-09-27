@@ -42,7 +42,7 @@ func _ready() -> void:
 	movement_state_machine.init(self)
 
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
 	update_dash_cooldown(delta)
 
 	movement_state_machine.physics_update(delta)
