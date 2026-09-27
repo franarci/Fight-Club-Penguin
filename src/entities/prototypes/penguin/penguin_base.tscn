@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://1p0rrharlx4b"]
+
+[ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/entities/prototypes/penguin/penguin_base.gd" id="1_s4b7q"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
+animations = []
+
+[node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
+motion_mode = 1
+script = ExtResource("1_s4b7q")
+metadata/_edit_group_ = true
+
+[node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
+sprite_frames = SubResource("SpriteFrames_s4b7q")
+animation = &""
+
+[node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
+
+[node name="DashTimer" type="Timer" parent="." unique_id=2062385814]
+wait_time = 0.25
+one_shot = true
+
+[node name="DashCooldown" type="Timer" parent="." unique_id=255640351]
+one_shot = true
+
+[connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
+[connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]
