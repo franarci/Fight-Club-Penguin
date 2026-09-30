@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://8d2uraygf2eo"]
+
+[ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/entities/prototypes/penguin/penguin_base.gd" id="1_eajup"]
+
+[node name="Explorer" type="CharacterBody2D" unique_id=1560269994]
+script = ExtResource("1_eajup")
+metadata/_custom_type_script = "uid://bqqoogykmdgex"

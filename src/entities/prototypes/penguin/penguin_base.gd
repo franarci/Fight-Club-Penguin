@@ -53,10 +53,10 @@ func _process(delta: float) -> void:
 func get_input_direction() -> Vector2:
 	return MultiplayerInput.get_vector(
 		device,
-		"p1_left",
-		"p1_right",
-		"p1_up",
-		"p1_down"
+		"left",
+		"right",
+		"up",
+		"down"
 	)
 
 
@@ -124,3 +124,18 @@ func update_dash_cooldown(delta: float) -> void:
 
 	if dash_cooldown_left <= 0.0:
 		can_dash = true
+
+func setup(
+	p_player_index: int,
+	p_device: int,
+) -> void:
+
+	player_index = p_player_index
+	device = p_device
+
+	apply_player_identity()
+
+func apply_player_identity() -> void:
+	var color := PlayerManager.get_player_color(player_index)
+
+	#Resolver color para identificar al jugador

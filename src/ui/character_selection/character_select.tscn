@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://4rdsst6aspvh"]
+
+[ext_resource type="Script" uid="uid://1cuqdu5t240p" path="res://src/ui/character_selection/character_select.gd" id="1_vmxbt"]
+[ext_resource type="PackedScene" uid="uid://btcmdje4rpi20" path="res://src/ui/character_selection/PlayerSelection.tscn" id="2_672rp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
+bg_color = Color(0.2449246, 0.17361537, 0.03437599, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m7el"]
+bg_color = Color(0.071218066, 0.012240997, 0.017861571, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qt4e8"]
+bg_color = Color(0.15319598, 0.58931094, 0.9999785, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xui14"]
+bg_color = Color(0.612107, 0.4616382, 0.2913878, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6myx"]
+bg_color = Color(0.7726102, 0.6761306, 0.059173115, 1)
+
+[node name="CharacterSelect" type="Control" unique_id=733309859]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vmxbt")
+player_selection_scene = ExtResource("2_672rp")
+
+[node name="Panel" type="Panel" parent="." unique_id=1866081368]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_672rp")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1966945891]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayersContainer" type="HBoxContainer" parent="CenterContainer" unique_id=442098328]
+visibility_layer = 3
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="PlayerSelection4" parent="CenterContainer/PlayersContainer" unique_id=1031974683 instance=ExtResource("2_672rp")]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7m7el")
+
+[node name="PlayerSelection3" parent="CenterContainer/PlayersContainer" unique_id=1366234303 instance=ExtResource("2_672rp")]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qt4e8")
+
+[node name="PlayerSelection" parent="CenterContainer/PlayersContainer" unique_id=1169863188 instance=ExtResource("2_672rp")]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xui14")
+
+[node name="PlayerSelection2" parent="CenterContainer/PlayersContainer" unique_id=1759641934 instance=ExtResource("2_672rp")]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y6myx")
+
+[node name="Countdown" type="Timer" parent="." unique_id=1237104261]
+wait_time = 3.0
+
+[connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection4" to="." method="_on_player_ready_changed"]
+[connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection3" to="." method="_on_player_ready_changed"]
+[connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection" to="." method="_on_player_ready_changed"]
+[connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection2" to="." method="_on_player_ready_changed"]
+[connection signal="timeout" from="Countdown" to="." method="_on_countdown_timeout"]

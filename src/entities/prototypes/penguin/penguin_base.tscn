@@ -21,6 +21,8 @@ animation = &""
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
 
+[node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
+
 [node name="DashTimer" type="Timer" parent="." unique_id=2062385814]
 wait_time = 0.25
 one_shot = true
