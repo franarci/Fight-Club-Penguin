@@ -1,27 +1,30 @@
 [gd_scene format=3 uid="uid://sej7wre0em41"]
 
-[ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/entities/prototypes/penguin/penguin_base.gd" id="1_ggrhy"]
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_ggrhy"]
 [ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_8p7r8"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_048j4"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_8p7r8"]
 atlas = ExtResource("2_8p7r8")
 region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_r3qsi"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_048j4"]
 atlas = ExtResource("2_8p7r8")
 region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_111wl"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_r3qsi"]
 atlas = ExtResource("2_8p7r8")
 region = Rect2(128, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5fjt7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_111wl"]
 atlas = ExtResource("2_8p7r8")
 region = Rect2(160, 0, 32, 32)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_8p7r8"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_048j4"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8p7r8")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_048j4")
 }, {
@@ -30,16 +33,14 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_111wl")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5fjt7")
 }],
 "loop": 1,
 "name": &"idle_right",
 "speed": 5.0
 }]
 
-[node name="Hunter" type="CharacterBody2D" unique_id=990284643]
-script = ExtResource("1_ggrhy")
-p_spriteframes = SubResource("SpriteFrames_8p7r8")
-metadata/_custom_type_script = "uid://bqqoogykmdgex"
+[node name="Hunter" type="Node2D" unique_id=288995503]
+
+[node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_ggrhy")]
+p_spriteframes = SubResource("SpriteFrames_048j4")
+p_autoplay = "idle_right"
