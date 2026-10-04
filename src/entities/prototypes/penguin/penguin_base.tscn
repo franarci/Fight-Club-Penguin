@@ -10,16 +10,31 @@
 animations = []
 
 [node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
+scale = Vector2(1.5, 1.5)
 motion_mode = 1
 script = ExtResource("1_s4b7q")
 ice_friction = 80.815
-metadata/_edit_group_ = true
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
 sprite_frames = SubResource("SpriteFrames_s4b7q")
 animation = &""
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
+
+[node name="PlayerIndicator" type="Node2D" parent="." unique_id=287483043]
+position = Vector2(0, -8.35)
+
+[node name="Label" type="Label" parent="PlayerIndicator" unique_id=214354687]
+anchors_preset = -1
+offset_left = -9.333333
+offset_top = -20.983332
+offset_right = 9.666667
+offset_bottom = 2.0166683
+
+[node name="Arrow" type="Polygon2D" parent="PlayerIndicator" unique_id=1252359202]
+position = Vector2(0, -1.3333335)
+polygon = PackedVector2Array(-6, 0, 6, 0, 0, 8)
+uv = PackedVector2Array(502, -40, 406.75928, -144.8194, 593.03723, -142.46146)
 
 [node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
 
