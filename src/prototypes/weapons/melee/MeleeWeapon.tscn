@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b6eph1rwjt5c2"]
+
+[ext_resource type="Script" uid="uid://dapfmvlamgrsq" path="res://src/prototypes/weapons/melee/melee_weapon.gd" id="1_s7ww3"]
+
+[node name="MeleeWeapon" type="Node2D" unique_id=1437278460]
+script = ExtResource("1_s7ww3")

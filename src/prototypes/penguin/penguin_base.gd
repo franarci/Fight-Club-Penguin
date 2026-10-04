@@ -1,13 +1,17 @@
+#@tool
 extends CharacterBody2D
 class_name Penguin
 
 
 @onready var body: AnimatedSprite2D = $Body
 @onready var movement_state_machine: Node = $MovementStateMachine
+@onready var weapon_socket: Node2D = $WeaponSocket
 
-@export_category("Player")
-@export var player_index: int
-@export var device: int
+var current_weapon: WeaponBase
+
+#@export_category("Player")
+var player_index: int
+var device: int
 
 @export_category("Movement")
 @export var base_speed: float = 180.0
@@ -28,18 +32,26 @@ class_name Penguin
 @export var p_autoplay: String
 
 
+@export_category("Weapon")
+@export var starting_weapon_scene: PackedScene
+@export var starting_weapon_data: WeaponData
+
 var facing: StringName = &"right"
 
 var dash_direction: Vector2 = Vector2.RIGHT
 var can_dash := true
 var dash_cooldown_left := 0.0
-
+var setup_completed := false
 
 func _ready() -> void:
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
 
 	movement_state_machine.init(self)
+	
+	#weapon
+	if setup_completed:
+		initialize_player()
 
 
 func _process(delta: float) -> void:
@@ -87,7 +99,9 @@ func apply_ice_friction(delta: float) -> void:
 func update_facing(input_dir: Vector2) -> void:
 	if input_dir == Vector2.ZERO:
 		return
-
+	
+	current_weapon.set_aim_direction(input_dir)
+	
 	if abs(input_dir.x) > abs(input_dir.y):
 		if input_dir.x > 0:
 			facing = &"right"
@@ -132,10 +146,37 @@ func setup(
 
 	player_index = p_player_index
 	device = p_device
+	setup_completed = true
 
+	if is_node_ready():
+		initialize_player()
+	
+func initialize_player() -> void:
 	apply_player_identity()
 
+	equip_weapon(
+		starting_weapon_scene,
+		starting_weapon_data
+	)
 func apply_player_identity() -> void:
 	var color := PlayerManager.get_player_color(player_index)
 
 	#Resolver color para identificar al jugador
+	modulate = color
+
+func equip_weapon(
+	weapon_scene: PackedScene,
+	weapon_data: WeaponData
+) -> void:
+
+	if current_weapon != null:
+		current_weapon.queue_free()
+
+	current_weapon = weapon_scene.instantiate() as WeaponBase
+
+	weapon_socket.add_child(current_weapon)
+
+	current_weapon.setup(
+		device,
+		weapon_data
+	)

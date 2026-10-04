@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://8d2uraygf2eo"]
 
-[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_eajup"]
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/prototypes/penguin/penguin_base.tscn" id="1_eajup"]
 [ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_tnopo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hh2m1"]

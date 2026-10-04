@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://h4n62xiii37i"]
+
+[ext_resource type="Script" uid="uid://cogl2v0hxxbc4" path="res://src/prototypes/weapons/base/weapon_base.gd" id="1_yi1dy"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_s6t6t"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yi1dy"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"idle_up_left",
+"speed": 5.0
+}]
+
+[node name="WeaponBase" type="Node2D" unique_id=612422102]
+script = ExtResource("1_yi1dy")
+p_spriteframes = SubResource("SpriteFrames_s6t6t")
+
+[node name="Body" type="AnimatedSprite2D" parent="." unique_id=1429468655]
+sprite_frames = SubResource("SpriteFrames_yi1dy")
+animation = &"idle_right"
+autoplay = "idle_right"
+
+[node name="AttackCooldown" type="Timer" parent="." unique_id=1615770677]
+
+[connection signal="timeout" from="AttackCooldown" to="." method="_on_attack_cooldown_timeout"]

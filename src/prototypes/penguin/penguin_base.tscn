@@ -1,27 +1,31 @@
 [gd_scene format=3 uid="uid://1p0rrharlx4b"]
 
-[ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/entities/prototypes/penguin/penguin_base.gd" id="1_s4b7q"]
-[ext_resource type="Script" uid="uid://2x3w5i81derj" path="res://src/entities/prototypes/penguin/movement_state.gd" id="2_7wuhw"]
-[ext_resource type="Script" uid="uid://cypcexwkq7j7u" path="res://src/entities/prototypes/penguin/idle.gd" id="3_heltl"]
-[ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
-[ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
+[ext_resource type="Script" uid="uid://bqqoogykmdgex" path="res://src/prototypes/penguin/penguin_base.gd" id="1_s4b7q"]
+[ext_resource type="Script" uid="uid://2x3w5i81derj" path="res://src/prototypes/penguin/movement_state.gd" id="2_7wuhw"]
+[ext_resource type="Script" uid="uid://cypcexwkq7j7u" path="res://src/prototypes/penguin/idle.gd" id="3_heltl"]
+[ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/prototypes/penguin/walk.gd" id="4_3sbks"]
+[ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/prototypes/penguin/dash.gd" id="5_ypmey"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
-animations = []
+[sub_resource type="SpriteFrames" id="SpriteFrames_gyoir"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}]
 
 [node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
 motion_mode = 1
 script = ExtResource("1_s4b7q")
 ice_friction = 80.815
-metadata/_edit_group_ = true
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
-sprite_frames = SubResource("SpriteFrames_s4b7q")
-animation = &""
+sprite_frames = SubResource("SpriteFrames_gyoir")
+animation = &"idle_right"
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
 
-[node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
+[node name="WeaponSocket" type="Node2D" parent="." unique_id=971728213]
 
 [node name="DashTimer" type="Timer" parent="." unique_id=2062385814]
 wait_time = 0.25

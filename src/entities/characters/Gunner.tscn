@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://dppv4b2b7ef31"]
 
-[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
 [ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_vtukd"]
+[ext_resource type="PackedScene" uid="uid://df4ykmse558s5" path="res://src/prototypes/weapons/ranged/RangedWeapon.tscn" id="3_djb2a"]
+[ext_resource type="Script" uid="uid://qwssbg2g12ig" path="res://WeaponData.gd" id="4_4e121"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vtukd"]
 atlas = ExtResource("2_vtukd")
@@ -140,8 +142,15 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Resource" id="Resource_gw8r0"]
+script = ExtResource("4_4e121")
+weapon_name = "AutomaticRifle"
+metadata/_custom_type_script = "uid://qwssbg2g12ig"
+
 [node name="Gunner" type="Node2D" unique_id=1018647709]
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
 p_spriteframes = SubResource("SpriteFrames_tnhwq")
 p_autoplay = "idle_right"
+starting_weapon_scene = ExtResource("3_djb2a")
+starting_weapon_data = SubResource("Resource_gw8r0")
