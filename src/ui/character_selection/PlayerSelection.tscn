@@ -222,7 +222,10 @@ custom_minimum_size = Vector2(0, 125.87)
 layout_mode = 2
 
 [node name="Character" type="TextureRect" parent="VBoxContainer/CharacterCenter" unique_id=713989201]
+custom_minimum_size = Vector2(190, 220)
 layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Navigation" type="HBoxContainer" parent="VBoxContainer" unique_id=227364430]
 layout_mode = 2
