@@ -27,6 +27,7 @@ var active := false
 #
 	##update_character()
 func activate(p_device: int, player_number: int) -> void:
+	is_ready = false
 	active = true
 	device = p_device
 
@@ -39,6 +40,7 @@ func activate(p_device: int, player_number: int) -> void:
 	selected_character = 0
 	character.texture = characters[selected_character].Img
 func deactivate() -> void:
+	is_ready = false
 	if active:
 		PlayerManager.remove_player(device)
 		
@@ -51,26 +53,37 @@ func deactivate() -> void:
 	navigation.visible = false
 	select_center.visible = false
 func next() -> void:
+	if not active or is_ready:
+		return
+
 	selected_character = (selected_character + 1) % characters.size()
 	character.texture = characters[selected_character].Img
 func prev():
+	if not active or is_ready:
+		return
+
 	selected_character = (selected_character - 1 + characters.size()) % characters.size()
 	character.texture = characters[selected_character].Img
 
 func _process(_delta: float) -> void:
-	if MultiplayerInput.is_action_just_pressed(device, "left"):
-		prev()
+	if not active:
+		return
 
-	if MultiplayerInput.is_action_just_pressed(device, "right"):
-		next()
+	if not is_ready:
+		if MultiplayerInput.is_action_just_pressed(device, "left"):
+			prev()
 
-	if MultiplayerInput.is_action_just_pressed(device, "selection_accept"):
-		confirm_character()
+		if MultiplayerInput.is_action_just_pressed(device, "right"):
+			next()
+
+		if MultiplayerInput.is_action_just_pressed(device, "selection_accept"):
+			confirm_character()
 
 	if MultiplayerInput.is_action_just_pressed(device, "selection_cancel"):
 		cancel_selection()
 		
 func confirm_character():
+	is_ready = true
 	PlayerManager.set_character(
 		device,
 		characters[selected_character]
