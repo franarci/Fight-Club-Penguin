@@ -244,6 +244,10 @@ layout_mode = 2
 layout_mode = 2
 text = "SELECT"
 
+[node name="BorderBlinkTimer" type="Timer" parent="." unique_id=511547008]
+wait_time = 0.4
+
 [connection signal="pressed" from="VBoxContainer/Navigation/Prev" to="." method="prev"]
 [connection signal="pressed" from="VBoxContainer/Navigation/Next" to="." method="next"]
 [connection signal="pressed" from="VBoxContainer/SelectCenter/Select" to="." method="_on_select_pressed"]
+[connection signal="timeout" from="BorderBlinkTimer" to="." method="_on_border_blink_timer_timeout"]
