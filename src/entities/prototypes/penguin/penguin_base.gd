@@ -1,13 +1,16 @@
+@tool
 extends CharacterBody2D
 class_name Penguin
 
 
 @onready var body: AnimatedSprite2D = $Body
 @onready var movement_state_machine: Node = $MovementStateMachine
+@onready var player_indicator: Node2D = $PlayerIndicator
+@onready var player_label: Label = $PlayerIndicator/Label
+@onready var player_arrow: Polygon2D = $PlayerIndicator/Arrow
 
-@export_category("Player")
-@export var player_index: int
-@export var device: int
+var player_index: int
+var device: int
 
 @export_category("Movement")
 @export var base_speed: float = 180.0
@@ -33,13 +36,17 @@ var facing: StringName = &"right"
 var dash_direction: Vector2 = Vector2.RIGHT
 var can_dash := true
 var dash_cooldown_left := 0.0
-
+var setup_completed := false
+var player_initialized := false
 
 func _ready() -> void:
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
 
 	movement_state_machine.init(self)
+	
+	if setup_completed:
+		initialize_player()
 
 
 func _process(delta: float) -> void:
@@ -132,10 +139,37 @@ func setup(
 
 	player_index = p_player_index
 	device = p_device
+	setup_completed = true
+
+	if is_node_ready():
+		initialize_player()
+		
+func initialize_player() -> void:
+	if player_initialized:
+		return
+
+	player_initialized = true
 
 	apply_player_identity()
 
 func apply_player_identity() -> void:
 	var color := PlayerManager.get_player_color(player_index)
+	modulate = color
+	player_label.text = "P%d" % (player_index + 1)
+	player_label.add_theme_color_override(
+		"font_color",
+		color
+	)
 
+	player_label.add_theme_color_override(
+		"font_outline_color",
+		Color.BLACK
+	)
+
+	player_label.add_theme_constant_override(
+		"outline_size",
+		3
+	)
+	
+	player_arrow.color = color
 	#Resolver color para identificar al jugador
