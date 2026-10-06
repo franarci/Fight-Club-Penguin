@@ -222,7 +222,10 @@ custom_minimum_size = Vector2(0, 125.87)
 layout_mode = 2
 
 [node name="Character" type="TextureRect" parent="VBoxContainer/CharacterCenter" unique_id=713989201]
+custom_minimum_size = Vector2(190, 220)
 layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Navigation" type="HBoxContainer" parent="VBoxContainer" unique_id=227364430]
 layout_mode = 2
@@ -244,6 +247,10 @@ layout_mode = 2
 layout_mode = 2
 text = "SELECT"
 
+[node name="BorderBlinkTimer" type="Timer" parent="." unique_id=511547008]
+wait_time = 0.4
+
 [connection signal="pressed" from="VBoxContainer/Navigation/Prev" to="." method="prev"]
 [connection signal="pressed" from="VBoxContainer/Navigation/Next" to="." method="next"]
 [connection signal="pressed" from="VBoxContainer/SelectCenter/Select" to="." method="_on_select_pressed"]
+[connection signal="timeout" from="BorderBlinkTimer" to="." method="_on_border_blink_timer_timeout"]
