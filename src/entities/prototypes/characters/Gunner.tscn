@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://dppv4b2b7ef31"]
+
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
+[ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_vtukd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vtukd"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(192, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(224, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2hxi"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4b2r"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(32, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vijys"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(64, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5x5m2"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lm2ft"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nh8tt"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edpr6"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vu1t"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1sc3u"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3aau"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ubhqm"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iyd6p"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d44fk"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wcaup"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpmf5"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tnhwq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vtukd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ikj4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e2hxi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j4b2r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vijys")
+}],
+"loop": 1,
+"name": &"dash_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5x5m2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lm2ft")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nh8tt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_edpr6")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vu1t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1sc3u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3aau")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ubhqm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iyd6p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d44fk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wcaup")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpmf5")
+}],
+"loop": 1,
+"name": &"walk_right",
+"speed": 5.0
+}]
+
+[node name="Gunner" type="Node2D" unique_id=1018647709]
+
+[node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
+p_spriteframes = SubResource("SpriteFrames_tnhwq")
+p_autoplay = "idle_right"

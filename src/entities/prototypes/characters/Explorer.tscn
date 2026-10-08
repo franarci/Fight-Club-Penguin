@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://8d2uraygf2eo"]
+
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_eajup"]
+[ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_tnopo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hh2m1"]
+atlas = ExtResource("2_tnopo")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6xyad"]
+atlas = ExtResource("2_tnopo")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qwhii"]
+atlas = ExtResource("2_tnopo")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3iu74"]
+atlas = ExtResource("2_tnopo")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ggrhy"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hh2m1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6xyad")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qwhii")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3iu74")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}]
+
+[node name="Explorer" type="Node2D" unique_id=429138432]
+
+[node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_eajup")]
+p_spriteframes = SubResource("SpriteFrames_ggrhy")
+p_autoplay = "idle_right"
