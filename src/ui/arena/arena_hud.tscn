@@ -1,7 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dkmy5124wu76r"]
 
-[ext_resource type="Script" path="res://src/ui/arena/arena_hud.gd" id="1"]
+[ext_resource type="Script" uid="uid://bxfop7lp0u256" path="res://src/ui/arena/arena_hud.gd" id="1"]
 
-[node name="ArenaHUD" type="CanvasLayer"]
+[node name="ArenaHUD" type="CanvasLayer" unique_id=133186521]
 layer = 10
 script = ExtResource("1")

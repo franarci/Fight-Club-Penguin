@@ -7,7 +7,7 @@
 bg_color = Color(0.2449246, 0.17361537, 0.03437599, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m7el"]
-bg_color = Color(0.071218066, 0.012240997, 0.017861571, 1)
+bg_color = Color(0.70980394, 0.29803923, 0.23529412, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qt4e8"]
 bg_color = Color(0.15319598, 0.58931094, 0.9999785, 1)
@@ -16,7 +16,7 @@ bg_color = Color(0.15319598, 0.58931094, 0.9999785, 1)
 bg_color = Color(0.612107, 0.4616382, 0.2913878, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6myx"]
-bg_color = Color(0.7726102, 0.6761306, 0.059173115, 1)
+bg_color = Color(0.18039216, 0.8, 0.44313726, 1)
 
 [node name="CharacterSelect" type="Control" unique_id=733309859]
 layout_mode = 3
