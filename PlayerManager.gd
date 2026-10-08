@@ -2,6 +2,8 @@ extends Node
 
 
 const MAX_PLAYERS := 4
+const STARTING_LIVES := 3
+signal lives_changed(slot: int, lives: int)
 const PLAYER_COLORS := [
 	Color("#e74c3c"),
 	Color("#f1c40f"),
@@ -23,7 +25,8 @@ func join_player(device: int, slot: int) -> bool:
 		"device": device,
 		"slot": slot,
 		"character": null,
-		"ready": false
+		"ready": false,
+		"lives": STARTING_LIVES
 	}
 
 	players.append(player_data)
@@ -57,6 +60,29 @@ func get_player_color(slot: int) -> Color:
 
 func clear_players() -> void:
 	players.clear()
+
+
+func reset_lives() -> void:
+	for player in players:
+		player["lives"] = STARTING_LIVES
+		lives_changed.emit(player["slot"], STARTING_LIVES)
+
+
+func set_lives(slot: int, lives: int) -> void:
+	for player in players:
+		if player["slot"] == slot:
+			var remaining := clampi(lives, 0, STARTING_LIVES)
+			if player.get("lives", STARTING_LIVES) != remaining:
+				player["lives"] = remaining
+				lives_changed.emit(slot, remaining)
+			return
+
+
+func lose_life(slot: int) -> void:
+	for player in players:
+		if player["slot"] == slot:
+			set_lives(slot, int(player.get("lives", STARTING_LIVES)) - 1)
+			return
 
 #When player confirms a penguin, save the selection on the player data
 func set_character(device: int, character: CharacterData) -> void:

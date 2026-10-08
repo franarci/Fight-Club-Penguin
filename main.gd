@@ -26,8 +26,9 @@ func _ready() -> void:
 
 func start_game() -> void:
 	character_select.queue_free()
-
+	PlayerManager.reset_lives()
 	spawn_players()
+	$ArenaHUD.show_players(PlayerManager.players)
 
 
 func spawn_players() -> void:

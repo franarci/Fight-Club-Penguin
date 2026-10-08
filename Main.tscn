@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b05vo5uhchgr" path="res://main.gd" id="1_r0du0"]
 [ext_resource type="PackedScene" uid="uid://4rdsst6aspvh" path="res://src/ui/character_selection/character_select.tscn" id="2_cm0pq"]
+[ext_resource type="PackedScene" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
@@ -17,6 +18,8 @@ color = Color(6.738305e-07, 0.75269306, 0.75269306, 1)
 [node name="CharacterSelect" parent="." unique_id=733309859 instance=ExtResource("2_cm0pq")]
 
 [node name="Players" type="Node2D" parent="." unique_id=425186647]
+
+[node name="ArenaHUD" parent="." instance=ExtResource("3_hud")]
 
 [node name="SpawnPoints" type="Control" parent="." unique_id=503014248]
 layout_mode = 3
