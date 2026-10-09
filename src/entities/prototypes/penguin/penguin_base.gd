@@ -39,6 +39,34 @@ var dash_cooldown_left := 0.0
 var setup_completed := false
 var player_initialized := false
 
+@export_category("Push")
+@export var push_speed: float = 500.0
+@export var push_friction: float = 600.0
+
+var is_being_pushed := false
+var respawn_position: Vector2
+var ice_rect: ColorRect
+var arena_configured := false
+
+
+func configure_arena(ice: ColorRect) -> void:
+	ice_rect = ice
+	respawn_position = global_position
+	arena_configured = true
+
+
+func check_arena_bounds() -> void:
+	if not arena_configured:
+		return
+
+	if ice_rect.get_global_rect().has_point(global_position):
+		return
+
+	velocity = Vector2.ZERO
+	is_being_pushed = false
+	movement_state_machine.change_state(&"Idle")
+	global_position = respawn_position
+
 func _ready() -> void:
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
@@ -53,15 +81,42 @@ func _ready() -> void:
 		initialize_player()
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 
 	update_dash_cooldown(delta)
 
+	if is_being_pushed:
+		velocity = velocity.move_toward(
+			Vector2.ZERO,
+			push_friction * delta
+		)
+
+		move_and_slide()
+
+		if velocity.length() < 10.0:
+			velocity = Vector2.ZERO
+			is_being_pushed = false
+			movement_state_machine.change_state(&"Idle")
+		
+		check_arena_bounds()
+		return
+
 	movement_state_machine.physics_update(delta)
+	
+
+	var is_dashing: bool = (
+		movement_state_machine.current_state != null
+		and movement_state_machine.current_state.name == &"Dash"
+	)
 
 	move_and_slide()
+
+	if is_dashing:
+		check_dash_impact()
+		
+	check_arena_bounds()
 
 
 func get_input_direction() -> Vector2:
@@ -162,7 +217,7 @@ func initialize_player() -> void:
 	apply_player_identity()
 
 func apply_player_identity() -> void:
-	var color := PlayerManager.get_player_color(player_index)
+	var color: Color = PlayerManager.get_player_color(player_index)
 	modulate = color
 	player_label.text = "P%d" % (player_index + 1)
 	player_label.add_theme_color_override(
@@ -182,3 +237,28 @@ func apply_player_identity() -> void:
 	
 	player_arrow.color = color
 	#Resolver color para identificar al jugador
+	
+	
+func check_dash_impact() -> void:
+	for i in range(get_slide_collision_count()):
+		var collision := get_slide_collision(i)
+		var other := collision.get_collider() as Penguin
+
+		if other == null or other == self:
+			continue
+
+		# Solo empujar si el rival está frente a la embestida.
+		if dash_direction.dot(-collision.get_normal()) <= 0.1:
+			continue
+
+		other.receive_push(dash_direction)
+
+		velocity = Vector2.ZERO
+		movement_state_machine.change_state(&"Idle")
+		return
+
+
+func receive_push(direction: Vector2) -> void:
+	movement_state_machine.change_state(&"Idle")
+	is_being_pushed = true
+	velocity = direction.normalized() * push_speed

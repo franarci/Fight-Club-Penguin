@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b05vo5uhchgr" path="res://main.gd" id="1_r0du0"]
 [ext_resource type="PackedScene" uid="uid://4rdsst6aspvh" path="res://src/ui/character_selection/character_select.tscn" id="2_cm0pq"]
-[ext_resource type="PackedScene" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://dkmy5124wu76r" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
@@ -13,13 +13,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(6.738305e-07, 0.75269306, 0.75269306, 1)
+mouse_filter = 2
+color = Color(0, 0.22745098, 0.7529412, 1)
+
+[node name="Ice" type="ColorRect" parent="." unique_id=992317577]
+offset_left = 150.0
+offset_top = 100.0
+offset_right = 1000.0
+offset_bottom = 550.0
+mouse_filter = 2
+color = Color(0, 1, 1, 1)
 
 [node name="CharacterSelect" parent="." unique_id=733309859 instance=ExtResource("2_cm0pq")]
 
 [node name="Players" type="Node2D" parent="." unique_id=425186647]
 
-[node name="ArenaHUD" parent="." instance=ExtResource("3_hud")]
+[node name="ArenaHUD" parent="." unique_id=516591620 instance=ExtResource("3_hud")]
 
 [node name="SpawnPoints" type="Control" parent="." unique_id=503014248]
 layout_mode = 3
@@ -28,13 +37,13 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Spawn1" type="Marker2D" parent="SpawnPoints" unique_id=658700905]
-position = Vector2(196, 119)
+position = Vector2(350, 225)
 
 [node name="Spawn2" type="Marker2D" parent="SpawnPoints" unique_id=2101652191]
-position = Vector2(172, 525)
+position = Vector2(350, 425)
 
 [node name="Spawn3" type="Marker2D" parent="SpawnPoints" unique_id=53401844]
-position = Vector2(979, 130)
+position = Vector2(800, 225)
 
 [node name="Spawn4" type="Marker2D" parent="SpawnPoints" unique_id=1800130287]
-position = Vector2(976, 522)
+position = Vector2(800, 425)

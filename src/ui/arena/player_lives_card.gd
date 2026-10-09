@@ -7,7 +7,7 @@ var hearts: Array[Control] = []
 func configure(player: Dictionary, right_side: bool) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var slot: int = player["slot"]
-	var color := PlayerManager.get_player_color(slot)
+	var color: Color = PlayerManager.get_player_color(slot)
 	var panel := StyleBoxFlat.new()
 	panel.bg_color = Color("101d32", 0.95)
 	panel.border_color = color

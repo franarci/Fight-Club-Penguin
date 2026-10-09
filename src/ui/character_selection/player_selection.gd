@@ -60,7 +60,7 @@ func deactivate() -> void:
 	navigation.visible = false
 	select_center.visible = false
 	border_blink_timer.stop()
-	set_border_visible(true)
+	set_border_visible(false)
 
 func next() -> void:
 	if not active or is_ready:
