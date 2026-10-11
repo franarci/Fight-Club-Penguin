@@ -8,6 +8,7 @@
 script = ExtResource("1_r0du0")
 
 [node name="Ground" type="ColorRect" parent="." unique_id=354157110]
+z_index = -10
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

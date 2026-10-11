@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/entities/prototypes/projectiles/projectile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/projectiles/bullet.svg" id="2"]
+
+[sub_resource type="CircleShape2D" id="Shape"]
+radius = 2.0
+
+[node name="Projectile" type="Sprite2D"]
+script = ExtResource("1")
+texture = ExtResource("2")
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+one_shot = true
+process_callback = 0
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("Shape")
+
+[connection signal="timeout" from="LifetimeTimer" to="." method="_on_lifetime_timer_timeout"]
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]

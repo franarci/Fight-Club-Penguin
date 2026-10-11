@@ -8,6 +8,12 @@ class_name Penguin
 @onready var player_indicator: Node2D = $PlayerIndicator
 @onready var player_label: Label = $PlayerIndicator/Label
 @onready var player_arrow: Polygon2D = $PlayerIndicator/Arrow
+@onready var weapon_socket: Node2D = $Weapon
+
+var current_weapon: WeaponBase
+
+@export_category("Weapon")
+@export var starting_weapon_data: WeaponData
 
 var player_index: int
 var device: int
@@ -27,8 +33,16 @@ var device: int
 
 
 @export_category("Animation")
-@export var p_spriteframes: SpriteFrames
-@export var p_autoplay: String
+@export var p_spriteframes: SpriteFrames:
+	set(value):
+		p_spriteframes = value
+		if Engine.is_editor_hint() and is_node_ready():
+			update_editor_preview()
+@export var p_autoplay: String:
+	set(value):
+		p_autoplay = value
+		if Engine.is_editor_hint() and is_node_ready():
+			update_editor_preview()
 
 
 var facing: StringName = &"right"
@@ -39,13 +53,21 @@ var dash_cooldown_left := 0.0
 var setup_completed := false
 var player_initialized := false
 
+func update_editor_preview() -> void:
+	if p_spriteframes == null:
+		return
+	body.sprite_frames = p_spriteframes
+	if p_spriteframes.has_animation(p_autoplay):
+		body.animation = p_autoplay
+	body.stop()
+
+
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		update_editor_preview()
+		return
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
-
-	# Keep the sprite preview, but do not run gameplay scripts in the editor.
-	if Engine.is_editor_hint():
-		return
 
 	movement_state_machine.init(self)
 	
@@ -101,6 +123,9 @@ func apply_ice_friction(delta: float) -> void:
 func update_facing(input_dir: Vector2) -> void:
 	if input_dir == Vector2.ZERO:
 		return
+
+	if is_instance_valid(current_weapon):
+		current_weapon.set_aim_direction(input_dir)
 
 	if abs(input_dir.x) > abs(input_dir.y):
 		if input_dir.x > 0:
@@ -160,6 +185,10 @@ func initialize_player() -> void:
 	player_initialized = true
 
 	apply_player_identity()
+	current_weapon = weapon_socket.get_node_or_null("EquippedWeapon") as WeaponBase
+	if current_weapon != null and starting_weapon_data != null:
+		current_weapon.wielder = self
+		current_weapon.setup(device, starting_weapon_data)
 
 func apply_player_identity() -> void:
 	var color := PlayerManager.get_player_color(player_index)

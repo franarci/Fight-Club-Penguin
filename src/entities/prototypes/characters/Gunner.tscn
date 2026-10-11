@@ -27,6 +27,14 @@ region = Rect2(32, 0, 32, 32)
 atlas = ExtResource("2_vtukd")
 region = Rect2(128, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vtukd"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lm2ft"]
+atlas = ExtResource("2_vtukd")
+region = Rect2(128, 32, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_2vu1t"]
 atlas = ExtResource("2_vtukd")
 region = Rect2(0, 0, 32, 32)
@@ -147,6 +155,17 @@ animations = [{
 }],
 "loop": 1,
 "name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vtukd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lm2ft")
+}],
+"loop": 1,
+"name": &"idle_up",
 "speed": 5.0
 }, {
 "frames": [{

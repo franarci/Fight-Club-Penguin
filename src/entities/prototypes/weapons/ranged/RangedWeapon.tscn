@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://df4ykmse558s5"]
+
+[ext_resource type="PackedScene" uid="uid://h4n62xiii37i" path="res://src/entities/prototypes/weapons/base/WeaponBase.tscn" id="1"]
+[ext_resource type="Script" uid="uid://jk45jwm3bp7i" path="res://src/entities/prototypes/weapons/ranged/ranged_weapon.gd" id="2"]
+[ext_resource type="SpriteFrames" path="res://src/entities/prototypes/weapons/ranged/rifle_frames.tres" id="3_frames"]
+
+[node name="RangedWeapon" unique_id=1121400081 instance=ExtResource("1")]
+script = ExtResource("2")
+
+[node name="Body" parent="." index="0" unique_id=1429468655]
+scale = Vector2(0.045, 0.045)
+sprite_frames = ExtResource("3_frames")

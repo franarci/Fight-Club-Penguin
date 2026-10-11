@@ -6,6 +6,9 @@
 [ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
 [ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
 
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="6_weapon"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/rifle_data.tres" id="7_data"]
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
 animations = []
 
@@ -14,6 +17,7 @@ scale = Vector2(1.5, 1.5)
 motion_mode = 1
 script = ExtResource("1_s4b7q")
 ice_friction = 80.815
+starting_weapon_data = ExtResource("7_data")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
 sprite_frames = SubResource("SpriteFrames_s4b7q")
@@ -37,6 +41,9 @@ polygon = PackedVector2Array(-6, 0, 6, 0, 0, 8)
 uv = PackedVector2Array(502, -40, 406.75928, -144.8194, 593.03723, -142.46146)
 
 [node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
+
+[node name="EquippedWeapon" parent="Weapon" instance=ExtResource("6_weapon")]
+position = Vector2(1.3333334, 10.666667)
 
 [node name="DashTimer" type="Timer" parent="." unique_id=2062385814]
 wait_time = 0.25
