@@ -11,6 +11,9 @@
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
 animations = []
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
+radius = 4.0
+height = 14.0
 
 [node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
 scale = Vector2(1.5, 1.5)
@@ -20,8 +23,11 @@ ice_friction = 80.815
 starting_weapon_data = ExtResource("7_data")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
-sprite_frames = SubResource("SpriteFrames_s4b7q")
 animation = &""
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=900449280]
+position = Vector2(0, 10)
+shape = SubResource("CapsuleShape2D_3sbks")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
 

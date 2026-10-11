@@ -59,3 +59,5 @@ func spawn_player(player_data: Dictionary) -> void:
 	players.add_child(penguin)
 
 	penguin.global_position = spawn_points[slot].global_position
+	var player_body := penguin.get_child(0) as Penguin
+	player_body.configure_arena($Ice)
