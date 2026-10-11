@@ -43,6 +43,10 @@ func _ready() -> void:
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
 
+	# Keep the sprite preview, but do not run gameplay scripts in the editor.
+	if Engine.is_editor_hint():
+		return
+
 	movement_state_machine.init(self)
 	
 	if setup_completed:
@@ -50,6 +54,9 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+
 	update_dash_cooldown(delta)
 
 	movement_state_machine.physics_update(delta)
@@ -98,8 +105,10 @@ func update_facing(input_dir: Vector2) -> void:
 	if abs(input_dir.x) > abs(input_dir.y):
 		if input_dir.x > 0:
 			facing = &"right"
+			body.flip_h = false
 		else:
 			facing = &"left"
+			body.flip_h = true
 	else:
 		if input_dir.y > 0:
 			facing = &"down"

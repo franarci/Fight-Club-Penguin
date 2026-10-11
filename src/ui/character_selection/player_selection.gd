@@ -112,9 +112,9 @@ func cancel_selection():
 
 func set_player_color(color: Color) -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	player_border_color = color
+	player_border_color = Color("#120305")
 
-	border_style.border_color = color
+	border_style.border_color = Color("#120305")
 	border_style.border_width_left = 5
 	border_style.border_width_top = 5
 	border_style.border_width_right = 5

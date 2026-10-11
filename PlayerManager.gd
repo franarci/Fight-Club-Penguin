@@ -6,9 +6,9 @@ const STARTING_LIVES := 3
 signal lives_changed(slot: int, lives: int)
 const PLAYER_COLORS := [
 	Color("#e74c3c"),
-	Color("#f1c40f"),
-	Color("#2ecc71"),
-	Color("#3498db")
+	Color("#2796ff"),
+	Color("#9c764a"),
+	Color("#2ecc71")
 ]
 
 var players: Array[Dictionary] = []
