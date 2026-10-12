@@ -2,6 +2,23 @@
 extends CharacterBody2D
 class_name Penguin
 
+signal health_changed(current: float, maximum: float)
+signal eliminated(slot: int)
+
+@export_category("Health")
+@export_range(1.0, 10000.0) var max_health: float = 100.0
+@export_range(0.01, 10.0) var respawn_delay: float = 0.8
+@export_range(0.0, 10.0) var respawn_protection: float = 1.0
+
+@onready var respawn_timer: Timer = $RespawnTimer
+@onready var original_collision_layer: int = collision_layer
+@onready var original_collision_mask: int = collision_mask
+
+var current_health: float
+var is_dead := false
+var is_eliminated := false
+var protection_left := 0.0
+
 
 @onready var body: AnimatedSprite2D = $Body
 @onready var movement_state_machine: Node = $MovementStateMachine
@@ -78,21 +95,19 @@ func configure_arena(ice: ColorRect) -> void:
 
 
 func check_arena_bounds() -> void:
-	if not arena_configured:
+	if is_dead or not arena_configured or not is_instance_valid(ice_rect):
 		return
 
 	if ice_rect.get_global_rect().has_point(global_position):
 		return
 
-	velocity = Vector2.ZERO
-	is_being_pushed = false
-	movement_state_machine.change_state(&"Idle")
-	global_position = respawn_position
+	lose_life()
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		update_editor_preview()
 		return
+	set_health(max_health)
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
 
@@ -103,9 +118,11 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Engine.is_editor_hint() or is_dead:
 		return
 
+	protection_left = maxf(0.0, protection_left - delta)
+	body.self_modulate.a = 0.5 if protection_left > 0.0 else 1.0
 	update_dash_cooldown(delta)
 
 	if is_being_pushed:
@@ -198,6 +215,8 @@ func update_facing(input_dir: Vector2) -> void:
 func play_animation(state: StringName) -> void:
 	var animation_name := String(state) + "_" + String(facing)
 
+	if not body.sprite_frames.has_animation(animation_name):
+		animation_name = p_autoplay
 	if body.animation != animation_name:
 		body.play(animation_name)
 
@@ -287,6 +306,67 @@ func check_dash_impact() -> void:
 
 
 func receive_push(direction: Vector2) -> void:
+	if is_dead or protection_left > 0.0:
+		return
 	movement_state_machine.change_state(&"Idle")
 	is_being_pushed = true
 	velocity = direction.normalized() * push_speed
+
+
+# Shared entry point for projectile, melee, and future environmental damage.
+func receive_damage(amount: float, source: Node2D = null, _direction: Vector2 = Vector2.ZERO) -> void:
+	if is_dead or protection_left > 0.0 or amount <= 0.0 or source == self:
+		return
+	set_health(current_health - amount)
+	if current_health <= 0.0:
+		lose_life()
+
+
+func set_health(value: float) -> void:
+	current_health = clampf(value, 0.0, max_health)
+	health_changed.emit(current_health, max_health)
+
+
+func lose_life() -> void:
+	if is_dead:
+		return
+	# Set the guard before signals/overlaps can cause a second death this frame.
+	is_dead = true
+	set_health(0.0)
+	PlayerManager.lose_life(player_index)
+	velocity = Vector2.ZERO
+	is_being_pushed = false
+	movement_state_machine.change_state(&"Idle")
+	set_deferred("collision_layer", 0)
+	set_deferred("collision_mask", 0)
+	if is_instance_valid(current_weapon):
+		current_weapon.can_attack = false
+		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
+	hide()
+	if PlayerManager.get_lives(player_index) <= 0:
+		is_eliminated = true
+		eliminated.emit(player_index)
+	else:
+		respawn_timer.start(respawn_delay)
+
+
+func _on_respawn_timer_timeout() -> void:
+	if is_eliminated:
+		return
+	global_position = respawn_position
+	velocity = Vector2.ZERO
+	is_being_pushed = false
+	can_dash = true
+	dash_cooldown_left = 0.0
+	movement_state_machine.change_state(&"Idle")
+	set_health(max_health)
+	protection_left = respawn_protection
+	body.self_modulate.a = 0.5 if protection_left > 0.0 else 1.0
+	set_deferred("collision_layer", original_collision_layer)
+	set_deferred("collision_mask", original_collision_mask)
+	if is_instance_valid(current_weapon):
+		current_weapon.attack_cooldown.stop()
+		current_weapon.can_attack = true
+		current_weapon.process_mode = Node.PROCESS_MODE_INHERIT
+	is_dead = false
+	show()

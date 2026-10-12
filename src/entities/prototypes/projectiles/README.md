@@ -17,8 +17,8 @@ once, emits `hit(target, damage, shooter, direction)`, and calls
 HP is not implemented here.
 
 Collision masks select physics layers, not players; ownership prevents self-hits
-in PvP. The default mask targets layer 1. Penguins currently lack body collision
-shapes: add hurtboxes/colliders with the health system before expecting PvP hits.
+in PvP. The default mask targets layer 1. Penguins have body collision shapes and receive damage through the shared
+health system.
 An Area2D hurtbox must receive/forward damage itself.
 
 The ray sweep prevents fast bullets crossing thin colliders between physics

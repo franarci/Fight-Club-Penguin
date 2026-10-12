@@ -23,7 +23,6 @@ ice_friction = 80.815
 starting_weapon_data = ExtResource("7_data")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
-animation = &""
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=900449280]
 position = Vector2(0, 10)
@@ -45,6 +44,9 @@ offset_bottom = 2.0166683
 position = Vector2(0, -1.3333335)
 polygon = PackedVector2Array(-6, 0, 6, 0, 0, 8)
 uv = PackedVector2Array(502, -40, 406.75928, -144.8194, 593.03723, -142.46146)
+
+[node name="RespawnTimer" type="Timer" parent="."]
+one_shot = true
 
 [node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
 
@@ -73,3 +75,5 @@ script = ExtResource("5_ypmey")
 
 [connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
 [connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]
+
+[connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]

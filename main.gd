@@ -29,6 +29,8 @@ func start_game() -> void:
 	PlayerManager.reset_lives()
 	spawn_players()
 	$ArenaHUD.show_players(PlayerManager.players)
+	for character in players.get_children():
+		$ArenaHUD.bind_penguin(character.get_child(0) as Penguin)
 
 
 func spawn_players() -> void:

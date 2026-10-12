@@ -78,6 +78,13 @@ func set_lives(slot: int, lives: int) -> void:
 			return
 
 
+func get_lives(slot: int) -> int:
+	for player in players:
+		if player["slot"] == slot:
+			return int(player.get("lives", STARTING_LIVES))
+	return 0
+
+
 func lose_life(slot: int) -> void:
 	for player in players:
 		if player["slot"] == slot:
