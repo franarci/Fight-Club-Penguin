@@ -8,6 +8,16 @@
 animations = [{
 "frames": [],
 "loop": 1,
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"idle_down_right",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
 "name": &"idle_right",
 "speed": 5.0
 }, {
@@ -29,11 +39,10 @@ p_spriteframes = SubResource("SpriteFrames_s6t6t")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1429468655]
 sprite_frames = SubResource("SpriteFrames_yi1dy")
-animation = &"idle_right"
+animation = &"idle_down_right"
 autoplay = "idle_right"
 
 [node name="AttackCooldown" type="Timer" parent="." unique_id=1615770677]
-
 one_shot = true
 
 [connection signal="timeout" from="AttackCooldown" to="." method="_on_attack_cooldown_timeout"]

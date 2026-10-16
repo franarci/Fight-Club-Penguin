@@ -7,6 +7,7 @@ class_name WeaponBase
 @export_category("Animation")
 @export var p_spriteframes: SpriteFrames
 @export var upward_visual_offset := Vector2(0, -6)
+@export var upward_diagonal_visual_offset := Vector2.ZERO
 
 @onready var authored_body_position: Vector2 = $Body.position
 
@@ -55,7 +56,10 @@ func snap_to_8_directions(direction: Vector2) -> Vector2i:
 
 func update_weapon_visual() -> void:
 	z_index = -1 if direction_8.y < 0 else 1
-	body.position = authored_body_position + (upward_visual_offset if direction_8.y < 0 else Vector2.ZERO)
+	var visual_offset := Vector2.ZERO
+	if direction_8.y < 0:
+		visual_offset = upward_visual_offset if direction_8.x == 0 else upward_diagonal_visual_offset
+	body.position = authored_body_position + visual_offset
 	body.flip_h = false
 	body.flip_v = false
 
@@ -65,6 +69,7 @@ func update_weapon_visual() -> void:
 
 		if direction_8.x < 0:
 			body.flip_h = true
+			z_index = -2
 
 	# Vertical
 	elif direction_8.x == 0:
@@ -72,16 +77,20 @@ func update_weapon_visual() -> void:
 
 		if direction_8.y > 0:
 			body.flip_v = true
+			z_index = -2
 
-	# Diagonal
-	else:
+	# Upper diagonals use left-facing artwork; lower diagonals use right-facing artwork.
+	elif direction_8.y < 0:
 		body.play("idle_up_left")
-
+		body.flip_h = direction_8.x > 0
 		if direction_8.x > 0:
-			body.flip_h = true
+			z_index=1
+	else:
+		body.play("idle_down_right")
+		body.flip_h = direction_8.x < 0
+		if direction_8.x < 0:
+			z_index=-1
 
-		if direction_8.y > 0:
-			body.flip_v = true
 func attack() -> void:
 	push_error("WeaponBase.attack() must be overridden")
 
@@ -90,7 +99,6 @@ func start_cooldown() -> void:
 
 	attack_cooldown.wait_time = weapon_data.attack_cooldown
 	attack_cooldown.start()
-
 
 func _on_attack_cooldown_timeout() -> void:
 	can_attack = true

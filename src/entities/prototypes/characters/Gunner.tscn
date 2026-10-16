@@ -1,7 +1,15 @@
 [gd_scene format=3 uid="uid://dppv4b2b7ef31"]
 
 [ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
+[ext_resource type="Script" uid="uid://bohxhlwhv07ng" path="res://RangedWeaponData.gd" id="2_edpr6"]
 [ext_resource type="Texture2D" uid="uid://b22cg6bmux0ly" path="res://assets/textures/entities/gunner/gunners.png" id="3_5x5m2"]
+[ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="3_lm2ft"]
+[ext_resource type="PackedScene" uid="uid://df4ykmse558s5" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="3_nh8tt"]
+[ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
+
+[sub_resource type="Resource" id="Resource_41i6s"]
+script = ExtResource("2_edpr6")
+metadata/_custom_type_script = "uid://bohxhlwhv07ng"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
 atlas = ExtResource("3_5x5m2")
@@ -70,6 +78,10 @@ region = Rect2(561, 755, 187, 151)
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fmju"]
 atlas = ExtResource("3_5x5m2")
 region = Rect2(0, 151, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2bl7"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 302, 187, 151)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jq0ew"]
 atlas = ExtResource("3_5x5m2")
@@ -227,6 +239,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_a2bl7")
+}],
+"loop": 1,
+"name": &"idle_down_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_jq0ew")
 }],
 "loop": 1,
@@ -329,19 +349,36 @@ animations = [{
 }]
 
 [node name="Gunner" type="Node2D" unique_id=1018647709]
+metadata/_edit_group_ = true
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
-max_health = null
-respawn_delay = null
-respawn_protection = null
+scale = Vector2(2.5, 2.5)
+starting_weapon_data = SubResource("Resource_41i6s")
 dash_speed = 400.0
+dash_duration = 0.5
+dash_cooldown = 0.6
 p_spriteframes = SubResource("SpriteFrames_tnhwq")
 p_autoplay = "idle_right"
 
 [node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
 position = Vector2(1.3333335, 8.666667)
-scale = Vector2(0.13, 0.13)
+scale = Vector2(0.11, 0.11)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
-animation = &"walk_up_right"
+animation = &"idle_right"
+
+[node name="Collision" parent="PenguinBase" index="1" unique_id=900449280]
+visible = false
+
+[node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1683410569, 1150368172) index="0" unique_id=1121400081 instance=ExtResource("3_nh8tt")]
+position = Vector2(1.5999999, 10.4)
+
+[node name="AnimationPlayer" parent="PenguinBase" index="8" unique_id=1976662253]
+libraries/ = ExtResource("dash_poses")
+
+[node name="Arm" type="Sprite2D" parent="PenguinBase" unique_id=1583356965]
+z_index = 2
+position = Vector2(-1.3333334, 8)
+scale = Vector2(0.155, 0.155)
+texture = ExtResource("3_lm2ft")
 
 [editable path="PenguinBase"]

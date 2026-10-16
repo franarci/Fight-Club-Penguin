@@ -19,6 +19,7 @@ func enter() -> void:
 
 func physics_update(delta: float) -> void:
 	time_left -= delta
+	player.advance_dash_animation(delta)
 
 	if time_left <= 0.0:
 		var input_dir := player.get_input_direction()

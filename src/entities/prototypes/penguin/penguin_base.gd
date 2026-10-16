@@ -26,6 +26,10 @@ var protection_left := 0.0
 @onready var player_label: Label = $PlayerIndicator/Label
 @onready var player_arrow: Polygon2D = $PlayerIndicator/Arrow
 @onready var weapon_socket: Node2D = $Weapon
+@onready var arm: Sprite2D = get_node_or_null("Arm") as Sprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var standing_weapon_position: Vector2 = $Weapon.position
+@onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
 
 var current_weapon: WeaponBase
 
@@ -69,6 +73,7 @@ var can_dash := true
 var dash_cooldown_left := 0.0
 var setup_completed := false
 var player_initialized := false
+var dash_pose_active := false
 
 func update_editor_preview() -> void:
 	if p_spriteframes == null:
@@ -158,7 +163,9 @@ func _physics_process(delta: float) -> void:
 
 
 func get_input_direction() -> Vector2:
-	return MultiplayerInput.get_vector(
+	# Resolve at runtime: the input plugin temporarily unregisters its autoload
+	# during editor shutdown, while this @tool script is still loaded.
+	return get_node("/root/MultiplayerInput").get_vector(
 		device,
 		"left",
 		"right",
@@ -202,10 +209,16 @@ func update_facing(input_dir: Vector2) -> void:
 		if input_dir.x > 0:
 			facing = &"right"
 			body.flip_h = false
+			if arm != null:
+				arm.visible = true
 		else:
 			facing = &"left"
 			body.flip_h = true
+			if arm != null:
+				arm.visible = false
 	else:
+		if arm != null:
+			arm.visible = false
 		if input_dir.y > 0:
 			facing = &"down"
 		else:
@@ -214,11 +227,35 @@ func update_facing(input_dir: Vector2) -> void:
 
 func play_animation(state: StringName) -> void:
 	var animation_name := String(state) + "_" + String(facing)
-
-	if not body.sprite_frames.has_animation(animation_name):
+	if not body.sprite_frames.has_animation(animation_name) or body.sprite_frames.get_frame_count(animation_name) == 0:
 		animation_name = p_autoplay
-	if body.animation != animation_name:
+	if state == &"dash" and animation_player.has_animation(animation_name):
+		# One timeline owns body frames and attachment positions during the dash.
+		dash_pose_active = true
+		body.stop()
+		var clip := animation_player.get_animation(animation_name)
+		animation_player.play(animation_name, -1, clip.length / maxf(dash_duration, 0.001))
+		animation_player.advance(0.0)
+		return
+
+	stop_dash_animation()
+	if body.animation != animation_name or not body.is_playing():
 		body.play(animation_name)
+
+
+func advance_dash_animation(delta: float) -> void:
+	if animation_player.is_playing():
+		animation_player.advance(delta)
+
+
+func stop_dash_animation() -> void:
+	if not dash_pose_active:
+		return
+	dash_pose_active = false
+	animation_player.stop()
+	weapon_socket.position = standing_weapon_position
+	if arm != null:
+		arm.position = standing_arm_position
 
 
 # -------------------------
@@ -228,9 +265,11 @@ func play_animation(state: StringName) -> void:
 func start_dash_cooldown() -> void:
 	can_dash = false
 	dash_cooldown_left = dash_cooldown
+	
 
 
 func update_dash_cooldown(delta: float) -> void:
+	
 	if can_dash:
 		return
 

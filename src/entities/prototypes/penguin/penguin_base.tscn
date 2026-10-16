@@ -6,21 +6,14 @@
 [ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
 [ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
 
-[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="6_weapon"]
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/rifle_data.tres" id="7_data"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_s4b7q"]
-animations = []
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
 radius = 4.0
 height = 14.0
 
 [node name="PenguinBase" type="CharacterBody2D" unique_id=1683410569]
-scale = Vector2(1.5, 1.5)
 motion_mode = 1
 script = ExtResource("1_s4b7q")
 ice_friction = 80.815
-starting_weapon_data = ExtResource("7_data")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1076287710]
 
@@ -45,13 +38,10 @@ position = Vector2(0, -1.3333335)
 polygon = PackedVector2Array(-6, 0, 6, 0, 0, 8)
 uv = PackedVector2Array(502, -40, 406.75928, -144.8194, 593.03723, -142.46146)
 
-[node name="RespawnTimer" type="Timer" parent="."]
+[node name="RespawnTimer" type="Timer" parent="." unique_id=699863478]
 one_shot = true
 
 [node name="Weapon" type="Node2D" parent="." unique_id=1150368172]
-
-[node name="EquippedWeapon" parent="Weapon" instance=ExtResource("6_weapon")]
-position = Vector2(1.3333334, 10.666667)
 
 [node name="DashTimer" type="Timer" parent="." unique_id=2062385814]
 wait_time = 0.25
@@ -59,6 +49,9 @@ one_shot = true
 
 [node name="DashCooldown" type="Timer" parent="." unique_id=255640351]
 one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1976662253]
+callback_mode_process = 2
 
 [node name="MovementStateMachine" type="Node" parent="." unique_id=1228045068 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("2_7wuhw")
@@ -73,7 +66,5 @@ script = ExtResource("4_3sbks")
 [node name="Dash" type="Node" parent="MovementStateMachine" unique_id=763498626]
 script = ExtResource("5_ypmey")
 
-[connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
-[connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]
-
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]
+[connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]
