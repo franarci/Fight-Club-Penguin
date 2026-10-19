@@ -205,30 +205,38 @@ func update_facing(input_dir: Vector2) -> void:
 	if is_instance_valid(current_weapon):
 		current_weapon.set_aim_direction(input_dir)
 
-	if abs(input_dir.x) > abs(input_dir.y):
-		if input_dir.x > 0:
-			facing = &"right"
-			body.flip_h = false
-			if arm != null:
-				arm.visible = true
-		else:
-			facing = &"left"
-			body.flip_h = true
-			if arm != null:
-				arm.visible = false
-	else:
-		if arm != null:
-			arm.visible = false
-		if input_dir.y > 0:
-			facing = &"down"
-		else:
-			facing = &"up"
+	# Equal 45-degree sectors also work with analog stick input.
+	var sector := posmod(roundi(input_dir.angle() / (PI / 4.0)), 8)
+	var directions: Array[StringName] = [
+		&"right", &"down_right", &"down", &"down_left",
+		&"left", &"up_left", &"up", &"up_right",
+	]
+	facing = directions[sector]
+	if arm != null:
+		arm.visible = facing == &"right"
+
+
+func has_body_animation(animation_name: String) -> bool:
+	return body.sprite_frames.has_animation(animation_name) and body.sprite_frames.get_frame_count(animation_name) > 0
 
 
 func play_animation(state: StringName) -> void:
 	var animation_name := String(state) + "_" + String(facing)
-	if not body.sprite_frames.has_animation(animation_name) or body.sprite_frames.get_frame_count(animation_name) == 0:
+	# Existing cardinal left animations use right-facing artwork.
+	body.flip_h = facing == &"left"
+	var direction_name := String(facing)
+	if direction_name.contains("_") and not has_body_animation(animation_name):
+		var mirrored_direction := direction_name.replace("left", "right") if direction_name.ends_with("left") else direction_name.replace("right", "left")
+		var mirrored_animation := String(state) + "_" + mirrored_direction
+		if has_body_animation(mirrored_animation):
+			animation_name = mirrored_animation
+			body.flip_h = true
+		else:
+			# Keep the same action when diagonal artwork is missing.
+			animation_name = String(state) + "_" + direction_name.get_slice("_", 0)
+	if not has_body_animation(animation_name):
 		animation_name = p_autoplay
+		body.flip_h = false
 	if state == &"dash" and animation_player.has_animation(animation_name):
 		# One timeline owns body frames and attachment positions during the dash.
 		dash_pose_active = true

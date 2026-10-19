@@ -9,3 +9,4 @@ class_name WeaponData
 
 @export_category("Visual")
 @export var sprite_frames: SpriteFrames
+@export var visual_profile: Resource

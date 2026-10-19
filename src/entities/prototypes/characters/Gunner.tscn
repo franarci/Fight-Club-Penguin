@@ -159,6 +159,22 @@ region = Rect2(374, 0, 187, 151)
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 0, 187, 151)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxsss"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(0, 604, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phls2"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(187, 604, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2a3km"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 604, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4fs83"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(561, 604, 187, 151)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_tnhwq"]
 animations = [{
 "frames": [{
@@ -337,7 +353,19 @@ animations = [{
 "name": &"walk_up",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kxsss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phls2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2a3km")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4fs83")
+}],
 "loop": 1,
 "name": &"walk_up_left",
 "speed": 5.0
@@ -361,6 +389,7 @@ p_spriteframes = SubResource("SpriteFrames_tnhwq")
 p_autoplay = "idle_right"
 
 [node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
+visible = false
 position = Vector2(1.3333335, 8.666667)
 scale = Vector2(0.11, 0.11)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
@@ -382,3 +411,4 @@ scale = Vector2(0.155, 0.155)
 texture = ExtResource("3_lm2ft")
 
 [editable path="PenguinBase"]
+[editable path="PenguinBase/Weapon/EquippedWeapon"]

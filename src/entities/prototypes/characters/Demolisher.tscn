@@ -5,9 +5,14 @@
 [ext_resource type="PackedScene" uid="uid://b6eph1rwjt5c2" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="3_41i6s"]
 [ext_resource type="Texture2D" uid="uid://carstxgfei871" path="res://assets/textures/entities/demolisher/dash.png" id="3_73gk6"]
 [ext_resource type="Texture2D" uid="uid://dpw3vp7htmmyn" path="res://assets/textures/entities/demolisher/demolisher.png" id="3_pbv7y"]
+[ext_resource type="Texture2D" uid="uid://bvvfs8lpoc4eh" path="res://assets/textures/weapons/hammer/hammer.png" id="6_a0c2c"]
+[ext_resource type="Texture2D" uid="uid://s6t104wf17t5" path="res://assets/textures/entities/demolisher/arm.png" id="7_23g6v"]
+
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/hammer_visual_profile.tres" id="8_hammer_profile"]
 
 [sub_resource type="Resource" id="Resource_7ikj4"]
 script = ExtResource("2_pbv7y")
+visual_profile = ExtResource("8_hammer_profile")
 metadata/_custom_type_script = "uid://c2vxwob7r2umm"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wpfg2"]
@@ -469,6 +474,81 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ivfbx"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(1000, 450, 500, 450)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5jvjn"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(0, 900, 500, 450)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7rrv"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(1500, 1350, 500, 450)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kvn42"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(1500, 0, 500, 450)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4e2v"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(500, 0, 500, 450)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2kj2j"]
+atlas = ExtResource("6_a0c2c")
+region = Rect2(1500, 450, 500, 450)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kvn42"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ivfbx")
+}],
+"loop": 1,
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5jvjn")
+}],
+"loop": 1,
+"name": &"idle_down_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7rrv")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kvn42")
+}],
+"loop": 1,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m4e2v")
+}],
+"loop": 1,
+"name": &"idle_up_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2kj2j")
+}],
+"loop": 1,
+"name": &"idle_up_right",
+"speed": 5.0
+}]
+
 [sub_resource type="Animation" id="Animation_l7qj1"]
 resource_name = "walk_right"
 tracks/0/type = "value"
@@ -502,10 +582,34 @@ scale = Vector2(0.24, 0.24)
 sprite_frames = SubResource("SpriteFrames_etcuu")
 animation = &"idle_right"
 
+[node name="Collision" parent="PenguinBase" index="1" unique_id=900449280]
+position = Vector2(-2, 11.000001)
+scale = Vector2(3.93, 3.93)
+
+[node name="Arrow" parent="PenguinBase/PlayerIndicator" parent_id_path=PackedInt32Array(1683410569, 287483043) index="1" unique_id=1252359202]
+position = Vector2(1, -19.65)
+
 [node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1683410569, 1150368172) index="0" unique_id=2030818522 instance=ExtResource("3_41i6s")]
+scale = Vector2(0.1, 0.1)
+visual_profile = ExtResource("8_hammer_profile")
+
+[node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
+position = Vector2(59.999996, 90)
+sprite_frames = SubResource("SpriteFrames_kvn42")
+animation = &"idle_right"
+frame_progress = 0.5359658
+
+[node name="CollisionShape2D" parent="PenguinBase/Weapon/EquippedWeapon/Hitbox" index="0"]
+position = Vector2(240, 140)
 
 [node name="AnimationPlayer" parent="PenguinBase" index="8" unique_id=1976662253]
 libraries/ = SubResource("AnimationLibrary_41i6s")
+
+[node name="Arm" type="Sprite2D" parent="PenguinBase" unique_id=529154603]
+z_index = 2
+position = Vector2(-30, 14.000001)
+scale = Vector2(0.27, 0.27)
+texture = ExtResource("7_23g6v")
 
 [editable path="PenguinBase"]
 [editable path="PenguinBase/Weapon/EquippedWeapon"]

@@ -1,3 +1,4 @@
+@tool
 extends WeaponBase
 class_name MeleeWeapon
 
@@ -16,9 +17,11 @@ func setup(p_device: int, p_weapon_data: WeaponData) -> void:
 
 
 func _process(_delta: float) -> void:
-	if MultiplayerInput.is_action_just_pressed(device, "attack"):
+	if Engine.is_editor_hint():
+		super._process(_delta)
+		return
+	if get_node("/root/MultiplayerInput").is_action_just_pressed(device, "attack"):
 		try_attack()
-
 
 func try_attack() -> void:
 	if not can_attack or melee_data == null:
