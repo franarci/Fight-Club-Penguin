@@ -1,6 +1,9 @@
 # Weapon poses
 
 Open Demolisher.tscn and select PenguinBase / Weapon / EquippedWeapon.
+Editor Preview Enabled defaults to off so SpriteFrames and Inspector editing
+are not overwritten. Turn it on only to preview poses or scrub a swing; turn it
+off again before editing the Body directly.
 Under Directional Poses, change Preview Direction to inspect a hammer pose in
 the editor. To match the penguin preview, select PenguinBase and change
 P Autoplay to a corresponding available body animation. Preview Direction

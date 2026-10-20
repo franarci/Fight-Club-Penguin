@@ -39,7 +39,8 @@ func attack() -> void:
 		push_error("Ranged weapons require a Projectile scene")
 		return
 	var projectile := instance as Projectile
-	var shot_direction := aim_direction.rotated(randf_range(-ranged_data.spread, ranged_data.spread))
+	var spread := get_effective_spread()
+	var shot_direction := aim_direction.rotated(randf_range(-spread, spread))
 	projectile.initialize(
 		get_tree().current_scene,
 		global_position + aim_direction * ranged_data.muzzle_distance,
@@ -49,3 +50,11 @@ func attack() -> void:
 		ranged_data.damage
 	)
 	start_cooldown()
+
+func get_attack_cooldown() -> float:
+	var multiplier: float = wielder.ranged_attack_speed if wielder is Penguin else 1.0
+	return super.get_attack_cooldown() / maxf(multiplier, 0.1)
+
+func get_effective_spread() -> float:
+	var handling: float = wielder.ranged_handling if wielder is Penguin else 1.0
+	return maxf(ranged_data.spread, 0.0) / maxf(handling, 0.1)

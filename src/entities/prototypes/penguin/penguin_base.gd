@@ -5,6 +5,18 @@ class_name Penguin
 signal health_changed(current: float, maximum: float)
 signal eliminated(slot: int)
 
+@export_category("Combat Stats")
+## Relative mass: 1 is average. Incoming push speed is divided by mass.
+## Does not change movement speed, outgoing damage, or incoming damage.
+@export_range(0.1, 5.0, 0.05) var mass: float = 1.0
+## Multiplies the equipped melee weapon's damage. 1.2 means 20% more damage.
+@export_range(0.0, 3.0, 0.05) var melee_power: float = 1.0
+## Divides ranged cooldown. 1.15 means 15% more shots per second.
+@export_range(0.1, 3.0, 0.05) var ranged_attack_speed: float = 1.0
+## Divides weapon spread. Values above 1 improve accuracy; zero-spread guns stay accurate.
+## Reloading is not implemented yet, so this currently affects only spread.
+@export_range(0.1, 3.0, 0.05) var ranged_handling: float = 1.0
+
 @export_category("Health")
 @export_range(1.0, 10000.0) var max_health: float = 100.0
 @export_range(0.01, 10.0) var respawn_delay: float = 0.8
@@ -352,21 +364,25 @@ func check_dash_impact() -> void:
 		return
 
 
-func receive_push(direction: Vector2) -> void:
+func receive_push(direction: Vector2, strength: float = -1.0) -> void:
 	if is_dead or protection_left > 0.0:
+		return
+	var speed := push_speed if strength < 0.0 else strength
+	if speed <= 0.0 or direction.is_zero_approx():
 		return
 	movement_state_machine.change_state(&"Idle")
 	is_being_pushed = true
-	velocity = direction.normalized() * push_speed
+	velocity = direction.normalized() * speed / maxf(mass, 0.1)
 
 
 # Shared entry point for projectile, melee, and future environmental damage.
-func receive_damage(amount: float, source: Node2D = null, _direction: Vector2 = Vector2.ZERO) -> void:
+func receive_damage(amount: float, source: Node2D = null, _direction: Vector2 = Vector2.ZERO) -> bool:
 	if is_dead or protection_left > 0.0 or amount <= 0.0 or source == self:
-		return
+		return false
 	set_health(current_health - amount)
 	if current_health <= 0.0:
 		lose_life()
+	return true
 
 
 func set_health(value: float) -> void:
@@ -387,6 +403,8 @@ func lose_life() -> void:
 	set_deferred("collision_layer", 0)
 	set_deferred("collision_mask", 0)
 	if is_instance_valid(current_weapon):
+		if current_weapon.has_method("cancel_attack"):
+			current_weapon.cancel_attack()
 		current_weapon.can_attack = false
 		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
 	hide()

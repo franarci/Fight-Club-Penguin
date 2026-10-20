@@ -6,9 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="3_lm2ft"]
 [ext_resource type="PackedScene" uid="uid://df4ykmse558s5" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="3_nh8tt"]
 [ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="rifle_projectile"]
 
 [sub_resource type="Resource" id="Resource_41i6s"]
 script = ExtResource("2_edpr6")
+projectile_scene = ExtResource("rifle_projectile")
 metadata/_custom_type_script = "uid://bohxhlwhv07ng"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
@@ -389,17 +391,16 @@ p_spriteframes = SubResource("SpriteFrames_tnhwq")
 p_autoplay = "idle_right"
 
 [node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
-visible = false
 position = Vector2(1.3333335, 8.666667)
 scale = Vector2(0.11, 0.11)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
 animation = &"idle_right"
 
-[node name="Collision" parent="PenguinBase" index="1" unique_id=900449280]
-visible = false
-
 [node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1683410569, 1150368172) index="0" unique_id=1121400081 instance=ExtResource("3_nh8tt")]
 position = Vector2(1.5999999, 10.4)
+
+[node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
+animation = &"idle_right"
 
 [node name="AnimationPlayer" parent="PenguinBase" index="8" unique_id=1976662253]
 libraries/ = ExtResource("dash_poses")

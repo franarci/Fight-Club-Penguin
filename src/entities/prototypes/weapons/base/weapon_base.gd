@@ -11,6 +11,13 @@ class_name WeaponBase
 @export var upward_diagonal_visual_offset := Vector2.ZERO
 
 @export_category("Directional Poses")
+## Enable only while previewing poses. Leave off to edit SpriteFrames and Body freely.
+@export var editor_preview_enabled: bool = false:
+	set(value):
+		var was_enabled := editor_preview_enabled
+		editor_preview_enabled = value
+		if Engine.is_editor_hint() and was_enabled and not value and is_node_ready():
+			body.pause()
 @export var visual_profile: Resource
 ## Optional weapon-specific poses. Unconfigured directions retain the legacy behavior.
 @export var directional_poses: Array[Resource] = []
@@ -19,7 +26,7 @@ class_name WeaponBase
 const POSE_DIRECTIONS = ["right", "down_right", "down", "down_left", "left", "up_left", "up", "up_right"]
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint() and is_instance_valid(body) and not get_directional_poses().is_empty():
+	if Engine.is_editor_hint() and editor_preview_enabled and is_instance_valid(body) and not get_directional_poses().is_empty():
 		direction_8 = snap_to_8_directions(Vector2.RIGHT.rotated(preview_direction * PI / 4.0))
 		update_weapon_visual()
 
@@ -138,8 +145,11 @@ func attack() -> void:
 func start_cooldown() -> void:
 	can_attack = false
 
-	attack_cooldown.wait_time = weapon_data.attack_cooldown
+	attack_cooldown.wait_time = maxf(get_attack_cooldown(), 0.001)
 	attack_cooldown.start()
+
+func get_attack_cooldown() -> float:
+	return weapon_data.attack_cooldown
 
 func _on_attack_cooldown_timeout() -> void:
 	can_attack = true
