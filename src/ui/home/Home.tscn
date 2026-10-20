@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://e533e5cmr8e3"]
+
+[ext_resource type="Script" uid="uid://b8yjifi3w36jb" path="res://src/ui/home/home.gd" id="1_36quf"]
+
+[node name="Home" type="Control" unique_id=1380580027]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_36quf")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1017668232]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1982064, 2.368033e-05, 0.7705582, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=172812648]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1327411650]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer" unique_id=167348694]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Fight Club Penguin"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1724236112]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Jugar"
+
+[node name="ControlButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2075582487]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Controles"
+
+[node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1568705128]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Opciones"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

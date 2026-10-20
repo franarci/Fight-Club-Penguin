@@ -7,6 +7,7 @@ const PlayerSelector = preload("res://src/ui/character_selection/PlayerSelection
 @export var player_selection_scene: PackedScene
 
 var player_slots: Array[PlayerSelection] = []
+var returning_to_menu := false
 
 func _ready() -> void:
 	for child in players_container.get_children():
@@ -80,5 +81,26 @@ func finish_character_selection() -> void:
 	
 	
 func _on_countdown_timeout() -> void:
+	if returning_to_menu:
+		return
 	hide()
 	get_parent().start_game()
+
+
+func _input(event: InputEvent) -> void:
+	if returning_to_menu or not is_visible_in_tree():
+		return
+	if event.is_action_pressed("ui_cancel") and not event.is_echo():
+		if PlayerManager.players.is_empty():
+			get_viewport().set_input_as_handled()
+			_return_to_menu()
+
+
+func _return_to_menu() -> void:
+	if returning_to_menu:
+		return
+	returning_to_menu = true
+	countdown.stop()
+	set_process(false)
+	PlayerManager.clear_players()
+	get_tree().change_scene_to_file.call_deferred("res://src/ui/home/Home.tscn")
