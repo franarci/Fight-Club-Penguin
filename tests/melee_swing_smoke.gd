@@ -31,12 +31,15 @@ func run_checks() -> void:
 		target.velocity = Vector2.ZERO
 		weapon.can_attack = true
 		weapon.attack_cooldown.stop()
-		weapon.set_aim_direction(direction)
+		attacker.update_facing(direction)
+		var swing_facing: StringName = attacker.facing
 		var rest_position: Vector2 = weapon.body.position
 		var socket_position: Vector2 = attacker.weapon_socket.position
 		await physics_frame
 		await process_frame
 		weapon.try_attack()
+		attacker.update_facing(-direction)
+		assert(attacker.facing == swing_facing, "Penguin facing must stay locked during wind-up")
 		var hand: Vector2 = weapon.resting_body_position + weapon.swing_grip
 		weapon._physics_process(0.05)
 		assert(target.current_health == 100, "Wind-up must not damage")
@@ -46,8 +49,12 @@ func run_checks() -> void:
 		weapon.set_aim_direction(-direction)
 		assert(weapon.aim_direction.is_equal_approx(direction), "Swing aim must stay locked")
 		weapon._physics_process(0.06)
+		attacker.update_facing(-direction)
+		assert(attacker.facing == swing_facing, "Penguin facing must stay locked during impact")
 		assert(target.current_health == 90, "Impact window must damage")
 		weapon._physics_process(0.25)
+		attacker.update_facing(-direction)
+		assert(attacker.facing == swing_facing, "Penguin facing must stay locked during recovery")
 		assert(target.current_health == 90, "One hit per swing")
 		# New overlap during recovery must not receive damage.
 		weapon.hit_targets.clear()
@@ -59,6 +66,8 @@ func run_checks() -> void:
 		assert(weapon.aim_direction.is_equal_approx(-direction))
 		assert(attacker.weapon_socket.position == socket_position)
 		assert(not weapon.can_attack and not weapon.attack_cooldown.is_stopped())
+		attacker.update_facing(-direction)
+		assert(attacker.facing != swing_facing, "Facing must unlock before the cooldown ends")
 		# Interrupted swings restore the exact resting pose, including grip position.
 		weapon.attack_cooldown.stop()
 		weapon.can_attack = true
@@ -68,6 +77,8 @@ func run_checks() -> void:
 		weapon.cancel_attack()
 		assert(weapon.body.position.is_equal_approx(rest_position))
 		assert(is_zero_approx(weapon.body.rotation))
+		attacker.update_facing(direction)
+		assert(attacker.facing == swing_facing, "Cancelled swings must release facing")
 	# A slow physics frame crossing the entire impact window must still hit once.
 	target.set_health(100)
 	weapon.can_attack = true

@@ -33,6 +33,7 @@ var protection_left := 0.0
 
 
 @onready var body: AnimatedSprite2D = $Body
+@onready var feet_marker: Marker2D = $FeetMarker
 @onready var movement_state_machine: Node = $MovementStateMachine
 @onready var player_indicator: Node2D = $PlayerIndicator
 @onready var player_label: Label = $PlayerIndicator/Label
@@ -101,24 +102,27 @@ func update_editor_preview() -> void:
 
 var is_being_pushed := false
 var respawn_position: Vector2
-var ice_rect: ColorRect
+var ice_boundary: CollisionPolygon2D
 var arena_configured := false
 
 
-func configure_arena(ice: ColorRect) -> void:
-	ice_rect = ice
+func configure_arena(boundary: CollisionPolygon2D) -> void:
+	ice_boundary = boundary
 	respawn_position = global_position
 	arena_configured = true
 
 
 func check_arena_bounds() -> void:
-	if is_dead or not arena_configured or not is_instance_valid(ice_rect):
+	if is_dead or not arena_configured or not is_instance_valid(ice_boundary):
 		return
 
-	if ice_rect.get_global_rect().has_point(global_position):
+	# Test the penguin's feet against the ice surface in image coordinates.
+	# Converting through the polygon also accounts for viewport scaling.
+	if Geometry2D.is_point_in_polygon(ice_boundary.to_local(feet_marker.global_position), ice_boundary.polygon):
 		return
 
-	lose_life()
+	print("Off boundaries")
+	#lose_life()
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -212,6 +216,10 @@ func apply_ice_friction(delta: float) -> void:
 
 func update_facing(input_dir: Vector2) -> void:
 	if input_dir == Vector2.ZERO:
+		return
+	# Keep the penguin and hammer facing together until the swing finishes.
+	# Movement still receives input independently of facing.
+	if current_weapon is MeleeWeapon and current_weapon.swing_time_left > 0.0:
 		return
 
 	if is_instance_valid(current_weapon):

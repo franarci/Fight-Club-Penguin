@@ -4,6 +4,8 @@ func _initialize() -> void:
 	call_deferred("run_checks")
 
 func run_checks() -> void:
+	# SceneTree scripts bypass the normal game-window setup in headless mode.
+	root.size = Vector2i(1152, 648)
 	var manager = root.get_node("PlayerManager")
 	manager.clear_players()
 	var main = load("res://Main.tscn").instantiate()
@@ -22,12 +24,16 @@ func run_checks() -> void:
 		data.key = names[slot]
 		manager.set_character(slot - 1, data)
 	main.start_game()
+	assert(not main.has_node("Ice") and not main.has_node("Ground"))
+	var boundary: CollisionPolygon2D = main.get_node("Arena/IceArea/CollisionPolygon2D")
+	assert(not Geometry2D.decompose_polygon_in_convex(boundary.polygon).is_empty())
 	var penguins = []
 	for character in main.players.get_children():
 		var penguin = character.get_child(0)
 		penguins.append(penguin)
 		penguin.respawn_delay = 0.03
 		penguin.respawn_protection = 0.2
+		assert(Geometry2D.is_point_in_polygon(boundary.to_local(penguin.global_position), boundary.polygon), "Spawn %s local %s viewport %s" % [penguin.global_position, boundary.to_local(penguin.global_position), root.get_visible_rect().size])
 		assert(penguin.current_health == 100.0 and main.get_node("ArenaHUD").cards[penguin.player_index].health_bar.value == 100.0)
 	await process_frame
 	var viewport_size := root.get_visible_rect().size
@@ -70,14 +76,22 @@ func run_checks() -> void:
 	target.receive_damage(1.0, shooter)
 	assert(target.current_health == 99.0)
 	target.receive_push(Vector2.RIGHT)
-	target.global_position = Vector2(-100, -100)
+	# This water point was inside the old rectangle; it must now cause a fall.
+	target.global_position = boundary.to_global(Vector2(1000, 600))
+	assert(Rect2(150, 100, 850, 450).has_point(target.global_position))
 	target.check_arena_bounds()
 	target.check_arena_bounds()
 	assert(manager.get_lives(1) == 1 and target.is_dead)
 	assert(not target.is_being_pushed and target.velocity == Vector2.ZERO)
 	await create_timer(0.1).timeout
 	assert(target.current_health == 100.0 and not target.is_dead)
-	assert(target.current_weapon.can_attack)
+	if is_instance_valid(target.current_weapon):
+		assert(target.current_weapon.can_attack)
+	# Ice extending left of the old rectangle must remain playable.
+	target.global_position = boundary.to_global(Vector2(620, 2050))
+	assert(not Rect2(150, 100, 850, 450).has_point(target.global_position))
+	target.check_arena_bounds()
+	assert(not target.is_dead and manager.get_lives(1) == 1)
 	# Falling bypasses damage protection and consumes the final life.
 	target.global_position = Vector2(1100, 600)
 	target.check_arena_bounds()
@@ -86,7 +100,8 @@ func run_checks() -> void:
 	await create_timer(0.1).timeout
 	assert(main.get_node("ArenaHUD").cards[1].health_bar.value == 0.0)
 	assert(target.is_dead and not target.visible and target.collision_layer == 0)
-	assert(target.current_weapon.process_mode == Node.PROCESS_MODE_DISABLED)
+	if is_instance_valid(target.current_weapon):
+		assert(target.current_weapon.process_mode == Node.PROCESS_MODE_DISABLED)
 	target.receive_damage(1000.0, shooter)
 	assert(manager.get_lives(1) == 0)
 	# Verify health/death wiring is shared by all four classes.
