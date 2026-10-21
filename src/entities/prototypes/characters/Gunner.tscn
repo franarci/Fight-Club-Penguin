@@ -8,9 +8,12 @@
 [ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="rifle_projectile"]
 
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="rifle_profile"]
+
 [sub_resource type="Resource" id="Resource_41i6s"]
 script = ExtResource("2_edpr6")
 projectile_scene = ExtResource("rifle_projectile")
+visual_profile = ExtResource("rifle_profile")
 metadata/_custom_type_script = "uid://bohxhlwhv07ng"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
@@ -177,8 +180,29 @@ region = Rect2(374, 604, 187, 151)
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 604, 187, 151)
 
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_0"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(0, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_1"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(187, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_2"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_3"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(561, 1359, 187, 151)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_tnhwq"]
 animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_0")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_1")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_2")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_3")}],
+"loop": 1,
+"name": &"dash_down_right",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7ikj4")
@@ -257,7 +281,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_a2bl7")
+"texture": SubResource("AtlasTexture_kxsss")
 }],
 "loop": 1,
 "name": &"idle_down_right",
@@ -369,12 +393,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_4fs83")
 }],
 "loop": 1,
-"name": &"walk_up_left",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": 1,
-"name": &"walk_up_right",
+"name": &"walk_down_right",
 "speed": 5.0
 }]
 
@@ -398,6 +417,7 @@ animation = &"idle_right"
 
 [node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1683410569, 1150368172) index="0" unique_id=1121400081 instance=ExtResource("3_nh8tt")]
 position = Vector2(1.5999999, 10.4)
+visual_profile = ExtResource("rifle_profile")
 
 [node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
 animation = &"idle_right"

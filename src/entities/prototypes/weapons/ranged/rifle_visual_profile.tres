@@ -1,0 +1,88 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://src/entities/prototypes/weapons/base/weapon_visual_profile.gd" id="1"]
+[ext_resource type="Script" path="res://src/entities/prototypes/weapons/base/weapon_pose.gd" id="2"]
+
+[sub_resource type="Resource" id="Pose_right"]
+script = ExtResource("2")
+direction = "right"
+animation = &"idle_right"
+flip_h = false
+flip_v = false
+hand_position = Vector2(-3, 1.2)
+grip_offset = Vector2(-50, 20)
+layer = 1
+
+[sub_resource type="Resource" id="Pose_down_right"]
+script = ExtResource("2")
+direction = "down_right"
+animation = &"idle_down_right"
+flip_h = false
+flip_v = false
+hand_position = Vector2(3, 2)
+grip_offset = Vector2(-30, 0)
+layer = 1
+
+[sub_resource type="Resource" id="Pose_down"]
+script = ExtResource("2")
+direction = "down"
+animation = &"idle_up"
+flip_h = false
+flip_v = true
+hand_position = Vector2(-4, 1)
+grip_offset = Vector2(0, 90)
+layer = 1
+
+[sub_resource type="Resource" id="Pose_down_left"]
+script = ExtResource("2")
+direction = "down_left"
+animation = &"idle_down_right"
+flip_h = true
+flip_v = false
+hand_position = Vector2(-6, 2)
+grip_offset = Vector2(-30, 0)
+layer = 1
+
+[sub_resource type="Resource" id="Pose_left"]
+script = ExtResource("2")
+direction = "left"
+animation = &"idle_right"
+flip_h = true
+flip_v = false
+hand_position = Vector2(-6, 1.2)
+grip_offset = Vector2(-50, 20)
+layer = 1
+
+[sub_resource type="Resource" id="Pose_up_left"]
+script = ExtResource("2")
+direction = "up_left"
+animation = &"idle_up_left"
+flip_h = false
+flip_v = false
+hand_position = Vector2(-6, -3)
+grip_offset = Vector2(30, 30)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_up"]
+script = ExtResource("2")
+direction = "up"
+animation = &"idle_up"
+flip_h = false
+flip_v = false
+hand_position = Vector2(5, -3)
+grip_offset = Vector2(0, 90)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_up_right"]
+script = ExtResource("2")
+direction = "up_right"
+animation = &"idle_up_left"
+flip_h = true
+flip_v = false
+hand_position = Vector2(5, -3)
+grip_offset = Vector2(30, 30)
+layer = -1
+
+[resource]
+script = ExtResource("1")
+poses = Array[Resource]([SubResource("Pose_right"), SubResource("Pose_down_right"), SubResource("Pose_down"), SubResource("Pose_down_left"), SubResource("Pose_left"), SubResource("Pose_up_left"), SubResource("Pose_up"), SubResource("Pose_up_right")])

@@ -2,10 +2,21 @@
 
 [ext_resource type="Script" uid="uid://b05vo5uhchgr" path="res://main.gd" id="1_r0du0"]
 [ext_resource type="PackedScene" uid="uid://4rdsst6aspvh" path="res://src/ui/character_selection/character_select.tscn" id="2_cm0pq"]
+[ext_resource type="Texture2D" uid="uid://biat0i06scs3r" path="res://assets/textures/terrain/3d-isometric-terrain-ice-blue-ocean-background.jpg" id="2_fos0i"]
 [ext_resource type="PackedScene" uid="uid://dkmy5124wu76r" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=308004024]
+z_index = -8
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_fos0i")
+expand_mode = 1
 
 [node name="Ground" type="ColorRect" parent="." unique_id=354157110]
 z_index = -10

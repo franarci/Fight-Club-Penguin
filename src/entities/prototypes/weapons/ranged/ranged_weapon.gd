@@ -1,3 +1,4 @@
+@tool
 extends WeaponBase
 class_name RangedWeapon
 
@@ -12,14 +13,17 @@ func setup(p_device: int, p_weapon_data: WeaponData) -> void:
 
 
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		super._process(_delta)
+		return
 	if ranged_data == null:
 		return
 
 	if ranged_data.automatic:
-		if MultiplayerInput.is_action_pressed(device, "attack"):
+		if get_node("/root/MultiplayerInput").is_action_pressed(device, "attack"):
 			try_attack()
 	else:
-		if MultiplayerInput.is_action_just_pressed(device, "attack"):
+		if get_node("/root/MultiplayerInput").is_action_just_pressed(device, "attack"):
 			try_attack()
 
 
