@@ -6,9 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="3_lm2ft"]
 [ext_resource type="PackedScene" uid="uid://df4ykmse558s5" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="3_nh8tt"]
 [ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
+[ext_resource type="Resource" uid="uid://cjll0sdd2kdpo" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="rifle_profile"]
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="rifle_projectile"]
-
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="rifle_profile"]
 
 [sub_resource type="Resource" id="Resource_41i6s"]
 script = ExtResource("2_edpr6")
@@ -31,6 +30,22 @@ region = Rect2(374, 906, 187, 151)
 [sub_resource type="AtlasTexture" id="AtlasTexture_vijys"]
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 906, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_0"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(0, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_1"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(187, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_2"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 1359, 187, 151)
+
+[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_3"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(561, 1359, 187, 151)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2vu1t"]
 atlas = ExtResource("3_5x5m2")
@@ -80,13 +95,29 @@ region = Rect2(374, 755, 187, 151)
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 755, 187, 151)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2bl7"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(0, 1208, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3p8qp"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(187, 1208, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6wi1"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 1208, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1r163"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(561, 1208, 187, 151)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fmju"]
 atlas = ExtResource("3_5x5m2")
 region = Rect2(0, 151, 187, 151)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_a2bl7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxsss"]
 atlas = ExtResource("3_5x5m2")
-region = Rect2(374, 302, 187, 151)
+region = Rect2(0, 604, 187, 151)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jq0ew"]
 atlas = ExtResource("3_5x5m2")
@@ -115,6 +146,18 @@ region = Rect2(374, 151, 187, 151)
 [sub_resource type="AtlasTexture" id="AtlasTexture_lbo2v"]
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 151, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phls2"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(187, 604, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2a3km"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(374, 604, 187, 151)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4fs83"]
+atlas = ExtResource("3_5x5m2")
+region = Rect2(561, 604, 187, 151)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6b4y6"]
 atlas = ExtResource("3_5x5m2")
@@ -164,45 +207,8 @@ region = Rect2(374, 0, 187, 151)
 atlas = ExtResource("3_5x5m2")
 region = Rect2(561, 0, 187, 151)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kxsss"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(0, 604, 187, 151)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_phls2"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(187, 604, 187, 151)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2a3km"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(374, 604, 187, 151)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4fs83"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(561, 604, 187, 151)
-
-[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_0"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(0, 1359, 187, 151)
-
-[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_1"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(187, 1359, 187, 151)
-
-[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_2"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(374, 1359, 187, 151)
-
-[sub_resource type="AtlasTexture" id="Gunner_dash_down_right_3"]
-atlas = ExtResource("3_5x5m2")
-region = Rect2(561, 1359, 187, 151)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_tnhwq"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_0")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_1")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_2")}, {"duration": 1.0, "texture": SubResource("Gunner_dash_down_right_3")}],
-"loop": 1,
-"name": &"dash_down_right",
-"speed": 5.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7ikj4")
@@ -218,6 +224,23 @@ animations = [{
 }],
 "loop": 1,
 "name": &"dash_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Gunner_dash_down_right_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Gunner_dash_down_right_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Gunner_dash_down_right_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Gunner_dash_down_right_3")
+}],
+"loop": 1,
+"name": &"dash_down_right",
 "speed": 5.0
 }, {
 "frames": [{
@@ -269,6 +292,23 @@ animations = [{
 }],
 "loop": 1,
 "name": &"dash_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2bl7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3p8qp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6wi1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1r163")
+}],
+"loop": 1,
+"name": &"dash_up_left",
 "speed": 5.0
 }, {
 "frames": [{
@@ -330,6 +370,23 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_kxsss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phls2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2a3km")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4fs83")
+}],
+"loop": 1,
+"name": &"walk_down_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_6b4y6")
 }, {
 "duration": 1.0,
@@ -378,32 +435,15 @@ animations = [{
 "loop": 1,
 "name": &"walk_up",
 "speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kxsss")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_phls2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2a3km")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4fs83")
-}],
-"loop": 1,
-"name": &"walk_down_right",
-"speed": 5.0
 }]
 
 [node name="Gunner" type="Node2D" unique_id=1018647709]
-metadata/_edit_group_ = true
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
+z_index = -1
 scale = Vector2(2.5, 2.5)
 starting_weapon_data = SubResource("Resource_41i6s")
-dash_speed = 400.0
+dash_speed = 300.0
 dash_duration = 0.5
 dash_cooldown = 0.6
 p_spriteframes = SubResource("SpriteFrames_tnhwq")
@@ -414,15 +454,34 @@ position = Vector2(1.3333335, 8.666667)
 scale = Vector2(0.11, 0.11)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
 animation = &"idle_right"
+flip_h = true
+
+[node name="FeetMarker" parent="PenguinBase" index="3"]
+visible = false
+
+[node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
+position = Vector2(1.333334, -3.6383333)
+scale = Vector2(0.6495789, 0.6495789)
+
+[node name="Label" parent="PenguinBase/PlayerIndicator" index="0" unique_id=214354687]
+offset_left = -9.5
+offset_top = -33.0
+offset_right = 9.5
+offset_bottom = -10.0
+text = "P1"
+
+[node name="Arrow" parent="PenguinBase/PlayerIndicator" index="1" unique_id=1252359202]
+position = Vector2(0, -8)
 
 [node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1683410569, 1150368172) index="0" unique_id=1121400081 instance=ExtResource("3_nh8tt")]
+z_index = -1
 position = Vector2(1.5999999, 10.4)
-visual_profile = ExtResource("rifle_profile")
 
 [node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
+position = Vector2(5.6000004, 1.1999998)
 animation = &"idle_right"
 
-[node name="AnimationPlayer" parent="PenguinBase" index="8" unique_id=1976662253]
+[node name="AnimationPlayer" parent="PenguinBase" index="9" unique_id=1976662253]
 libraries/ = ExtResource("dash_poses")
 
 [node name="Arm" type="Sprite2D" parent="PenguinBase" unique_id=1583356965]

@@ -5,7 +5,7 @@ const MAX_PLAYERS := 4
 const STARTING_LIVES := 3
 signal lives_changed(slot: int, lives: int)
 const PLAYER_COLORS := [
-	Color("#e74c3c"),
+	Color("#4b5c28"),
 	Color("#2796ff"),
 	Color("#9c764a"),
 	Color("#2ecc71")

@@ -11,3 +11,9 @@ extends Resource
 @export var grip_offset := Vector2.ZERO
 ## Relative to the weapon's parent. Keep the foreground arm above this layer.
 @export var layer: int = 1
+
+@export_group("Projectile Muzzle")
+## Use this pose's sprite-relative muzzle instead of the weapon data's distance.
+@export var use_muzzle_offset := false
+## Barrel tip in source-image pixels relative to its center, before flips and scale.
+@export var muzzle_offset := Vector2.ZERO

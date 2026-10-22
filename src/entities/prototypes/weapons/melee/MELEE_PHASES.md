@@ -51,6 +51,13 @@ are never rotated. The hammer uses a 0.07-second wind-up, 0.18-second recovery,
 -45/85-degree angles, Strike Fraction 0.4 and Recoil Angle 8 for a sharper swing.
 Attack Duration and cooldown remain unchanged, and total attack cadence stays
 the same; the damage window now starts 0.03 seconds earlier.
+
+Down Attack Offset moves only the authored attack_down visual during the strike,
+holds it at impact, and returns it during recovery. Positive Y moves downward.
+The hammer starts at (0, 80) weapon-local units: its 0.1 scale makes this an
+8-pixel shift in penguin-local space. Adjust it under Starting Weapon Data >
+Swing Animation, and preview using Preview Swing Progress while facing down.
+It does not change the idle hand position, the up attack, or hitbox reach.
 The parent's Weapon socket remains available to the penguin's dash timeline.
 
 Try targets in front, behind, and just outside reach, then repeat in all eight

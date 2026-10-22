@@ -47,13 +47,32 @@ func attack() -> void:
 	var shot_direction := aim_direction.rotated(randf_range(-spread, spread))
 	projectile.initialize(
 		get_tree().current_scene,
-		global_position + aim_direction * ranged_data.muzzle_distance,
+		get_muzzle_global_position(),
 		shot_direction,
 		wielder,
 		ranged_data.projectile_speed,
 		ranged_data.damage
 	)
 	start_cooldown()
+
+func get_muzzle_global_position() -> Vector2:
+	var direction_name: String = POSE_DIRECTIONS[posmod(roundi(Vector2(direction_8).angle() / (PI / 4.0)), 8)]
+	for pose in get_directional_poses():
+		if pose == null or pose.get("direction") != direction_name or pose.get("use_muzzle_offset") != true:
+			continue
+		var point: Vector2 = pose.muzzle_offset
+		# Account for sprite drawing settings, then follow the live body transform,
+		# including socket movement from dash animations and character scaling.
+		if not body.centered:
+			var texture := body.sprite_frames.get_frame_texture(body.animation, body.frame)
+			point += texture.get_size() * 0.5
+		point += body.offset
+		if body.flip_h:
+			point.x = -point.x
+		if body.flip_v:
+			point.y = -point.y
+		return body.to_global(point)
+	return global_position + aim_direction * ranged_data.muzzle_distance
 
 func get_attack_cooldown() -> float:
 	var multiplier: float = wielder.ranged_attack_speed if wielder is Penguin else 1.0

@@ -5,6 +5,25 @@ class_name Penguin
 signal health_changed(current: float, maximum: float)
 signal eliminated(slot: int)
 
+@export_category("Equipment Colors")
+## Shared palette settings. Runtime duplicates the material for each player.
+## Expand Shader Parameters to adjust source colors, tolerance and shading.
+@export var equipment_palette: ShaderMaterial = preload("res://src/entities/prototypes/penguin/player_palette.tres")
+## Only Body and these optional child sprites are recolored. Weapons remain untouched.
+@export var equipment_sprite_paths: Array[NodePath] = [NodePath("Arm")]
+## Optional editor preview; gameplay always uses the assigned player slot color.
+@export var preview_equipment_color: bool = false:
+	set(value):
+		preview_equipment_color = value
+		if Engine.is_editor_hint() and is_node_ready():
+			update_equipment_preview()
+@export var equipment_preview_color: Color = Color("e74c3c"):
+	set(value):
+		equipment_preview_color = value
+		if Engine.is_editor_hint() and is_node_ready():
+			update_equipment_preview()
+var player_palette_instance: ShaderMaterial
+
 @export_category("Combat Stats")
 ## Relative mass: 1 is average. Incoming push speed is divided by mass.
 ## Does not change movement speed, outgoing damage, or incoming damage.
@@ -45,6 +64,65 @@ var protection_left := 0.0
 @onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
 
 var current_weapon: WeaponBase
+
+@export_category("Player Identifier")
+## Automatically place and size P1/P2 and the triangle using the Body sprite bounds.
+## Disable to position PlayerIndicator and its children manually.
+@export var auto_player_identifier: bool = true
+## Identifier width as a fraction of the scaled Body width.
+@export_range(0.1, 1.5, 0.05) var identifier_width_ratio: float = 0.6
+## Space from the top of Body to the triangle tip, in penguin-local pixels.
+@export_range(0.0, 50.0, 0.5) var identifier_head_gap: float = 4.0
+## Space between the label and triangle, before identifier scaling.
+@export_range(0.0, 20.0, 0.5) var identifier_label_gap: float = 2.0
+## Fine adjustment in penguin-local coordinates; positive Y moves downward.
+@export var identifier_offset := Vector2.ZERO
+
+func _process(_delta: float) -> void:
+	update_player_identifier()
+
+func update_player_identifier() -> void:
+	if not auto_player_identifier or not is_instance_valid(body) or not is_instance_valid(player_indicator):
+		return
+	var sprite_rect := get_body_display_rect()
+	if not sprite_rect.has_area():
+		return
+	# Both nodes are siblings: Body's transform includes its own scale and offset,
+	# while their shared parent scale naturally scales the whole result once.
+	var bounds: Rect2 = body.transform * sprite_rect
+	if player_arrow.polygon.is_empty():
+		return
+	if Engine.is_editor_hint() and player_label.text.is_empty():
+		player_label.text = "P%d" % (player_index + 1)
+	var label_size := player_label.get_minimum_size()
+	var arrow_bounds := Rect2(player_arrow.polygon[0], Vector2.ZERO)
+	for vertex in player_arrow.polygon:
+		arrow_bounds = arrow_bounds.expand(vertex)
+	var content_width := maxf(maxf(label_size.x, arrow_bounds.size.x), 1.0)
+	var indicator_scale := bounds.size.x * identifier_width_ratio / content_width
+	player_indicator.scale = Vector2.ONE * indicator_scale
+	player_indicator.position = Vector2(bounds.get_center().x, bounds.position.y - identifier_head_gap) + identifier_offset
+	# Put the triangle tip at the identifier origin, and center the label above it.
+	player_arrow.position = Vector2(-arrow_bounds.get_center().x, -arrow_bounds.end.y)
+	player_label.size = label_size
+	player_label.position = Vector2(-label_size.x * 0.5, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
+
+func get_body_display_rect() -> Rect2:
+	if body.sprite_frames == null or not body.sprite_frames.has_animation(body.animation):
+		return Rect2()
+	var count := body.sprite_frames.get_frame_count(body.animation)
+	if count == 0:
+		return Rect2()
+	var texture := body.sprite_frames.get_frame_texture(body.animation, clampi(body.frame, 0, count - 1))
+	if texture == null:
+		return Rect2()
+	var size := texture.get_size()
+	var origin := body.offset - (size * 0.5 if body.centered else Vector2.ZERO)
+	if body.flip_h:
+		origin.x = -origin.x - size.x
+	if body.flip_v:
+		origin.y = -origin.y - size.y
+	return Rect2(origin, size)
 
 @export_category("Weapon")
 @export var starting_weapon_data: WeaponData
@@ -121,12 +199,12 @@ func check_arena_bounds() -> void:
 	if Geometry2D.is_point_in_polygon(ice_boundary.to_local(feet_marker.global_position), ice_boundary.polygon):
 		return
 
-	print("Off boundaries")
-	#lose_life()
+	lose_life()
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		update_editor_preview()
+		update_equipment_preview()
 		return
 	set_health(max_health)
 	body.sprite_frames = p_spriteframes
@@ -242,6 +320,7 @@ func has_body_animation(animation_name: String) -> bool:
 
 func play_animation(state: StringName) -> void:
 	var animation_name := String(state) + "_" + String(facing)
+	var requested_animation := animation_name
 	# Existing cardinal left animations use right-facing artwork.
 	body.flip_h = facing == &"left"
 	var direction_name := String(facing)
@@ -257,12 +336,13 @@ func play_animation(state: StringName) -> void:
 	if not has_body_animation(animation_name):
 		animation_name = p_autoplay
 		body.flip_h = false
-	if state == &"dash" and animation_player.has_animation(animation_name):
+	var timeline_name := requested_animation if animation_player.has_animation(requested_animation) else animation_name
+	if state == &"dash" and animation_player.has_animation(timeline_name):
 		# One timeline owns body frames and attachment positions during the dash.
 		dash_pose_active = true
 		body.stop()
-		var clip := animation_player.get_animation(animation_name)
-		animation_player.play(animation_name, -1, clip.length / maxf(dash_duration, 0.001))
+		var clip := animation_player.get_animation(timeline_name)
+		animation_player.play(timeline_name, -1, clip.length / maxf(dash_duration, 0.001))
 		animation_player.advance(0.0)
 		return
 
@@ -282,6 +362,8 @@ func stop_dash_animation() -> void:
 	dash_pose_active = false
 	animation_player.stop()
 	weapon_socket.position = standing_weapon_position
+	if is_instance_valid(current_weapon):
+		current_weapon.restore_directional_layer()
 	if arm != null:
 		arm.position = standing_arm_position
 
@@ -332,7 +414,8 @@ func initialize_player() -> void:
 
 func apply_player_identity() -> void:
 	var color: Color = PlayerManager.get_player_color(player_index)
-	modulate = color
+	modulate = Color.WHITE
+	apply_equipment_color(color)
 	player_label.text = "P%d" % (player_index + 1)
 	player_label.add_theme_color_override(
 		"font_color",
@@ -351,6 +434,30 @@ func apply_player_identity() -> void:
 	
 	player_arrow.color = color
 	#Resolver color para identificar al jugador
+
+func apply_equipment_color(color: Color) -> void:
+	if equipment_palette == null:
+		return
+	player_palette_instance = equipment_palette.duplicate() as ShaderMaterial
+	player_palette_instance.set_shader_parameter("player_color", color)
+	player_palette_instance.set_shader_parameter("preserve_original", not Engine.is_editor_hint() and player_index == 0)
+	body.material = player_palette_instance
+	for path in equipment_sprite_paths:
+		var equipment_sprite := get_node_or_null(path) as CanvasItem
+		if equipment_sprite != null:
+			equipment_sprite.material = player_palette_instance
+
+func update_equipment_preview() -> void:
+	if preview_equipment_color:
+		apply_equipment_color(equipment_preview_color)
+	elif player_palette_instance != null:
+		if body.material == player_palette_instance:
+			body.material = null
+		for path in equipment_sprite_paths:
+			var equipment_sprite := get_node_or_null(path) as CanvasItem
+			if equipment_sprite != null and equipment_sprite.material == player_palette_instance:
+				equipment_sprite.material = null
+		player_palette_instance = null
 	
 	
 func check_dash_impact() -> void:

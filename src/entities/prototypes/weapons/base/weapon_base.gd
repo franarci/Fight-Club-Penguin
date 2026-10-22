@@ -82,6 +82,18 @@ func get_directional_poses() -> Array:
 		return visual_profile.get("poses")
 	return directional_poses
 
+func restore_directional_layer() -> void:
+	var direction_name: String = POSE_DIRECTIONS[posmod(roundi(Vector2(direction_8).angle() / (PI / 4.0)), 8)]
+	for pose in get_directional_poses():
+		if pose != null and pose.get("direction") == direction_name:
+			z_index = pose.layer
+			return
+	# Match the legacy layers for weapons without an explicit visual profile.
+	if direction_8 == Vector2i.LEFT or direction_8 == Vector2i.DOWN:
+		z_index = -2
+	else:
+		z_index = -1 if direction_8.x < 0 or direction_8 == Vector2i.UP else 1
+
 func update_weapon_visual() -> void:
 	var direction_name: String = POSE_DIRECTIONS[posmod(roundi(Vector2(direction_8).angle() / (PI / 4.0)), 8)]
 	for pose in get_directional_poses():

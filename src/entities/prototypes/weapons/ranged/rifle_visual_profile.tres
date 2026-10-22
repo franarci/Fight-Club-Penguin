@@ -1,87 +1,85 @@
-[gd_resource type="Resource" format=3]
+[gd_resource type="Resource" format=3 uid="uid://cjll0sdd2kdpo"]
 
-[ext_resource type="Script" path="res://src/entities/prototypes/weapons/base/weapon_visual_profile.gd" id="1"]
-[ext_resource type="Script" path="res://src/entities/prototypes/weapons/base/weapon_pose.gd" id="2"]
+[ext_resource type="Script" uid="uid://br1hnyhg41n0n" path="res://src/entities/prototypes/weapons/base/weapon_visual_profile.gd" id="1"]
+[ext_resource type="Script" uid="uid://d15t0yme1hhfv" path="res://src/entities/prototypes/weapons/base/weapon_pose.gd" id="2"]
 
 [sub_resource type="Resource" id="Pose_right"]
 script = ExtResource("2")
-direction = "right"
-animation = &"idle_right"
-flip_h = false
-flip_v = false
-hand_position = Vector2(-3, 1.2)
+hand_position = Vector2(2.025, 1.77)
 grip_offset = Vector2(-50, 20)
-layer = 1
+use_muzzle_offset = true
+muzzle_offset = Vector2(175, -35)
 
 [sub_resource type="Resource" id="Pose_down_right"]
 script = ExtResource("2")
 direction = "down_right"
 animation = &"idle_down_right"
-flip_h = false
-flip_v = false
-hand_position = Vector2(3, 2)
+hand_position = Vector2(-2.305, 2)
 grip_offset = Vector2(-30, 0)
-layer = 1
+use_muzzle_offset = true
+muzzle_offset = Vector2(120, 110)
 
 [sub_resource type="Resource" id="Pose_down"]
 script = ExtResource("2")
 direction = "down"
 animation = &"idle_up"
-flip_h = false
 flip_v = true
-hand_position = Vector2(-4, 1)
+hand_position = Vector2(-9.935, 1)
 grip_offset = Vector2(0, 90)
-layer = 1
+use_muzzle_offset = true
+muzzle_offset = Vector2(18, -154)
 
 [sub_resource type="Resource" id="Pose_down_left"]
 script = ExtResource("2")
 direction = "down_left"
 animation = &"idle_down_right"
 flip_h = true
-flip_v = false
 hand_position = Vector2(-6, 2)
 grip_offset = Vector2(-30, 0)
-layer = 1
+layer = -1
+use_muzzle_offset = true
+muzzle_offset = Vector2(120, 110)
 
 [sub_resource type="Resource" id="Pose_left"]
 script = ExtResource("2")
 direction = "left"
-animation = &"idle_right"
 flip_h = true
-flip_v = false
 hand_position = Vector2(-6, 1.2)
 grip_offset = Vector2(-50, 20)
-layer = 1
+layer = -1
+use_muzzle_offset = true
+muzzle_offset = Vector2(175, -35)
 
 [sub_resource type="Resource" id="Pose_up_left"]
 script = ExtResource("2")
 direction = "up_left"
 animation = &"idle_up_left"
-flip_h = false
-flip_v = false
-hand_position = Vector2(-6, -3)
+hand_position = Vector2(-3.32, -1.75)
 grip_offset = Vector2(30, 30)
 layer = -1
+use_muzzle_offset = true
+muzzle_offset = Vector2(-115, -106)
 
 [sub_resource type="Resource" id="Pose_up"]
 script = ExtResource("2")
 direction = "up"
 animation = &"idle_up"
-flip_h = false
-flip_v = false
-hand_position = Vector2(5, -3)
+hand_position = Vector2(2.785, -0.025)
 grip_offset = Vector2(0, 90)
 layer = -1
+use_muzzle_offset = true
+muzzle_offset = Vector2(18, -154)
 
 [sub_resource type="Resource" id="Pose_up_right"]
 script = ExtResource("2")
 direction = "up_right"
 animation = &"idle_up_left"
 flip_h = true
-flip_v = false
 hand_position = Vector2(5, -3)
 grip_offset = Vector2(30, 30)
 layer = -1
+use_muzzle_offset = true
+muzzle_offset = Vector2(-115, -106)
 
 [resource]
 script = ExtResource("1")
