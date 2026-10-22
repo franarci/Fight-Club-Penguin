@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3 uid="uid://dedacs08cpqjf"]
+
+[ext_resource type="Script" uid="uid://c0tlugca1ip3y" path="res://src/entities/prototypes/penguin/hand_positions.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+right = Vector2(4, 24)
+down_right = Vector2(0.245, 27)
+down = Vector2(-18, 21)
+down_left = Vector2(-26.195, 19)
+left = Vector2(-18, 22)
+up_left = Vector2(10, 14)
+up = Vector2(23, 8)
+up_right = Vector2(23, 8)
+behind_body_directions = Array[String](["left", "up_left"])

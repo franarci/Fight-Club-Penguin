@@ -68,3 +68,19 @@ Keep damage/reach/timing fixed while comparing strengths; choose those after
 the push feels right. Damage occurs only in the middle stage, never during
 wind-up or recovery. The attack locks its direction until recovery ends and
 then follows the latest aim. Death cancels the swing and restores its rest pose.
+
+### Down attack per-frame placement
+
+Hammer data now uses Down Attack Frame Positions > Down Attack Frame Offsets.
+Each Array[Vector2] entry corresponds to the same zero-based attack_down SpriteFrames index.
+Offsets are relative to the resting Body position, in weapon-local units (Hammer scale 0.1 makes Y=290 approximately 29 penguin-local pixels).
+The initial entries are (0,0), (0,145), (0,290). Tune the middle entry to the artwork.
+The offset does not interpolate: it changes with the displayed frame and remains fixed through recovery.
+At completion/cancellation, idle artwork and resting position restore together.
+With a nonempty array, legacy Down Attack Offset is ignored for this animation. Other weapons with an empty array retain their old behavior.
+If frames are added, add matching entries; missing entries use the final supplied offset. Extra entries are unused.
+
+In Demolisher, select EquippedWeapon, enable Editor Preview Enabled, choose Preview Direction down,
+and scrub Preview Swing Progress. Expand Preview Weapon Data (the same shared hammer_data.tres used at runtime),
+then Down Attack Frame Positions to edit offsets. Disable preview after tuning and save the resource.
+This does not change damage windows or add recovery artwork. Returning to idle remains a direct sprite switch.

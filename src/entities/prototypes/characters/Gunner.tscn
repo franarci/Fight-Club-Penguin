@@ -1,19 +1,14 @@
 [gd_scene format=3 uid="uid://dppv4b2b7ef31"]
 
 [ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
-[ext_resource type="Script" uid="uid://bohxhlwhv07ng" path="res://RangedWeaponData.gd" id="2_edpr6"]
 [ext_resource type="Texture2D" uid="uid://b22cg6bmux0ly" path="res://assets/textures/entities/gunner/gunners.png" id="3_5x5m2"]
 [ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="3_lm2ft"]
-[ext_resource type="PackedScene" uid="uid://df4ykmse558s5" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="3_nh8tt"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/Rifle.tscn" id="3_nh8tt"]
 [ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
-[ext_resource type="Resource" uid="uid://cjll0sdd2kdpo" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="rifle_profile"]
-[ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="rifle_projectile"]
 
-[sub_resource type="Resource" id="Resource_41i6s"]
-script = ExtResource("2_edpr6")
-projectile_scene = ExtResource("rifle_projectile")
-visual_profile = ExtResource("rifle_profile")
-metadata/_custom_type_script = "uid://bohxhlwhv07ng"
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/gunner_rifle_data.tres" id="standalone_Resource_41i6s"]
+
+[ext_resource type="Resource" path="res://src/entities/prototypes/characters/gunner_hand_positions.tres" id="hand_positions"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
 atlas = ExtResource("3_5x5m2")
@@ -440,9 +435,10 @@ animations = [{
 [node name="Gunner" type="Node2D" unique_id=1018647709]
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
+hand_positions = ExtResource("hand_positions")
 z_index = -1
 scale = Vector2(2.5, 2.5)
-starting_weapon_data = SubResource("Resource_41i6s")
+starting_weapon_data = ExtResource("standalone_Resource_41i6s")
 dash_speed = 300.0
 dash_duration = 0.5
 dash_cooldown = 0.6

@@ -6,6 +6,8 @@ class_name WeaponBase
 @onready var attack_cooldown: Timer = $AttackCooldown
 
 @export_category("Animation")
+## Default combat settings carried by this weapon scene. Character overrides are optional.
+@export var default_weapon_data: WeaponData
 @export var p_spriteframes: SpriteFrames
 @export var upward_visual_offset := Vector2(0, -6)
 @export var upward_diagonal_visual_offset := Vector2.ZERO
@@ -82,11 +84,23 @@ func get_directional_poses() -> Array:
 		return visual_profile.get("poses")
 	return directional_poses
 
+func get_character_pose_layer(direction_name: String, fallback: int) -> int:
+	var character := wielder
+	if Engine.is_editor_hint() and get_parent() != null:
+		character = get_parent().get_parent()
+	if is_instance_valid(character):
+		var hands: Variant = character.get("hand_positions")
+		if hands != null:
+			var behind: Variant = hands.get("behind_body_directions")
+			if behind is Array and direction_name in behind:
+				return -1
+	return fallback
+
 func restore_directional_layer() -> void:
 	var direction_name: String = POSE_DIRECTIONS[posmod(roundi(Vector2(direction_8).angle() / (PI / 4.0)), 8)]
 	for pose in get_directional_poses():
 		if pose != null and pose.get("direction") == direction_name:
-			z_index = pose.layer
+			z_index = get_character_pose_layer(direction_name, pose.layer)
 			return
 	# Match the legacy layers for weapons without an explicit visual profile.
 	if direction_8 == Vector2i.LEFT or direction_8 == Vector2i.DOWN:
@@ -106,8 +120,18 @@ func update_weapon_visual() -> void:
 			grip.x = -grip.x
 		if pose.flip_v:
 			grip.y = -grip.y
-		body.position = pose.hand_position - grip * body.scale
-		z_index = pose.layer
+		var hand: Vector2 = pose.hand_position
+		var character := wielder
+		if Engine.is_editor_hint():
+			# Editor instances have no runtime wielder assignment.
+			character = get_parent().get_parent() if get_parent() != null else null
+		if is_instance_valid(character) and character.has_method("get_weapon_hand_position"):
+			var attachment: Variant = character.get_weapon_hand_position(direction_name)
+			if attachment is Vector2:
+				# Convert through the socket so dash offsets and weapon scale both work.
+				hand = to_local(get_parent().to_global(attachment))
+		body.position = hand - grip * body.scale
+		z_index = get_character_pose_layer(direction_name, pose.layer)
 		body.play(pose.animation)
 		return
 	z_index = -1 if direction_8.y < 0 else 1

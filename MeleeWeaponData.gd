@@ -26,3 +26,10 @@ class_name MeleeWeaponData
 ## Visual offset at impact for attack_down, in weapon-local units. Positive Y lowers it.
 ## Applied during the strike and removed during recovery; does not move the hitbox.
 @export var down_attack_offset := Vector2.ZERO
+
+@export_group("Down Attack Frame Positions")
+## Optional offsets from the resting weapon Body position, in weapon-local units.
+## Index 0 matches attack_down frame 0. Each offset stays fixed while its frame is visible,
+## including the last frame during recovery. Missing entries use the last supplied offset.
+## Empty retains the legacy animated Down Attack Offset behavior.
+@export var down_attack_frame_offsets: Array[Vector2] = []

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MeleeWeaponData" format=3 uid="uid://bdcnb5uu0ucrg"]
+
+[ext_resource type="Script" uid="uid://c2vxwob7r2umm" path="res://MeleeWeaponData.gd" id="2_pbv7y"]
+[ext_resource type="Resource" uid="uid://d4agsm3livnsh" path="res://src/entities/prototypes/weapons/melee/hammer_visual_profile.tres" id="8_hammer_profile"]
+[ext_resource type="SpriteFrames" uid="uid://b11xr6rqbimkx" path="res://src/entities/prototypes/weapons/melee/hammer_frames.tres" id="frames"]
+
+[resource]
+script = ExtResource("2_pbv7y")
+windup_duration = 0.07
+recovery_duration = 0.18
+windup_angle = -45.0
+impact_angle = 85.0
+strike_fraction = 0.4
+recoil_angle = 8.0
+down_attack_offset = Vector2(0, 290)
+down_attack_frame_offsets = Array[Vector2]([Vector2(0, 0), Vector2(0, 145), Vector2(0, 290)])
+sprite_frames = ExtResource("frames")
+visual_profile = ExtResource("8_hammer_profile")
+metadata/_custom_type_script = "uid://c2vxwob7r2umm"

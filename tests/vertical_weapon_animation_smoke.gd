@@ -36,7 +36,11 @@ func run_checks() -> void:
 			weapon.apply_swing_visual(weapon.swing_windup + weapon.swing_active_duration, weapon.melee_data)
 			assert(weapon.body.position.is_equal_approx(position + weapon.melee_data.down_attack_offset))
 			weapon.apply_swing_visual(weapon.swing_windup + weapon.swing_active_duration + weapon.swing_recovery * 0.5, weapon.melee_data)
-			assert(weapon.body.position.is_equal_approx(position + weapon.melee_data.down_attack_offset * 0.5))
+			assert(weapon.body.position.is_equal_approx(position + weapon.melee_data.down_attack_frame_offsets[-1]), "Ground frame must hold its offset throughout recovery")
+			# Every displayed frame uses exactly its configured offset.
+			for step in range(100):
+				weapon.apply_swing_visual(weapon.total_swing_duration() * step / 100.0, weapon.melee_data)
+				assert(weapon.body.position.is_equal_approx(position + weapon.melee_data.down_attack_frame_offsets[weapon.body.frame]))
 		else:
 			assert(weapon.body.position == position)
 		assert(not weapon.body.flip_h and not weapon.body.flip_v)
@@ -44,6 +48,15 @@ func run_checks() -> void:
 		weapon.cancel_attack()
 		assert(weapon.body.animation == idle and weapon.body.is_playing())
 		assert(weapon.body.position == position)
+	# Normal completion restores the idle frame and position together.
+	weapon.can_attack = true
+	weapon.set_aim_direction(Vector2.DOWN)
+	var resting: Vector2 = weapon.body.position
+	weapon.try_attack()
+	weapon.apply_swing_visual(weapon.total_swing_duration(), weapon.melee_data)
+	assert(weapon.body.animation == &"idle_down")
+	assert(weapon.body.position.is_equal_approx(resting))
+	weapon.cancel_attack()
 	character.free()
 	print("PASS: authored up/down frames, no extra rotation/flips, impact timing and idle restoration")
 	quit()

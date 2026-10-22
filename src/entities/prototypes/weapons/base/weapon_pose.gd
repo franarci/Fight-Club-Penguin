@@ -5,7 +5,8 @@ extends Resource
 @export var animation: StringName = &"idle_right"
 @export var flip_h := false
 @export var flip_v := false
-## Grip location in weapon-local coordinates, before the weapon node's scale.
+## Fallback hand location for standalone preview or characters without Hand Positions.
+## Configured characters use PenguinBase > Weapon Attachment > Hand Positions instead.
 @export var hand_position := Vector2.ZERO
 ## Grip location measured from the center of the unflipped source image.
 @export var grip_offset := Vector2.ZERO

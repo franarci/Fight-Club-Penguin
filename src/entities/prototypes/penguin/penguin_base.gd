@@ -64,12 +64,25 @@ var protection_left := 0.0
 @onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
 
 var current_weapon: WeaponBase
+@export_category("Weapon Attachment")
+## Directional hand positions in Weapon socket coordinates. Shared by all equipped weapons.
+@export var hand_positions: Resource
+
+func get_weapon_hand_position(direction_name: String) -> Variant:
+	return hand_positions.get(direction_name) if hand_positions != null else null
+
+var pending_weapon: WeaponBase
+var weapon_change_pending := false
+var weapon_attack_ready_at := 0
+var empty_weapon_attachment: Node2D
 
 @export_category("Player Identifier")
 ## Automatically place and size P1/P2 and the triangle using the Body sprite bounds.
 ## Disable to position PlayerIndicator and its children manually.
 @export var auto_player_identifier: bool = true
-## Identifier width as a fraction of the scaled Body width.
+## First frame used to size the identifier, independently of the playing animation.
+@export var identifier_reference_animation: StringName = &"idle_right"
+## Identifier width as a fraction of the scaled reference frame width.
 @export_range(0.1, 1.5, 0.05) var identifier_width_ratio: float = 0.6
 ## Space from the top of Body to the triangle tip, in penguin-local pixels.
 @export_range(0.0, 50.0, 0.5) var identifier_head_gap: float = 4.0
@@ -99,13 +112,28 @@ func update_player_identifier() -> void:
 	for vertex in player_arrow.polygon:
 		arrow_bounds = arrow_bounds.expand(vertex)
 	var content_width := maxf(maxf(label_size.x, arrow_bounds.size.x), 1.0)
-	var indicator_scale := bounds.size.x * identifier_width_ratio / content_width
+	var reference_width := get_identifier_reference_width()
+	var indicator_scale := reference_width * identifier_width_ratio / content_width
 	player_indicator.scale = Vector2.ONE * indicator_scale
 	player_indicator.position = Vector2(bounds.get_center().x, bounds.position.y - identifier_head_gap) + identifier_offset
 	# Put the triangle tip at the identifier origin, and center the label above it.
 	player_arrow.position = Vector2(-arrow_bounds.get_center().x, -arrow_bounds.end.y)
 	player_label.size = label_size
 	player_label.position = Vector2(-label_size.x * 0.5, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
+
+func get_identifier_reference_width() -> float:
+	var frames := body.sprite_frames
+	if frames == null:
+		return 0.0
+	# Fallbacks remain independent of the current animation and frame.
+	var candidates: Array[StringName] = [identifier_reference_animation, &"idle_right", StringName(p_autoplay)]
+	for animation_name in candidates:
+		if not frames.has_animation(animation_name) or frames.get_frame_count(animation_name) == 0:
+			continue
+		var texture := frames.get_frame_texture(animation_name, 0)
+		if texture != null:
+			return texture.get_size().x * absf(body.scale.x)
+	return 1.0 * absf(body.scale.x)
 
 func get_body_display_rect() -> Rect2:
 	if body.sprite_frames == null or not body.sprite_frames.has_animation(body.animation):
@@ -366,6 +394,8 @@ func stop_dash_animation() -> void:
 		current_weapon.restore_directional_layer()
 	if arm != null:
 		arm.position = standing_arm_position
+	if weapon_change_pending:
+		apply_weapon_change()
 
 
 # -------------------------
@@ -408,9 +438,87 @@ func initialize_player() -> void:
 
 	apply_player_identity()
 	current_weapon = weapon_socket.get_node_or_null("EquippedWeapon") as WeaponBase
-	if current_weapon != null and starting_weapon_data != null:
+	if current_weapon != null:
 		current_weapon.wielder = self
-		current_weapon.setup(device, starting_weapon_data)
+		var data := starting_weapon_data if starting_weapon_data != null else current_weapon.default_weapon_data
+		if data != null:
+			current_weapon.setup(device, data)
+
+## Returns true when accepted. During a dash, replacement waits for its timeline to end.
+## Call deferred from physics overlap signals (for example, a pickup's body_entered).
+func equip_weapon(scene: PackedScene, data_override: WeaponData = null) -> bool:
+	if not is_node_ready() or is_dead or is_eliminated or scene == null:
+		return false
+	var candidate := scene.instantiate()
+	if not candidate is WeaponBase:
+		candidate.free()
+		return false
+	var data: WeaponData = data_override if data_override != null else candidate.default_weapon_data
+	if data == null or (candidate is RangedWeapon and not data is RangedWeaponData) or (candidate is MeleeWeapon and not data is MeleeWeaponData):
+		candidate.free()
+		return false
+	candidate.default_weapon_data = data
+	queue_weapon_change(candidate)
+	return true
+
+func unequip_weapon() -> bool:
+	if not is_node_ready() or is_dead or is_eliminated:
+		return false
+	queue_weapon_change(null)
+	return true
+
+func queue_weapon_change(candidate: WeaponBase) -> void:
+	if is_instance_valid(pending_weapon):
+		pending_weapon.free()
+	pending_weapon = candidate
+	weapon_change_pending = true
+	if not dash_pose_active:
+		apply_weapon_change()
+
+func apply_weapon_change() -> void:
+	weapon_change_pending = false
+	var candidate := pending_weapon
+	pending_weapon = null
+	if is_dead or is_eliminated:
+		if is_instance_valid(candidate):
+			candidate.free()
+		return
+	var direction := Vector2.RIGHT.rotated(WeaponBase.POSE_DIRECTIONS.find(String(facing)) * PI / 4.0)
+	var cooldown := maxf(0.0, (weapon_attack_ready_at - Time.get_ticks_msec()) / 1000.0)
+	if is_instance_valid(current_weapon):
+		direction = current_weapon.aim_direction
+		cooldown = maxf(cooldown, current_weapon.attack_cooldown.time_left)
+		if current_weapon is MeleeWeapon and current_weapon.swing_time_left > 0.0:
+			cooldown = maxf(cooldown, current_weapon.swing_time_left + current_weapon.get_attack_cooldown())
+		if current_weapon.has_method("cancel_attack"):
+			current_weapon.cancel_attack()
+		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
+		weapon_socket.remove_child(current_weapon)
+		current_weapon.queue_free()
+	weapon_attack_ready_at = Time.get_ticks_msec() + ceili(cooldown * 1000.0)
+	if is_instance_valid(empty_weapon_attachment):
+		empty_weapon_attachment.free()
+		empty_weapon_attachment = null
+	current_weapon = candidate
+	animation_player.clear_caches()
+	if current_weapon == null:
+		# Keep existing dash layer tracks valid while the character is unarmed.
+		empty_weapon_attachment = Node2D.new()
+		empty_weapon_attachment.name = "EquippedWeapon"
+		weapon_socket.add_child(empty_weapon_attachment)
+		return
+	current_weapon.name = "EquippedWeapon"
+	current_weapon.wielder = self
+	weapon_socket.add_child(current_weapon)
+	current_weapon.setup(device, current_weapon.default_weapon_data)
+	current_weapon.set_aim_direction(direction)
+	if cooldown > 0.0:
+		current_weapon.can_attack = false
+		current_weapon.attack_cooldown.start(cooldown)
+
+func _exit_tree() -> void:
+	if is_instance_valid(pending_weapon):
+		pending_weapon.free()
 
 func apply_player_identity() -> void:
 	var color: Color = PlayerManager.get_player_color(player_index)
@@ -533,6 +641,7 @@ func lose_life() -> void:
 func _on_respawn_timer_timeout() -> void:
 	if is_eliminated:
 		return
+	weapon_attack_ready_at = 0
 	global_position = respawn_position
 	velocity = Vector2.ZERO
 	is_being_pushed = false

@@ -59,7 +59,6 @@ direction = "up_right"
 animation = &"idle_up_right"
 hand_position = Vector2(230, 80)
 grip_offset = Vector2(30, 110)
-layer = -1
 
 [resource]
 script = ExtResource("1")

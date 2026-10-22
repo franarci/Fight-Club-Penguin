@@ -233,7 +233,7 @@ func apply_authored_swing(animation_name: StringName, elapsed: float) -> void:
 	body.pause()
 	var data := preview_weapon_data if Engine.is_editor_hint() else melee_data
 	var strike_duration := swing_active_duration * clampf(data.strike_fraction, 0.1, 1.0)
-	if animation_name == &"attack_down":
+	if animation_name == &"attack_down" and data.down_attack_frame_offsets.is_empty():
 		var offset_weight := smoothstep(0.0, strike_duration, elapsed - swing_windup)
 		if elapsed >= swing_windup + swing_active_duration:
 			offset_weight = 1.0 - smoothstep(0.0, maxf(swing_recovery, 0.001), elapsed - swing_windup - swing_active_duration)
@@ -257,3 +257,6 @@ func apply_authored_swing(animation_name: StringName, elapsed: float) -> void:
 				break
 			cursor -= frame_duration
 	body.set_frame_and_progress(frame_index, progress)
+	if animation_name == &"attack_down" and not data.down_attack_frame_offsets.is_empty():
+		var offset_index := mini(frame_index, data.down_attack_frame_offsets.size() - 1)
+		body.position = resting_body_position + data.down_attack_frame_offsets[offset_index]

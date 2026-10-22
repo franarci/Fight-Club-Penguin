@@ -24,6 +24,19 @@ func run_checks() -> void:
 			assert(is_equal_approx(label_width, bounds.size.x * penguin.identifier_width_ratio))
 			assert(penguin.player_label.position.y + penguin.player_label.size.y < penguin.player_arrow.position.y)
 		penguin.identifier_offset = Vector2(3, -2)
+		# Wider dash artwork must change placement, never the reference-based size.
+		penguin.update_player_identifier()
+		var reference_scale: Vector2 = penguin.player_indicator.scale
+		for animation_name in penguin.body.sprite_frames.get_animation_names():
+			if not String(animation_name).begins_with("dash_"):
+				continue
+			penguin.body.animation = animation_name
+			for frame in range(penguin.body.sprite_frames.get_frame_count(animation_name)):
+				penguin.body.frame = frame
+				penguin.update_player_identifier()
+				assert(penguin.player_indicator.scale.is_equal_approx(reference_scale), "Dash frames must not resize the identifier")
+				var dash_bounds: Rect2 = penguin.body.transform * penguin.get_body_display_rect()
+				assert(is_equal_approx(penguin.player_indicator.position.y, dash_bounds.position.y - penguin.identifier_head_gap + penguin.identifier_offset.y))
 		penguin.update_player_identifier()
 		var position: Vector2 = penguin.player_indicator.position
 		penguin.scale *= 2
