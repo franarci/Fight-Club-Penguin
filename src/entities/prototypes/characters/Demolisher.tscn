@@ -631,6 +631,7 @@ _data = {
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_l7qj1")]
 starting_weapon_data = SubResource("Resource_7ikj4")
+dash_speed = 290.0
 p_spriteframes = SubResource("SpriteFrames_etcuu")
 p_autoplay = "idle_right"
 
