@@ -2,6 +2,39 @@
 
 [ext_resource type="Texture2D" uid="uid://biat0i06scs3r" path="res://assets/textures/terrain/3d-isometric-terrain-ice-blue-ocean-background.jpg" id="1_pk0ls"]
 [ext_resource type="Script" uid="uid://ckm4ip3632gh2" path="res://src/terrain/arena.gd" id="2_arena"]
+[ext_resource type="Shader" uid="uid://biamjuua8esus" path="res://src/terrain/waves.gdshader" id="2_bs7i5"]
+[ext_resource type="Texture2D" uid="uid://c6dp5ride3nne" path="res://assets/textures/terrain/water_mask.jpg" id="4_water_mask"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_m2i37"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_a5lxv"]
+noise = SubResource("FastNoiseLite_m2i37")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_max0r"]
+seed = 17
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_iccqo"]
+noise = SubResource("FastNoiseLite_max0r")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_whwmn"]
+shader = ExtResource("2_bs7i5")
+shader_parameter/canvasitem_dimensions = Vector2(100, 100)
+shader_parameter/texture_dimensions = Vector2(100, 100)
+shader_parameter/direction = Vector2(1, 0.3)
+shader_parameter/wave_length = 0.3
+shader_parameter/wave_frequency = 0.5
+shader_parameter/intensity = 1.0
+shader_parameter/horizon_line = 0.0
+shader_parameter/is_under_horizon = true
+shader_parameter/water_noise = SubResource("NoiseTexture2D_a5lxv")
+shader_parameter/water_noise2 = SubResource("NoiseTexture2D_iccqo")
+shader_parameter/water_mask = ExtResource("4_water_mask")
+shader_parameter/water_noise_scale = Vector2(1, 1)
+shader_parameter/water_noise_scale2 = Vector2(1, 1)
+shader_parameter/water_noise_mix = 0.5
+shader_parameter/highlight_color = Color(0, 0.6509804, 1, 1)
 
 [node name="Arena" type="Node2D" unique_id=1295443067]
 z_index = -8
@@ -9,6 +42,7 @@ scale = Vector2(0.3538491, 0.32079208)
 script = ExtResource("2_arena")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1984875998]
+material = SubResource("ShaderMaterial_whwmn")
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
