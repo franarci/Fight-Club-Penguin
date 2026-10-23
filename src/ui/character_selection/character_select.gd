@@ -90,10 +90,31 @@ func _on_countdown_timeout() -> void:
 func _input(event: InputEvent) -> void:
 	if returning_to_menu or not is_visible_in_tree():
 		return
-	if event.is_action_pressed("ui_cancel") and not event.is_echo():
-		if PlayerManager.players.is_empty():
-			get_viewport().set_input_as_handled()
-			_return_to_menu()
+
+	if not PlayerManager.players.is_empty():
+		return
+
+	if event.is_echo():
+		return
+
+	var device: int = -1
+
+	if event is InputEventJoypadButton:
+		device = event.device
+
+		if not MultiplayerInput.device_actions.has(device):
+			return
+	elif not event is InputEventKey:
+		return
+
+	var action: StringName = MultiplayerInput.get_action_name(
+		device,
+		"selection_cancel"
+	)
+
+	if event.is_action_pressed(action):
+		get_viewport().set_input_as_handled()
+		_return_to_menu()
 
 
 func _return_to_menu() -> void:

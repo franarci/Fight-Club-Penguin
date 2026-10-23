@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://lijg58o1ckpu" path="res://assets/textures/entities/demolisher/sprite-frame-1.png" id="4_yla77"]
 [ext_resource type="Texture2D" uid="uid://c6tsswhvopvc7" path="res://assets/textures/entities/explorer/sprite-frame-1.png" id="5_kktns"]
 [ext_resource type="Texture2D" uid="uid://cvrnxaolmqttl" path="res://assets/textures/entities/hunter/sprite-frame-1.png" id="6_tolr6"]
+[ext_resource type="PackedScene" uid="uid://cs3ta2ahnlymh" path="res://src/ui/character_selection/StatRow.tscn" id="7_kktns"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kktns"]
 
@@ -33,169 +34,8 @@ key = "Hunter"
 Img = ExtResource("6_tolr6")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
-[sub_resource type="FontFile" id="FontFile_7cru3"]
-subpixel_positioning = 0
-msdf_pixel_range = 14
-msdf_size = 128
-cache/0/variation_coordinates = {}
-cache/0/face_index = 0
-cache/0/embolden = 0.0
-cache/0/transform = Transform2D(1, 0, 0, 1, 0, 0)
-cache/0/spacing_top = 0
-cache/0/spacing_bottom = 0
-cache/0/spacing_space = 0
-cache/0/spacing_glyph = 0
-cache/0/baseline_offset = 0.0
-cache/0/16/0/ascent = 0.0
-cache/0/16/0/descent = 0.0
-cache/0/16/0/underline_position = 0.0
-cache/0/16/0/underline_thickness = 0.0
-cache/0/16/0/scale = 1.0
-cache/0/19/0/ascent = 0.0
-cache/0/19/0/descent = 0.0
-cache/0/19/0/underline_position = 0.0
-cache/0/19/0/underline_thickness = 0.0
-cache/0/19/0/scale = 1.0
-cache/0/20/0/ascent = 0.0
-cache/0/20/0/descent = 0.0
-cache/0/20/0/underline_position = 0.0
-cache/0/20/0/underline_thickness = 0.0
-cache/0/20/0/scale = 1.0
-cache/0/21/0/ascent = 0.0
-cache/0/21/0/descent = 0.0
-cache/0/21/0/underline_position = 0.0
-cache/0/21/0/underline_thickness = 0.0
-cache/0/21/0/scale = 1.0
-cache/0/22/0/ascent = 0.0
-cache/0/22/0/descent = 0.0
-cache/0/22/0/underline_position = 0.0
-cache/0/22/0/underline_thickness = 0.0
-cache/0/22/0/scale = 1.0
-cache/0/23/0/ascent = 0.0
-cache/0/23/0/descent = 0.0
-cache/0/23/0/underline_position = 0.0
-cache/0/23/0/underline_thickness = 0.0
-cache/0/23/0/scale = 1.0
-cache/0/24/0/ascent = 0.0
-cache/0/24/0/descent = 0.0
-cache/0/24/0/underline_position = 0.0
-cache/0/24/0/underline_thickness = 0.0
-cache/0/24/0/scale = 1.0
-cache/0/25/0/ascent = 0.0
-cache/0/25/0/descent = 0.0
-cache/0/25/0/underline_position = 0.0
-cache/0/25/0/underline_thickness = 0.0
-cache/0/25/0/scale = 1.0
-cache/0/26/0/ascent = 0.0
-cache/0/26/0/descent = 0.0
-cache/0/26/0/underline_position = 0.0
-cache/0/26/0/underline_thickness = 0.0
-cache/0/26/0/scale = 1.0
-cache/0/27/0/ascent = 0.0
-cache/0/27/0/descent = 0.0
-cache/0/27/0/underline_position = 0.0
-cache/0/27/0/underline_thickness = 0.0
-cache/0/27/0/scale = 1.0
-cache/0/28/0/ascent = 0.0
-cache/0/28/0/descent = 0.0
-cache/0/28/0/underline_position = 0.0
-cache/0/28/0/underline_thickness = 0.0
-cache/0/28/0/scale = 1.0
-cache/0/29/0/ascent = 0.0
-cache/0/29/0/descent = 0.0
-cache/0/29/0/underline_position = 0.0
-cache/0/29/0/underline_thickness = 0.0
-cache/0/29/0/scale = 1.0
-cache/0/30/0/ascent = 0.0
-cache/0/30/0/descent = 0.0
-cache/0/30/0/underline_position = 0.0
-cache/0/30/0/underline_thickness = 0.0
-cache/0/30/0/scale = 1.0
-cache/0/31/0/ascent = 0.0
-cache/0/31/0/descent = 0.0
-cache/0/31/0/underline_position = 0.0
-cache/0/31/0/underline_thickness = 0.0
-cache/0/31/0/scale = 1.0
-cache/0/32/0/ascent = 0.0
-cache/0/32/0/descent = 0.0
-cache/0/32/0/underline_position = 0.0
-cache/0/32/0/underline_thickness = 0.0
-cache/0/32/0/scale = 1.0
-cache/0/33/0/ascent = 0.0
-cache/0/33/0/descent = 0.0
-cache/0/33/0/underline_position = 0.0
-cache/0/33/0/underline_thickness = 0.0
-cache/0/33/0/scale = 1.0
-cache/0/34/0/ascent = 0.0
-cache/0/34/0/descent = 0.0
-cache/0/34/0/underline_position = 0.0
-cache/0/34/0/underline_thickness = 0.0
-cache/0/34/0/scale = 1.0
-cache/0/35/0/ascent = 0.0
-cache/0/35/0/descent = 0.0
-cache/0/35/0/underline_position = 0.0
-cache/0/35/0/underline_thickness = 0.0
-cache/0/35/0/scale = 1.0
-cache/0/36/0/ascent = 0.0
-cache/0/36/0/descent = 0.0
-cache/0/36/0/underline_position = 0.0
-cache/0/36/0/underline_thickness = 0.0
-cache/0/36/0/scale = 1.0
-cache/0/37/0/ascent = 0.0
-cache/0/37/0/descent = 0.0
-cache/0/37/0/underline_position = 0.0
-cache/0/37/0/underline_thickness = 0.0
-cache/0/37/0/scale = 1.0
-cache/0/38/0/ascent = 0.0
-cache/0/38/0/descent = 0.0
-cache/0/38/0/underline_position = 0.0
-cache/0/38/0/underline_thickness = 0.0
-cache/0/38/0/scale = 1.0
-cache/0/39/0/ascent = 0.0
-cache/0/39/0/descent = 0.0
-cache/0/39/0/underline_position = 0.0
-cache/0/39/0/underline_thickness = 0.0
-cache/0/39/0/scale = 1.0
-cache/0/40/0/ascent = 0.0
-cache/0/40/0/descent = 0.0
-cache/0/40/0/underline_position = 0.0
-cache/0/40/0/underline_thickness = 0.0
-cache/0/40/0/scale = 1.0
-cache/0/41/0/ascent = 0.0
-cache/0/41/0/descent = 0.0
-cache/0/41/0/underline_position = 0.0
-cache/0/41/0/underline_thickness = 0.0
-cache/0/41/0/scale = 1.0
-cache/0/42/0/ascent = 0.0
-cache/0/42/0/descent = 0.0
-cache/0/42/0/underline_position = 0.0
-cache/0/42/0/underline_thickness = 0.0
-cache/0/42/0/scale = 1.0
-cache/0/43/0/ascent = 0.0
-cache/0/43/0/descent = 0.0
-cache/0/43/0/underline_position = 0.0
-cache/0/43/0/underline_thickness = 0.0
-cache/0/43/0/scale = 1.0
-cache/0/44/0/ascent = 0.0
-cache/0/44/0/descent = 0.0
-cache/0/44/0/underline_position = 0.0
-cache/0/44/0/underline_thickness = 0.0
-cache/0/44/0/scale = 1.0
-cache/0/45/0/ascent = 0.0
-cache/0/45/0/descent = 0.0
-cache/0/45/0/underline_position = 0.0
-cache/0/45/0/underline_thickness = 0.0
-cache/0/45/0/scale = 1.0
-cache/0/46/0/ascent = 0.0
-cache/0/46/0/descent = 0.0
-cache/0/46/0/underline_position = 0.0
-cache/0/46/0/underline_thickness = 0.0
-cache/0/46/0/scale = 1.0
-
-[sub_resource type="LabelSettings" id="LabelSettings_jce1r"]
-font = SubResource("FontFile_7cru3")
-font_size = 30
-font_color = Color(0.14227244, 0.22363687, 0.8743565, 1)
+[sub_resource type="LabelSettings" id="LabelSettings_yla77"]
+font_size = 22
 
 [node name="PlayerSelection" type="PanelContainer" unique_id=576206770]
 light_mask = 4
@@ -210,47 +50,66 @@ characters = Array[ExtResource("2_7cru3")]([SubResource("Resource_672rp"), SubRe
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1682365352]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="PlayerLabel" type="Label" parent="VBoxContainer" unique_id=1492488716]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "PLayer X"
-label_settings = SubResource("LabelSettings_jce1r")
+label_settings = SubResource("LabelSettings_yla77")
 horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
 
 [node name="CharacterCenter" type="CenterContainer" parent="VBoxContainer" unique_id=1317168388]
 custom_minimum_size = Vector2(0, 125.87)
 layout_mode = 2
 
 [node name="Character" type="TextureRect" parent="VBoxContainer/CharacterCenter" unique_id=713989201]
-custom_minimum_size = Vector2(190, 220)
+custom_minimum_size = Vector2(180, 160)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
+[node name="StatsMargin" type="MarginContainer" parent="VBoxContainer" unique_id=2010885332]
+layout_mode = 2
+theme_override_constants/margin_bottom = 16
+
+[node name="StatsContainer" type="VBoxContainer" parent="VBoxContainer/StatsMargin" unique_id=624110200]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SpeedStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=615272567 instance=ExtResource("7_kktns")]
+layout_mode = 2
+
+[node name="StrengthStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=176041905 instance=ExtResource("7_kktns")]
+layout_mode = 2
+
+[node name="ResistanceStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=1240575531 instance=ExtResource("7_kktns")]
+layout_mode = 2
+
 [node name="Navigation" type="HBoxContainer" parent="VBoxContainer" unique_id=227364430]
 layout_mode = 2
-theme_override_constants/separation = 55
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Prev" type="Button" parent="VBoxContainer/Navigation" unique_id=949271258]
 layout_mode = 2
 text = "←"
 
+[node name="Select" type="Button" parent="VBoxContainer/Navigation" unique_id=1158604813]
+layout_mode = 2
+text = "SELECT"
+
 [node name="Next" type="Button" parent="VBoxContainer/Navigation" unique_id=701563577]
 layout_mode = 2
 text = "→"
-
-[node name="SelectCenter" type="CenterContainer" parent="VBoxContainer" unique_id=1418742094]
-layout_mode = 2
-
-[node name="Select" type="Button" parent="VBoxContainer/SelectCenter" unique_id=1158604813]
-layout_mode = 2
-text = "SELECT"
 
 [node name="BorderBlinkTimer" type="Timer" parent="." unique_id=511547008]
 wait_time = 0.4
 
 [connection signal="pressed" from="VBoxContainer/Navigation/Prev" to="." method="prev"]
+[connection signal="pressed" from="VBoxContainer/Navigation/Select" to="." method="_on_select_pressed"]
 [connection signal="pressed" from="VBoxContainer/Navigation/Next" to="." method="next"]
-[connection signal="pressed" from="VBoxContainer/SelectCenter/Select" to="." method="_on_select_pressed"]
 [connection signal="timeout" from="BorderBlinkTimer" to="." method="_on_border_blink_timer_timeout"]

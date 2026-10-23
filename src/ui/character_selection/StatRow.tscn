@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cs3ta2ahnlymh"]
+
+[ext_resource type="Script" uid="uid://gtiai7lecww4" path="res://src/ui/character_selection/stat_row.gd" id="1_7q18k"]
+
+[node name="StatRow" type="VBoxContainer" unique_id=615272567]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 4
+script = ExtResource("1_7q18k")
+
+[node name="NameLabel" type="Label" parent="." unique_id=1223249763]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Habilidad"
+
+[node name="Bar" type="ProgressBar" parent="." unique_id=1030246110]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+value = 50.0
+show_percentage = false

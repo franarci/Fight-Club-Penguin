@@ -28,6 +28,12 @@ var ignored_guids = []
 
 func _init():
 	reset()
+	
+
+func _ready() -> void:
+	for device in Input.get_connected_joypads():
+		if not device_actions.has(device):
+			_create_actions_for_device(device)
 
 # Call this if you change any of the core actions or need to reset everything.
 func reset():

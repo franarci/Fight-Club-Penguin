@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://btcmdje4rpi20" path="res://src/ui/character_selection/PlayerSelection.tscn" id="2_672rp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
-bg_color = Color(0.2449246, 0.17361537, 0.03437599, 1)
+bg_color = Color(0.2, 0, 0.76862746, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m7el"]
 bg_color = Color(0.70980394, 0.29803923, 0.23529412, 1)
