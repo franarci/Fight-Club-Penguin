@@ -5,7 +5,7 @@ const HUNTER = preload("uid://sej7wre0em41")
 const DEMOLISHER = preload("uid://bplqlfsdkfml5")
 const EXPLORER = preload("uid://8d2uraygf2eo")
 
-@onready var character_select = $CharacterSelect
+@onready var character_select = $MenuLayer/CharacterSelect
 @onready var players: Node2D = $Players
 @onready var spawn_1: Marker2D = $SpawnPoints/Spawn1
 @onready var spawn_2: Marker2D = $SpawnPoints/Spawn2
@@ -20,6 +20,7 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 ]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	$SharedCamera.show_arena($Arena.world_size)
 	Input.get_connected_joypads()
 	#MultiplayerInput._create_actions_for_device(0)
 	#MultiplayerInput._create_actions_for_device(1)
@@ -28,7 +29,10 @@ func start_game() -> void:
 	character_select.queue_free()
 	PlayerManager.reset_lives()
 	spawn_players()
+	$SharedCamera.follow_players(players)
 	$ArenaHUD.show_players(PlayerManager.players)
+	for character in players.get_children():
+		$ArenaHUD.bind_penguin(character.get_child(0) as Penguin)
 
 
 func spawn_players() -> void:
@@ -60,4 +64,4 @@ func spawn_player(player_data: Dictionary) -> void:
 
 	penguin.global_position = spawn_points[slot].global_position
 	var player_body := penguin.get_child(0) as Penguin
-	player_body.configure_arena($Ice)
+	player_body.configure_arena($Arena/IceArea/Ground)

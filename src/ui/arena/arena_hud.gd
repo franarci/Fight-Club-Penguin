@@ -41,3 +41,8 @@ func show_players(active_players: Array[Dictionary]) -> void:
 func _on_lives_changed(slot: int, lives: int) -> void:
 	if cards.has(slot):
 		cards[slot].set_lives(lives)
+
+
+func bind_penguin(penguin: Penguin) -> void:
+	if cards.has(penguin.player_index):
+		cards[penguin.player_index].bind_penguin(penguin)

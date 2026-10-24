@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b6eph1rwjt5c2"]
+
+[ext_resource type="PackedScene" uid="uid://h4n62xiii37i" path="res://src/entities/prototypes/weapons/base/WeaponBase.tscn" id="1"]
+[ext_resource type="Script" uid="uid://dapfmvlamgrsq" path="res://src/entities/prototypes/weapons/melee/melee_weapon.gd" id="2"]
+
+[sub_resource type="CircleShape2D" id="hit"]
+radius = 12.0
+
+[node name="MeleeWeapon" unique_id=1466300965 instance=ExtResource("1")]
+script = ExtResource("2")
+preview_weapon_data = null
+preview_swing_progress = 0.0
+
+[node name="Hitbox" type="Area2D" parent="." index="2" unique_id=314684964]
+position = Vector2(30, 0)
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" index="0" unique_id=698488743]
+shape = SubResource("hit")

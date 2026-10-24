@@ -2,48 +2,38 @@
 
 [ext_resource type="Script" uid="uid://b05vo5uhchgr" path="res://main.gd" id="1_r0du0"]
 [ext_resource type="PackedScene" uid="uid://4rdsst6aspvh" path="res://src/ui/character_selection/character_select.tscn" id="2_cm0pq"]
+[ext_resource type="PackedScene" uid="uid://diya1h220nhjx" path="res://src/terrain/arena.tscn" id="2_fos0i"]
 [ext_resource type="PackedScene" uid="uid://dkmy5124wu76r" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
+[ext_resource type="Script" uid="uid://d4ex2xwdjh6bn" path="res://src/terrain/shared_camera.gd" id="5_camera"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
 
-[node name="Ground" type="ColorRect" parent="." unique_id=354157110]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0.22745098, 0.7529412, 1)
+[node name="Arena" parent="." unique_id=459240053 instance=ExtResource("2_fos0i")]
 
-[node name="Ice" type="ColorRect" parent="." unique_id=992317577]
-offset_left = 150.0
-offset_top = 100.0
-offset_right = 1000.0
-offset_bottom = 550.0
-mouse_filter = 2
-color = Color(0, 1, 1, 1)
+[node name="MenuLayer" type="CanvasLayer" parent="." unique_id=65484925]
+layer = 11
 
-[node name="CharacterSelect" parent="." unique_id=733309859 instance=ExtResource("2_cm0pq")]
+[node name="CharacterSelect" parent="MenuLayer" unique_id=733309859 instance=ExtResource("2_cm0pq")]
 
 [node name="Players" type="Node2D" parent="." unique_id=425186647]
 
+[node name="SharedCamera" type="Camera2D" parent="." unique_id=162560985]
+script = ExtResource("5_camera")
+
 [node name="ArenaHUD" parent="." unique_id=516591620 instance=ExtResource("3_hud")]
 
-[node name="SpawnPoints" type="Control" parent="." unique_id=503014248]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=503014248]
+scale = Vector2(1.6, 1.6)
 
 [node name="Spawn1" type="Marker2D" parent="SpawnPoints" unique_id=658700905]
-position = Vector2(350, 225)
+position = Vector2(543.75, 135.625)
 
 [node name="Spawn2" type="Marker2D" parent="SpawnPoints" unique_id=2101652191]
-position = Vector2(350, 425)
+position = Vector2(419.375, 418.125)
 
 [node name="Spawn3" type="Marker2D" parent="SpawnPoints" unique_id=53401844]
-position = Vector2(800, 225)
+position = Vector2(908.75, 318.125)
 
 [node name="Spawn4" type="Marker2D" parent="SpawnPoints" unique_id=1800130287]
-position = Vector2(800, 425)
+position = Vector2(605.625, 465.625)

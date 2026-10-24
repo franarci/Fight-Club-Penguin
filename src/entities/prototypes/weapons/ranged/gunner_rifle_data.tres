@@ -1,0 +1,16 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" uid="uid://bohxhlwhv07ng" path="res://RangedWeaponData.gd" id="2_edpr6"]
+[ext_resource type="Resource" uid="uid://cjll0sdd2kdpo" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="rifle_profile"]
+
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="rifle_projectile"]
+
+[ext_resource type="SpriteFrames" path="res://src/entities/prototypes/weapons/ranged/rifle_frames.tres" id="frames"]
+
+[resource]
+script = ExtResource("2_edpr6")
+sprite_frames = ExtResource("frames")
+projectile_scene = ExtResource("rifle_projectile")
+visual_profile = ExtResource("rifle_profile")
+metadata/_custom_type_script = "uid://bohxhlwhv07ng"
+

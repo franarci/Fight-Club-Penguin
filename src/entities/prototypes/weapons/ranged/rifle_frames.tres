@@ -1,0 +1,41 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cyua8nmd8e03y"]
+
+[ext_resource type="Texture2D" uid="uid://bvg0asrc6q1gi" path="res://assets/textures/weapons/ak47/right.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://ugvl3owub88s" path="res://assets/textures/weapons/ak47/down-right.png" id="1_7uvx6"]
+[ext_resource type="Texture2D" uid="uid://dop2e1430lm56" path="res://assets/textures/weapons/ak47/up.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cj6pdkym6lbvu" path="res://assets/textures/weapons/ak47/left-up.png" id="3"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_7uvx6")
+}],
+"loop": 1,
+"name": &"idle_down_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2")
+}],
+"loop": 1,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3")
+}],
+"loop": 1,
+"name": &"idle_up_left",
+"speed": 5.0
+}]
