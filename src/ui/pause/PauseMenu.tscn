@@ -1,0 +1,132 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/ui/pause/pause_menu.gd" id="1_pause"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.025, 0.05, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 90
+script = ExtResource("1_pause")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MainPanel" type="PanelContainer" parent="Background/CenterContainer"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="Background/CenterContainer/MainPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Content" type="VBoxContainer" parent="Background/CenterContainer/MainPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Background/CenterContainer/MainPanel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Pausa"
+horizontal_alignment = 1
+
+[node name="OwnerLabel" type="Label" parent="Background/CenterContainer/MainPanel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ""
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="Background/CenterContainer/MainPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Continuar"
+
+[node name="OptionsButton" type="Button" parent="Background/CenterContainer/MainPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Opciones"
+disabled = true
+tooltip_text = "Música y efectos: pendientes de integrar"
+
+[node name="ExitButton" type="Button" parent="Background/CenterContainer/MainPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Volver al menú principal"
+
+[node name="Confirmation" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="CenterContainer" type="CenterContainer" parent="Confirmation"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ConfirmPanel" type="PanelContainer" parent="Confirmation/CenterContainer"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="Confirmation/CenterContainer/ConfirmPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Content" type="VBoxContainer" parent="Confirmation/CenterContainer/ConfirmPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Confirmation/CenterContainer/ConfirmPanel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "¿Volver al menú principal?"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="Confirmation/CenterContainer/ConfirmPanel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Se perderá la partida actual."
+horizontal_alignment = 1
+
+[node name="ExitButton" type="Button" parent="Confirmation/CenterContainer/ConfirmPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Volver al menú"
+
+[node name="CancelButton" type="Button" parent="Confirmation/CenterContainer/ConfirmPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Cancelar"

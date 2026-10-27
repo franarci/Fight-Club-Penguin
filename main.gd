@@ -8,6 +8,7 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 @onready var character_select = $CharacterSelect
 @onready var players: Node2D = $Players
 @onready var round_result = $RoundResult
+@onready var pause_menu = $PauseMenu
 
 var round_started := false
 var round_finished := false
@@ -25,6 +26,8 @@ var round_finished := false
 func _ready() -> void:
 	round_result.replay_requested.connect(_replay_round)
 	round_result.menu_requested.connect(_return_to_menu)
+	pause_menu.resume_requested.connect(_resume_round)
+	pause_menu.menu_requested.connect(_return_to_menu)
 	if PlayerManager.replay_requested:
 		PlayerManager.replay_requested = false
 		start_game.call_deferred()
@@ -90,6 +93,7 @@ func _check_round_result() -> void:
 	if survivors.size() > 1:
 		return
 	round_finished = true
+	pause_menu.dismiss()
 	get_tree().paused = true
 	round_result.show_result(survivors[0] if survivors.size() == 1 else -1)
 
@@ -103,8 +107,33 @@ func _replay_round() -> void:
 
 
 func _return_to_menu() -> void:
-	if not round_finished:
+	if not round_finished and not get_tree().paused:
 		return
 	PlayerManager.clear_players()
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://src/ui/home/Home.tscn")
+
+
+func _input(event: InputEvent) -> void:
+	if not round_started or round_finished or get_tree().paused or event.is_echo():
+		return
+	var device := -1
+	if event is InputEventJoypadButton:
+		device = event.device
+		if not MultiplayerInput.device_actions.has(device):
+			return
+	elif not event is InputEventKey:
+		return
+	var player: Dictionary = PlayerManager.get_player_by_device(device)
+	if player.is_empty() or PlayerManager.get_lives(player["slot"]) <= 0:
+		return
+	var action: StringName = MultiplayerInput.get_action_name(device, "pause")
+	if event.is_action_pressed(action):
+		get_viewport().set_input_as_handled()
+		pause_menu.open(device, player["slot"])
+		get_tree().paused = true
+
+
+func _resume_round() -> void:
+	if not round_finished:
+		get_tree().paused = false

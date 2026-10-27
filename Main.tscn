@@ -6,6 +6,8 @@
 
 [ext_resource type="PackedScene" path="res://src/ui/results/RoundResult.tscn" id="4_result"]
 
+[ext_resource type="PackedScene" path="res://src/ui/pause/PauseMenu.tscn" id="5_pause"]
+
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
 
@@ -53,3 +55,5 @@ position = Vector2(800, 225)
 position = Vector2(800, 425)
 
 [node name="RoundResult" parent="." instance=ExtResource("4_result")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("5_pause")]

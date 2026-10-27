@@ -89,6 +89,13 @@ attack={
 ]
 }
 
+pause={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":4194305)
+, Object(InputEventJoypadButton,"device":-1,"button_index":6)
+]
+}
+
 [physics]
 
 3d/physics_engine="Jolt Physics"
