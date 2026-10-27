@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://4rdsst6aspvh" path="res://src/ui/character_selection/character_select.tscn" id="2_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://dkmy5124wu76r" path="res://src/ui/arena/arena_hud.tscn" id="3_hud"]
 
+[ext_resource type="PackedScene" path="res://src/ui/results/RoundResult.tscn" id="4_result"]
+
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
 
@@ -49,3 +51,5 @@ position = Vector2(800, 225)
 
 [node name="Spawn4" type="Marker2D" parent="SpawnPoints" unique_id=1800130287]
 position = Vector2(800, 425)
+
+[node name="RoundResult" parent="." instance=ExtResource("4_result")]

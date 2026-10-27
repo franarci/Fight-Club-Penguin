@@ -7,6 +7,10 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 
 @onready var character_select = $CharacterSelect
 @onready var players: Node2D = $Players
+@onready var round_result = $RoundResult
+
+var round_started := false
+var round_finished := false
 @onready var spawn_1: Marker2D = $SpawnPoints/Spawn1
 @onready var spawn_2: Marker2D = $SpawnPoints/Spawn2
 @onready var spawn_3: Marker2D = $SpawnPoints/Spawn3
@@ -18,13 +22,17 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 	spawn_3,
 	spawn_4
 ]
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Input.get_connected_joypads()
-	#MultiplayerInput._create_actions_for_device(0)
-	#MultiplayerInput._create_actions_for_device(1)
+	round_result.replay_requested.connect(_replay_round)
+	round_result.menu_requested.connect(_return_to_menu)
+	if PlayerManager.replay_requested:
+		PlayerManager.replay_requested = false
+		start_game.call_deferred()
 
 func start_game() -> void:
+	if round_started:
+		return
+	round_started = true
 	character_select.queue_free()
 	PlayerManager.reset_lives()
 	spawn_players()
@@ -63,3 +71,40 @@ func spawn_player(player_data: Dictionary) -> void:
 	penguin.global_position = spawn_points[slot].global_position
 	var player_body := penguin.get_child(0) as Penguin
 	player_body.configure_arena($Ice)
+	player_body.eliminated.connect(_on_player_eliminated)
+
+
+func _on_player_eliminated(_slot: int) -> void:
+	if round_started and not round_finished:
+		_check_round_result.call_deferred()
+
+
+func _check_round_result() -> void:
+	if not round_started or round_finished:
+		return
+	var survivors: Array[int] = []
+	for player in PlayerManager.players:
+		var slot: int = player["slot"]
+		if PlayerManager.get_lives(slot) > 0:
+			survivors.append(slot)
+	if survivors.size() > 1:
+		return
+	round_finished = true
+	get_tree().paused = true
+	round_result.show_result(survivors[0] if survivors.size() == 1 else -1)
+
+
+func _replay_round() -> void:
+	if not round_finished:
+		return
+	PlayerManager.replay_requested = true
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
+func _return_to_menu() -> void:
+	if not round_finished:
+		return
+	PlayerManager.clear_players()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://src/ui/home/Home.tscn")

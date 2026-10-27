@@ -12,6 +12,7 @@ const PLAYER_COLORS := [
 ]
 
 var players: Array[Dictionary] = []
+var replay_requested := false
 
 
 func join_player(device: int, slot: int) -> bool:
@@ -60,6 +61,7 @@ func get_player_color(slot: int) -> Color:
 
 func clear_players() -> void:
 	players.clear()
+	replay_requested = false
 
 
 func reset_lives() -> void:
