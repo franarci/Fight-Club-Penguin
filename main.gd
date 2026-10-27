@@ -9,6 +9,7 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 @onready var players: Node2D = $Players
 @onready var round_result = $RoundResult
 @onready var pause_menu = $PauseMenu
+@onready var gamepad_recovery = $GamepadRecovery
 
 var round_started := false
 var round_finished := false
@@ -28,6 +29,9 @@ func _ready() -> void:
 	round_result.menu_requested.connect(_return_to_menu)
 	pause_menu.resume_requested.connect(_resume_round)
 	pause_menu.menu_requested.connect(_return_to_menu)
+	pause_menu.recovery_slot_requested.connect(gamepad_recovery.choose_slot)
+	gamepad_recovery.recovery_changed.connect(_on_recovery_changed)
+	gamepad_recovery.device_reassigned.connect(_on_device_reassigned)
 	if PlayerManager.replay_requested:
 		PlayerManager.replay_requested = false
 		start_game.call_deferred()
@@ -42,6 +46,7 @@ func start_game() -> void:
 	$ArenaHUD.show_players(PlayerManager.players)
 	for character in players.get_children():
 		$ArenaHUD.bind_penguin(character.get_child(0) as Penguin)
+	gamepad_recovery.begin_round()
 
 
 func spawn_players() -> void:
@@ -93,6 +98,7 @@ func _check_round_result() -> void:
 	if survivors.size() > 1:
 		return
 	round_finished = true
+	gamepad_recovery.stop()
 	pause_menu.dismiss()
 	get_tree().paused = true
 	round_result.show_result(survivors[0] if survivors.size() == 1 else -1)
@@ -135,5 +141,22 @@ func _input(event: InputEvent) -> void:
 
 
 func _resume_round() -> void:
-	if not round_finished:
+	if not round_finished and not gamepad_recovery.has_missing_players():
 		get_tree().paused = false
+
+
+func _on_recovery_changed(missing_slots: Array[int], choices: Dictionary) -> void:
+	if not round_started or round_finished:
+		return
+	if missing_slots.is_empty() and not pause_menu.shared_control:
+		return
+	get_tree().paused = true
+	pause_menu.show_recovery(missing_slots, choices)
+
+
+func _on_device_reassigned(slot: int, device: int) -> void:
+	for character in players.get_children():
+		var penguin := character.get_child(0) as Penguin
+		if penguin.player_index == slot:
+			penguin.rebind_device(device)
+			return

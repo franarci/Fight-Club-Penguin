@@ -8,6 +8,8 @@
 
 [ext_resource type="PackedScene" path="res://src/ui/pause/PauseMenu.tscn" id="5_pause"]
 
+[ext_resource type="Script" path="res://src/input/gamepad_recovery.gd" id="6_recovery"]
+
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
 
@@ -57,3 +59,7 @@ position = Vector2(800, 425)
 [node name="RoundResult" parent="." instance=ExtResource("4_result")]
 
 [node name="PauseMenu" parent="." instance=ExtResource("5_pause")]
+
+[node name="GamepadRecovery" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("6_recovery")

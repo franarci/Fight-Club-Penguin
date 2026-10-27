@@ -106,3 +106,14 @@ func set_ready(device: int, ready: bool) -> void:
 		if player["device"] == device:
 			player["ready"] = ready
 			return
+
+
+func set_device(slot: int, device: int) -> bool:
+	for player in players:
+		if player["slot"] != slot and player["device"] == device:
+			return false
+	for player in players:
+		if player["slot"] == slot:
+			player["device"] = device
+			return true
+	return false

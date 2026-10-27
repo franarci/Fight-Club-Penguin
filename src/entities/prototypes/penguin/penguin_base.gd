@@ -409,3 +409,9 @@ func _on_respawn_timer_timeout() -> void:
 		current_weapon.process_mode = Node.PROCESS_MODE_INHERIT
 	is_dead = false
 	show()
+
+
+func rebind_device(new_device: int) -> void:
+	device = new_device
+	if is_instance_valid(current_weapon):
+		current_weapon.device = new_device
