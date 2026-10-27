@@ -1,13 +1,19 @@
 extends Control
 
+const COUNTDOWN_STEPS := ["3", "2", "1", "¡YA!"]
+const COUNTDOWN_STEP_DURATION := 1.0
+
 const PlayerSelector = preload("res://src/ui/character_selection/PlayerSelection.tscn")
 @onready var players_container: HBoxContainer = $CenterContainer/PlayersContainer
 @onready var countdown: Timer = $Countdown
+@onready var countdown_overlay = $CountdownOverlay
 
 @export var player_selection_scene: PackedScene
 
 var player_slots: Array[PlayerSelection] = []
 var returning_to_menu := false
+var countdown_step := -1
+var game_starting := false
 
 func _ready() -> void:
 	for child in players_container.get_children():
@@ -18,6 +24,8 @@ func _ready() -> void:
 		slot.deactivate()
 
 func _process(_delta: float) -> void:
+	if returning_to_menu or game_starting:
+		return
 	check_keyboard_join()
 	check_gamepads_join()
 
@@ -48,6 +56,7 @@ func activate_player_slot(device: int):
 		return
 
 	if PlayerManager.join_player(device, free_slot):
+		cancel_countdown()
 		player_slots[free_slot].activate(
 			device,
 			free_slot
@@ -71,18 +80,56 @@ func are_all_players_ready() -> bool:
 	return true
 
 func _on_player_ready_changed() -> void:
+	if returning_to_menu or game_starting:
+		return
 	if are_all_players_ready():
 		finish_character_selection()
-	elif !countdown.is_stopped():
-		countdown.stop()
+	else:
+		cancel_countdown()
+
 
 func finish_character_selection() -> void:
-	countdown.start()
-	
-	
-func _on_countdown_timeout() -> void:
-	if returning_to_menu:
+	if countdown_step >= 0 or returning_to_menu or game_starting:
 		return
+	if not are_all_players_ready():
+		return
+	countdown_step = 0
+	show_countdown_step()
+
+
+func show_countdown_step() -> void:
+	countdown_overlay.show_step(COUNTDOWN_STEPS[countdown_step], COUNTDOWN_STEP_DURATION)
+	countdown.start(COUNTDOWN_STEP_DURATION)
+
+
+func cancel_countdown() -> void:
+	countdown.stop()
+	countdown_step = -1
+	countdown_overlay.cancel()
+
+
+func _on_countdown_timeout() -> void:
+	if returning_to_menu or game_starting or countdown_step < 0:
+		return
+	if not are_all_players_ready():
+		cancel_countdown()
+		return
+	countdown_step += 1
+	if countdown_step < COUNTDOWN_STEPS.size():
+		show_countdown_step()
+	else:
+		_start_game_if_ready.call_deferred()
+
+
+func _start_game_if_ready() -> void:
+	if returning_to_menu or game_starting or countdown_step != COUNTDOWN_STEPS.size():
+		return
+	if not are_all_players_ready():
+		cancel_countdown()
+		return
+	game_starting = true
+	cancel_countdown()
+	set_process(false)
 	hide()
 	get_parent().start_game()
 
@@ -121,7 +168,7 @@ func _return_to_menu() -> void:
 	if returning_to_menu:
 		return
 	returning_to_menu = true
-	countdown.stop()
+	cancel_countdown()
 	set_process(false)
 	PlayerManager.clear_players()
 	get_tree().change_scene_to_file.call_deferred("res://src/ui/home/Home.tscn")

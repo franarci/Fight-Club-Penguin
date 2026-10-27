@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://1cuqdu5t240p" path="res://src/ui/character_selection/character_select.gd" id="1_vmxbt"]
 [ext_resource type="PackedScene" uid="uid://btcmdje4rpi20" path="res://src/ui/character_selection/PlayerSelection.tscn" id="2_672rp"]
 
+[ext_resource type="PackedScene" path="res://src/ui/character_selection/CountdownOverlay.tscn" id="3_countdown"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
 bg_color = Color(0.2, 0, 0.76862746, 1)
 
@@ -68,7 +70,10 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_y6myx")
 
 [node name="Countdown" type="Timer" parent="." unique_id=1237104261]
-wait_time = 3.0
+wait_time = 1.0
+one_shot = true
+
+[node name="CountdownOverlay" parent="." instance=ExtResource("3_countdown")]
 
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection4" to="." method="_on_player_ready_changed"]
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection3" to="." method="_on_player_ready_changed"]
