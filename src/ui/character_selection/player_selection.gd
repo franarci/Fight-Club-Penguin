@@ -40,8 +40,8 @@ func activate(p_device: int, player_number: int) -> void:
 	active = true
 	device = p_device
 
-	player_label.text = "JUGADOR %d" % (player_number + 1)
-	select_button.text = "Seleccionar"
+	player_label.text = "PLAYER %d" % (player_number + 1)
+	select_button.text = "Select"
 	var player_color = PlayerManager.get_player_color(player_number)
 	set_player_color(player_color)
 	character_container.visible = true
@@ -62,7 +62,7 @@ func deactivate() -> void:
 	active = false
 	device = -99
 
-	player_label.text = "PRESIONÁ\nSTART"
+	player_label.text = "PRESS\nSTART"
 
 	character_container.visible = false
 	stats_container.hide()
@@ -127,7 +127,7 @@ func confirm_character() -> void:
 
 	prev_button.hide()
 	next_button.hide()
-	select_button.text = "Cambiar"
+	select_button.text = "Change"
 
 	border_blink_timer.stop()
 	set_border_visible(true)
@@ -144,7 +144,7 @@ func cancel_selection() -> void:
 
 		prev_button.show()
 		next_button.show()
-		select_button.text = "Seleccionar"
+		select_button.text = "Select"
 
 		set_border_visible(true)
 		border_blink_timer.start()
@@ -197,6 +197,6 @@ func update_character_preview() -> void:
 	var data: CharacterData = characters[selected_character]
 
 	character.texture = data.Img
-	speed_stat.configure("Velocidad", data.selection_speed)
-	strength_stat.configure("Fuerza", data.selection_strength)
-	resistance_stat.configure("Resistencia", data.selection_resistance)
+	speed_stat.configure("Speed", data.selection_speed)
+	strength_stat.configure("Strength", data.selection_strength)
+	resistance_stat.configure("Resistance", data.selection_resistance)

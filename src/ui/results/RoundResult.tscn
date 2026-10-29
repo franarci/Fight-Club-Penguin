@@ -51,14 +51,14 @@ theme_override_constants/separation = 20
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 horizontal_alignment = 1
-text = "Resultado de la partida"
+text = "Match results"
 
 [node name="ReplayButton" type="Button" parent="Background/CenterContainer/PanelContainer/MarginContainer/Content"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-text = "Jugar de nuevo"
+text = "Play again"
 
 [node name="MenuButton" type="Button" parent="Background/CenterContainer/PanelContainer/MarginContainer/Content"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-text = "Volver al menú principal"
+text = "Main menu"

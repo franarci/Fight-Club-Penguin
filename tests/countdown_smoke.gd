@@ -59,7 +59,7 @@ func run_checks() -> void:
 			observed.append(selector.countdown_overlay.number_label.text)
 	)
 	await create_timer(4.3).timeout
-	assert(observed == ["3", "2", "1", "¡YA!"])
+	assert(observed == ["3", "2", "1", "GO!"])
 	assert(host.starts == 1)
 	assert(not selector.visible)
 	selector._on_countdown_timeout()

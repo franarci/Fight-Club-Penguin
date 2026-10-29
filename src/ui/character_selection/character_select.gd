@@ -1,6 +1,6 @@
 extends Control
 
-const COUNTDOWN_STEPS := ["3", "2", "1", "¡YA!"]
+const COUNTDOWN_STEPS := ["3", "2", "1", "GO!"]
 const COUNTDOWN_STEP_DURATION := 1.0
 
 const PlayerSelector = preload("res://src/ui/character_selection/PlayerSelection.tscn")

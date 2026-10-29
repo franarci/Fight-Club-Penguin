@@ -11,7 +11,7 @@ script = ExtResource("1_7q18k")
 [node name="NameLabel" type="Label" parent="." unique_id=1223249763]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Habilidad"
+text = "Attribute"
 
 [node name="Bar" type="ProgressBar" parent="." unique_id=1030246110]
 custom_minimum_size = Vector2(0, 12)

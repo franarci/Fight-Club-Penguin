@@ -18,7 +18,7 @@ func _ready() -> void:
 
 func show_result(winner_slot: int) -> void:
 	active = true
-	title.text = "¡Empate!" if winner_slot < 0 else "¡Ganó el jugador %d!" % (winner_slot + 1)
+	title.text = "Draw!" if winner_slot < 0 else "Player %d wins!" % (winner_slot + 1)
 	title.add_theme_color_override("font_color", Color.WHITE if winner_slot < 0 else PlayerManager.get_player_color(winner_slot))
 	show()
 	replay_button.grab_focus()

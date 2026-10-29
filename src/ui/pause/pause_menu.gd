@@ -39,7 +39,7 @@ func open(device: int, slot: int) -> void:
 	continue_button.disabled = false
 	_clear_choices()
 	active = true
-	owner_label.text = "Pausa del jugador %d" % (slot + 1)
+	owner_label.text = "Paused by player %d" % (slot + 1)
 	confirmation.hide()
 	show()
 	continue_button.grab_focus()
@@ -55,12 +55,12 @@ func show_recovery(missing_slots: Array[int], choices: Dictionary) -> void:
 	var names := PackedStringArray()
 	for slot in missing_slots:
 		names.append(str(slot + 1))
-	owner_label.text = "Esperando mandos de jugadores: " + ", ".join(names) if not resume_allowed else "Mandos recuperados. Elegí Continuar."
+	owner_label.text = "Waiting for controllers for players: " + ", ".join(names) if not resume_allowed else "Controllers reconnected. Select Resume."
 	device_choices = choices.duplicate(true)
 	if not choices.is_empty():
 		for slot in missing_slots:
 			var button := Button.new()
-			button.text = "Soy el jugador %d" % (slot + 1)
+			button.text = "I'm player %d" % (slot + 1)
 			button.custom_minimum_size.y = 44
 			button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			button.pressed.connect(_choose_slot.bind(slot))

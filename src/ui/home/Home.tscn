@@ -43,16 +43,16 @@ horizontal_alignment = 1
 [node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1724236112]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-text = "Jugar"
+text = "Play"
 
 [node name="ControlButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2075582487]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-text = "Controles"
+text = "Controls"
 
 [node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1568705128]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-text = "Opciones"
+text = "Options"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
