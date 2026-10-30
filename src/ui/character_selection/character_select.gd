@@ -1,5 +1,7 @@
 extends Control
 
+signal selection_finished
+
 const PlayerSelector = preload("res://src/ui/character_selection/PlayerSelection.tscn")
 @onready var players_container: HBoxContainer = $CenterContainer/PlayersContainer
 @onready var countdown: Timer = $Countdown
@@ -81,4 +83,4 @@ func finish_character_selection() -> void:
 	
 func _on_countdown_timeout() -> void:
 	hide()
-	get_parent().start_game()
+	selection_finished.emit()

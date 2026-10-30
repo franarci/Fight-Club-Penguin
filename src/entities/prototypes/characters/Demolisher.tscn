@@ -473,7 +473,9 @@ animations = [{
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_l7qj1")]
 hand_positions = ExtResource("hand_positions")
 starting_weapon_data = ExtResource("standalone_Resource_7ikj4")
+base_speed = 165.0
 dash_speed = 290.0
+dash_duration = 0.25
 p_spriteframes = SubResource("SpriteFrames_etcuu")
 p_autoplay = "idle_right"
 

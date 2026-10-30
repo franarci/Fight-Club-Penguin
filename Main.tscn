@@ -37,3 +37,5 @@ position = Vector2(908.75, 318.125)
 
 [node name="Spawn4" type="Marker2D" parent="SpawnPoints" unique_id=1800130287]
 position = Vector2(605.625, 465.625)
+
+[connection signal="selection_finished" from="MenuLayer/CharacterSelect" to="." method="start_game"]
