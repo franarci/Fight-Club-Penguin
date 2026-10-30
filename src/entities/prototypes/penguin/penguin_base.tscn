@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
 [ext_resource type="Script" path="res://src/entities/prototypes/penguin/feet_marker.gd" id="6_feet"]
 
+[ext_resource type="Script" path="res://src/entities/prototypes/penguin/damage_feedback.gd" id="7_damage_feedback"]
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
 radius = 4.0
 height = 14.0
@@ -71,6 +73,9 @@ script = ExtResource("4_3sbks")
 
 [node name="Dash" type="Node" parent="MovementStateMachine" unique_id=763498626]
 script = ExtResource("5_ypmey")
+
+[node name="DamageFeedback" type="Node" parent="."]
+script = ExtResource("7_damage_feedback")
 
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]
 [connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]

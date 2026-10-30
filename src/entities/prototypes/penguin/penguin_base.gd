@@ -52,6 +52,7 @@ var protection_left := 0.0
 
 
 @onready var body: AnimatedSprite2D = $Body
+@onready var damage_feedback: DamageFeedback = $DamageFeedback
 @onready var feet_marker: Marker2D = $FeetMarker
 @onready var movement_state_machine: Node = $MovementStateMachine
 @onready var player_indicator: Node2D = $PlayerIndicator
@@ -547,6 +548,7 @@ func apply_equipment_color(color: Color) -> void:
 	if equipment_palette == null:
 		return
 	player_palette_instance = equipment_palette.duplicate() as ShaderMaterial
+	player_palette_instance.set_shader_parameter("damage_flash", 0.0)
 	player_palette_instance.set_shader_parameter("player_color", color)
 	player_palette_instance.set_shader_parameter("preserve_original", not Engine.is_editor_hint() and player_index == 0)
 	body.material = player_palette_instance
@@ -599,12 +601,16 @@ func receive_push(direction: Vector2, strength: float = -1.0) -> void:
 
 
 # Shared entry point for projectile, melee, and future environmental damage.
-func receive_damage(amount: float, source: Node2D = null, _direction: Vector2 = Vector2.ZERO) -> bool:
+func receive_damage(amount: float, source: Node2D = null, direction: Vector2 = Vector2.ZERO) -> bool:
 	if is_dead or protection_left > 0.0 or amount <= 0.0 or source == self:
 		return false
 	set_health(current_health - amount)
 	if current_health <= 0.0:
 		lose_life()
+	else:
+		if direction.is_zero_approx() and is_instance_valid(source):
+			direction = global_position - source.global_position
+		damage_feedback.play(direction)
 	return true
 
 
@@ -618,6 +624,7 @@ func lose_life() -> void:
 		return
 	# Set the guard before signals/overlaps can cause a second death this frame.
 	is_dead = true
+	damage_feedback.reset()
 	set_health(0.0)
 	PlayerManager.lose_life(player_index)
 	velocity = Vector2.ZERO
@@ -641,6 +648,7 @@ func lose_life() -> void:
 func _on_respawn_timer_timeout() -> void:
 	if is_eliminated:
 		return
+	damage_feedback.reset()
 	weapon_attack_ready_at = 0
 	global_position = respawn_position
 	velocity = Vector2.ZERO

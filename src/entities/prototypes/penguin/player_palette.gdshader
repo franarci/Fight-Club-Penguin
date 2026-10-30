@@ -1,5 +1,6 @@
 shader_type canvas_item;
 uniform bool preserve_original = false;
+uniform float damage_flash : hint_range(0.0, 1.0) = 0.0;
 
 uniform vec4 source_shadow : source_color = vec4(0.188, 0.231, 0.106, 1.0);
 uniform vec4 source_mid : source_color = vec4(0.294, 0.361, 0.157, 1.0);
@@ -49,5 +50,6 @@ void fragment() {
 			pixel.rgb = mix(player_color.rgb, highlight, blend);
 		}
 	}
+	pixel.rgb = mix(pixel.rgb, vec3(1.0), damage_flash);
 	COLOR = pixel * sprite_modulate;
 }
