@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="base"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/hammer_data.tres" id="data"]
+[ext_resource type="SpriteFrames" path="res://src/entities/prototypes/weapons/melee/hammer_frames.tres" id="frames"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/hammer_visual_profile.tres" id="poses"]
+
+[node name="Hammer" instance=ExtResource("base")]
+scale = Vector2(0.1, 0.1)
+default_weapon_data = ExtResource("data")
+preview_weapon_data = ExtResource("data")
+visual_profile = ExtResource("poses")
+
+[node name="Body" parent="." index="0"]
+position = Vector2(240, 40)
+sprite_frames = ExtResource("frames")
+animation = &"idle_right"
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+position = Vector2(240, 140)

@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/RangedWeapon.tscn" id="base"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/gunner_rifle_data.tres" id="data"]
+
+[node name="Rifle" instance=ExtResource("base")]
+default_weapon_data = ExtResource("data")
+
+[node name="Body" parent="." index="0"]
+animation = &"idle_right"

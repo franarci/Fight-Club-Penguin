@@ -2,8 +2,10 @@
 [ext_resource type="Script" path="res://RangedWeaponData.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://src/entities/prototypes/weapons/ranged/rifle_frames.tres" id="2"]
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="3"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/rifle_visual_profile.tres" id="4"]
 [resource]
 script = ExtResource("1")
+visual_profile = ExtResource("4")
 weapon_name = "AutomaticRifle"
 sprite_frames = ExtResource("2")
 automatic = true

@@ -2,35 +2,49 @@
 
 [ext_resource type="Script" uid="uid://bufk34mbwuh24" path="res://src/ui/character_selection/player_selection.gd" id="1_jce1r"]
 [ext_resource type="Script" uid="uid://dqa0d1iiigmpy" path="res://src/ui/character_selection/CharacterData.gd" id="2_7cru3"]
-[ext_resource type="Texture2D" uid="uid://brfgmrvkl6c7o" path="res://assets/textures/entities/gunner/sprite-frame-1 - copia.png" id="3_3weqg"]
-[ext_resource type="Texture2D" uid="uid://lijg58o1ckpu" path="res://assets/textures/entities/demolisher/sprite-frame-1.png" id="4_yla77"]
-[ext_resource type="Texture2D" uid="uid://c6tsswhvopvc7" path="res://assets/textures/entities/explorer/sprite-frame-1.png" id="5_kktns"]
-[ext_resource type="Texture2D" uid="uid://cvrnxaolmqttl" path="res://assets/textures/entities/hunter/sprite-frame-1.png" id="6_tolr6"]
+[ext_resource type="Texture2D" path="res://assets/textures/character_select/gunner.webp" id="3_3weqg"]
+[ext_resource type="Texture2D" path="res://assets/textures/character_select/demolisher-transparent.png" id="4_yla77"]
+[ext_resource type="Texture2D" path="res://assets/textures/character_select/explorer.webp" id="5_kktns"]
+[ext_resource type="Texture2D" path="res://assets/textures/character_select/hunter.webp" id="6_tolr6"]
 [ext_resource type="PackedScene" uid="uid://cs3ta2ahnlymh" path="res://src/ui/character_selection/StatRow.tscn" id="7_kktns"]
+
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Gunner.tscn" id="8_gunner_profile"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Demolisher.tscn" id="9_demolisher_profile"]
+
+[ext_resource type="Shader" path="res://src/ui/character_selection/portrait.gdshader" id="10_portrait"]
+
+[sub_resource type="ShaderMaterial" id="PortraitMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("10_portrait")
+shader_parameter/saturation = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kktns"]
 
 [sub_resource type="Resource" id="Resource_672rp"]
 script = ExtResource("2_7cru3")
 key = "Gunner"
+character_scene = ExtResource("8_gunner_profile")
 Img = ExtResource("3_3weqg")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
 [sub_resource type="Resource" id="Resource_h2xqw"]
 script = ExtResource("2_7cru3")
 key = "Demolisher"
+character_scene = ExtResource("9_demolisher_profile")
 Img = ExtResource("4_yla77")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
 [sub_resource type="Resource" id="Resource_5aohr"]
 script = ExtResource("2_7cru3")
 key = "Explorer"
+selectable = false
 Img = ExtResource("5_kktns")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
 [sub_resource type="Resource" id="Resource_yla77"]
 script = ExtResource("2_7cru3")
 key = "Hunter"
+selectable = false
 Img = ExtResource("6_tolr6")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
@@ -69,6 +83,7 @@ layout_mode = 2
 [node name="Character" type="TextureRect" parent="VBoxContainer/CharacterCenter" unique_id=713989201]
 custom_minimum_size = Vector2(180, 160)
 layout_mode = 2
+material = SubResource("PortraitMaterial")
 expand_mode = 1
 stretch_mode = 5
 
@@ -96,14 +111,17 @@ alignment = 1
 
 [node name="Prev" type="Button" parent="VBoxContainer/Navigation" unique_id=949271258]
 layout_mode = 2
+focus_mode = 0
 text = "←"
 
 [node name="Select" type="Button" parent="VBoxContainer/Navigation" unique_id=1158604813]
 layout_mode = 2
+focus_mode = 0
 text = "Select"
 
 [node name="Next" type="Button" parent="VBoxContainer/Navigation" unique_id=701563577]
 layout_mode = 2
+focus_mode = 0
 text = "→"
 
 [node name="BorderBlinkTimer" type="Timer" parent="." unique_id=511547008]

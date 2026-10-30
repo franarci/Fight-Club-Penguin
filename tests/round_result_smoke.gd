@@ -62,7 +62,10 @@ func run_checks() -> void:
 	await settle()
 	main = current_scene
 	assert(main.get_instance_id() != previous_id)
-	assert(not paused and main.round_started and not main.round_finished)
+	assert(paused and main.round_started and not main.round_finished)
+	assert(main.pre_match.active and main.pre_match.countdown_step == 0)
+	assert(main.pre_match.countdown_overlay.number_label.text == "3")
+	assert(not main.pre_match.background.visible)
 	assert(not main.has_node("PreviousRoundObject"))
 	assert(manager.players.size() == 2)
 	for character in main.players.get_children():
@@ -72,6 +75,19 @@ func run_checks() -> void:
 		assert(not penguin.is_dead and not penguin.is_being_pushed)
 		assert(penguin.velocity == Vector2.ZERO)
 		assert(penguin.global_position.is_equal_approx(penguin.respawn_position))
+	var observed: Array[String] = ["3"]
+	main.pre_match.countdown.timeout.connect(func():
+		if main.pre_match.countdown_step >= 0:
+			observed.append(main.pre_match.countdown_overlay.number_label.text)
+	)
+	await create_timer(0.12).timeout
+	assert(paused)
+	for character in main.players.get_children():
+		var penguin = character.get_child(0)
+		assert(penguin.global_position.is_equal_approx(penguin.respawn_position))
+	await create_timer(4.2).timeout
+	assert(observed == ["3", "2", "1", "GO!"])
+	assert(not paused and not main.pre_match.active)
 	for character in main.players.get_children():
 		var penguin = character.get_child(0)
 		manager.set_lives(penguin.player_index, 1)
@@ -87,5 +103,5 @@ func run_checks() -> void:
 	assert(manager.players.is_empty() and not manager.replay_requested)
 	assert(current_scene.name == "Home")
 	current_scene.free()
-	print("PASS: damage, falls, respawn, protection, elimination, winner, draw, replay reset and return to Home")
+	print("PASS: damage, falls, respawn, protection, elimination, winner, draw, replay reset/countdown/freeze and return to Home")
 	quit()

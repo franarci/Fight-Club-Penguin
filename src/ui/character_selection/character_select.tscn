@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://1cuqdu5t240p" path="res://src/ui/character_selection/character_select.gd" id="1_vmxbt"]
 [ext_resource type="PackedScene" uid="uid://btcmdje4rpi20" path="res://src/ui/character_selection/PlayerSelection.tscn" id="2_672rp"]
 
-[ext_resource type="PackedScene" path="res://src/ui/character_selection/CountdownOverlay.tscn" id="3_countdown"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
 bg_color = Color(0.2, 0, 0.76862746, 1)
@@ -19,6 +18,21 @@ bg_color = Color(0.612107, 0.4616382, 0.2913878, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6myx"]
 bg_color = Color(0.18039216, 0.8, 0.44313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="FooterStyle"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="ReadyStyle"]
+bg_color = Color(0.025, 0.05, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.9, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
 
 [node name="CharacterSelect" type="Control" unique_id=733309859]
 layout_mode = 3
@@ -44,6 +58,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 16.0
+offset_bottom = -64.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -69,14 +85,108 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_xui14")
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_y6myx")
 
-[node name="Countdown" type="Timer" parent="." unique_id=1237104261]
-wait_time = 1.0
-one_shot = true
+[node name="Footer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("FooterStyle")
 
-[node name="CountdownOverlay" parent="." instance=ExtResource("3_countdown")]
+[node name="Margin" type="MarginContainer" parent="Footer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Actions" type="HBoxContainer" parent="Footer/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 28
+alignment = 1
+
+[node name="ReadyDialog" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ReadyDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="Center" type="CenterContainer" parent="ReadyDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="ReadyDialog/Center"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("ReadyStyle")
+
+[node name="Margin" type="MarginContainer" parent="ReadyDialog/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="ReadyDialog/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="ReadyDialog/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Ready to play?"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="ReadyDialog/Center/Panel/Margin/Content"]
+layout_mode = 2
+text = "Everyone has chosen a character.
+Start the match or keep choosing."
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="ReadyDialog/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Accept" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Let's play"
+
+[node name="Cancel" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Buttons"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Keep choosing"
+
+[node name="Prompts" type="HBoxContainer" parent="ReadyDialog/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
 
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection4" to="." method="_on_player_ready_changed"]
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection3" to="." method="_on_player_ready_changed"]
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection" to="." method="_on_player_ready_changed"]
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection2" to="." method="_on_player_ready_changed"]
-[connection signal="timeout" from="Countdown" to="." method="_on_countdown_timeout"]

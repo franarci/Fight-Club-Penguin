@@ -23,6 +23,7 @@ var is_ready := false
 
 
 signal ready_changed
+signal preview_changed
 var active := false
 var border_style: StyleBoxFlat
 var player_border_color: Color
@@ -40,7 +41,6 @@ func activate(p_device: int, player_number: int) -> void:
 	active = true
 	device = p_device
 
-	player_label.text = "PLAYER %d" % (player_number + 1)
 	select_button.text = "Select"
 	var player_color = PlayerManager.get_player_color(player_number)
 	set_player_color(player_color)
@@ -114,7 +114,7 @@ func _process(_delta: float) -> void:
 		cancel_selection()
 		
 func confirm_character() -> void:
-	if not active or is_ready:
+	if not active or is_ready or not characters[selected_character].selectable:
 		return
 
 	is_ready = true
@@ -196,7 +196,19 @@ func _on_select_pressed() -> void:
 func update_character_preview() -> void:
 	var data: CharacterData = characters[selected_character]
 
+	player_label.text = data.key
 	character.texture = data.Img
-	speed_stat.configure("Speed", data.selection_speed)
-	strength_stat.configure("Strength", data.selection_strength)
-	resistance_stat.configure("Resistance", data.selection_resistance)
+	var portrait_material := character.material as ShaderMaterial
+	portrait_material.set_shader_parameter("saturation", 1.0 if data.selectable else 0.0)
+	select_button.disabled = not data.selectable
+	select_button.text = "Change" if is_ready else ("Select" if data.selectable else "Unavailable")
+	var profile := data.get_selection_profile()
+	speed_stat.configure("Speed", profile["speed"])
+	strength_stat.configure("Strength", profile["strength"])
+	resistance_stat.configure("Resistance", profile["resistance"])
+	var provisional := data.character_scene == null
+	speed_stat.tooltip_text = "Provisional profile" if provisional else "Movement speed, excluding dash"
+	strength_stat.tooltip_text = "Provisional profile" if provisional else "Damage per hit with the starting weapon"
+	resistance_stat.tooltip_text = "Provisional profile" if provisional else "Resistance to knockback"
+
+	preview_changed.emit()

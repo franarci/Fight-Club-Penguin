@@ -118,7 +118,11 @@ func run_checks() -> void:
 	assert(not next_main.pause_menu.active and not next_main.pause_menu.visible)
 	next_main.round_result._on_replay_pressed()
 	await settle()
-	assert(not paused and current_scene.round_started)
+	assert(paused and current_scene.round_started)
+	assert(current_scene.pre_match.countdown_step == 0)
+	for i in range(4):
+		current_scene.pre_match._on_countdown_timeout()
+	assert(not paused)
 	assert(not current_scene.pause_menu.active)
 	current_scene.free()
 	manager.clear_players()

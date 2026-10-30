@@ -1,0 +1,14 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://src/entities/prototypes/penguin/hand_positions.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+right = Vector2(3.6249999, 12.1700000)
+down_right = Vector2(-0.7050001, 12.4000000)
+down = Vector2(-8.3350001, 11.4000000)
+down_left = Vector2(-4.4000001, 12.4000000)
+left = Vector2(-4.4000001, 11.6000000)
+up_left = Vector2(-1.7200001, 8.6500000)
+up = Vector2(4.3849999, 10.3750000)
+up_right = Vector2(6.5999999, 7.4000000)

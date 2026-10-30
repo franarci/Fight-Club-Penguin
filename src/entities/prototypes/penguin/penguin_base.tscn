@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://cypcexwkq7j7u" path="res://src/entities/prototypes/penguin/idle.gd" id="3_heltl"]
 [ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
 [ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
+[ext_resource type="Script" path="res://src/entities/prototypes/penguin/feet_marker.gd" id="6_feet"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
 radius = 4.0
@@ -22,6 +23,11 @@ position = Vector2(0, 10)
 shape = SubResource("CapsuleShape2D_3sbks")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
+
+[node name="FeetMarker" type="Marker2D" parent="."]
+position = Vector2(0, 17)
+z_index = 10
+script = ExtResource("6_feet")
 
 [node name="PlayerIndicator" type="Node2D" parent="." unique_id=287483043]
 position = Vector2(0, -8.35)

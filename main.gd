@@ -5,11 +5,12 @@ const HUNTER = preload("uid://sej7wre0em41")
 const DEMOLISHER = preload("uid://bplqlfsdkfml5")
 const EXPLORER = preload("uid://8d2uraygf2eo")
 
-@onready var character_select = $CharacterSelect
+@onready var character_select = $MenuLayer/CharacterSelect
 @onready var players: Node2D = $Players
 @onready var round_result = $RoundResult
 @onready var pause_menu = $PauseMenu
 @onready var gamepad_recovery = $GamepadRecovery
+@onready var pre_match = $PreMatch
 
 var round_started := false
 var round_finished := false
@@ -25,6 +26,8 @@ var round_finished := false
 	spawn_4
 ]
 func _ready() -> void:
+	$SharedCamera.show_arena($Arena.world_size)
+	pre_match.completed.connect(_on_tutorial_completed)
 	round_result.replay_requested.connect(_replay_round)
 	round_result.menu_requested.connect(_return_to_menu)
 	pause_menu.resume_requested.connect(_resume_round)
@@ -34,7 +37,20 @@ func _ready() -> void:
 	gamepad_recovery.device_reassigned.connect(_on_device_reassigned)
 	if PlayerManager.replay_requested:
 		PlayerManager.replay_requested = false
-		start_game.call_deferred()
+		prepare_match.call_deferred(true)
+
+func prepare_match(skip_tutorial: bool = false) -> void:
+	if round_started:
+		return
+	start_game()
+	get_tree().paused = true
+	pre_match.open(skip_tutorial)
+
+
+func _on_tutorial_completed() -> void:
+	if not round_finished and not gamepad_recovery.has_missing_players():
+		get_tree().paused = false
+
 
 func start_game() -> void:
 	if round_started:
@@ -43,6 +59,7 @@ func start_game() -> void:
 	character_select.queue_free()
 	PlayerManager.reset_lives()
 	spawn_players()
+	$SharedCamera.follow_players(players)
 	$ArenaHUD.show_players(PlayerManager.players)
 	for character in players.get_children():
 		$ArenaHUD.bind_penguin(character.get_child(0) as Penguin)
@@ -78,7 +95,7 @@ func spawn_player(player_data: Dictionary) -> void:
 
 	penguin.global_position = spawn_points[slot].global_position
 	var player_body := penguin.get_child(0) as Penguin
-	player_body.configure_arena($Ice)
+	player_body.configure_arena($Arena/IceArea/Ground)
 	player_body.eliminated.connect(_on_player_eliminated)
 
 
@@ -142,7 +159,10 @@ func _input(event: InputEvent) -> void:
 
 func _resume_round() -> void:
 	if not round_finished and not gamepad_recovery.has_missing_players():
-		get_tree().paused = false
+		if pre_match.active:
+			pre_match.resume()
+		else:
+			get_tree().paused = false
 
 
 func _on_recovery_changed(missing_slots: Array[int], choices: Dictionary) -> void:
@@ -150,6 +170,7 @@ func _on_recovery_changed(missing_slots: Array[int], choices: Dictionary) -> voi
 		return
 	if missing_slots.is_empty() and not pause_menu.shared_control:
 		return
+	pre_match.suspend()
 	get_tree().paused = true
 	pause_menu.show_recovery(missing_slots, choices)
 
