@@ -8,6 +8,7 @@ func _initialize() -> void:
 func run_checks() -> void:
 	root.size = Vector2i(1152, 648)
 	var manager = root.get_node("PlayerManager")
+	var music = root.get_node("Music")
 	var inputs = root.get_node("MultiplayerInput")
 	inputs.device_actions[0] = {}
 	for action in inputs.core_actions:
@@ -16,6 +17,7 @@ func run_checks() -> void:
 	var main = load("res://Main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
+	assert(music.active_player == music.menu_player)
 	var selector = main.character_select
 	selector.set_process(false)
 	for slot in selector.player_slots:
@@ -29,11 +31,13 @@ func run_checks() -> void:
 	assert(selector.ready_dialog.visible)
 	selector.finish_character_selection()
 	assert(paused and main.pre_match.active)
+	assert(music.active_player == music.menu_player)
 	main.pre_match.advance()
 	main.pre_match.advance()
 	for i in range(4):
 		main.pre_match._on_countdown_timeout()
 	assert(not paused and not main.pre_match.active)
+	assert(music.active_player == music.combat_player)
 	var gunner = main.players.get_child(0).get_child(0)
 	var demolisher = main.players.get_child(1).get_child(0)
 	assert(gunner.current_weapon.get_script().get_global_name() == "RangedWeapon")
@@ -56,9 +60,11 @@ func run_checks() -> void:
 	main = current_scene
 	assert(main.round_started and paused and main.players.get_child_count() == 2)
 	assert(main.pre_match.countdown_step == 0 and not main.pre_match.background.visible)
+	assert(music.active_player == music.menu_player)
 	for i in range(4):
 		main.pre_match._on_countdown_timeout()
 	assert(not paused)
+	assert(music.active_player == music.combat_player)
 	assert(manager.get_lives(0) == 3 and manager.get_lives(1) == 3)
 	assert(main.players.get_child(1).get_child(0).current_weapon.get_script().get_global_name() == "MeleeWeapon")
 	main.pause_menu.open(-1, 0)
@@ -67,6 +73,7 @@ func run_checks() -> void:
 	await process_frame
 	await process_frame
 	assert(current_scene.name == "Home" and manager.players.is_empty() and not paused)
+	assert(music.active_player == music.menu_player)
 	current_scene.free()
 	print("PASS: integrated ready/tutorial/countdown, rifle and hammer, shared camera, polygon bounds, elimination, winner, replay and return to Home")
 	quit()

@@ -5,10 +5,29 @@ static func device_family(device: int) -> String:
 	if device < 0:
 		return "Keyboard"
 	if Input.get_connected_joypads().has(device):
-		var name := Input.get_joy_name(device).to_lower()
-		if "sony" in name or "playstation" in name or "dualshock" in name or "dualsense" in name or "ps4" in name or "ps5" in name:
-			return "PlayStation"
+		return family_from_name(Input.get_joy_name(device))
 	return "Xbox / Gamepad"
+
+
+static func family_from_name(device_name: String) -> String:
+	var name := device_name.to_lower()
+	for keyword in ["sony", "playstation", "dualshock", "dualsense", "ps4", "ps5"]:
+		if keyword in name:
+			return "PlayStation"
+	var vendor_pattern := RegEx.new()
+	vendor_pattern.compile(r"(?:\bvendor:\s*0*54c\b|^0*54c-[0-9a-f]+-)")
+	if vendor_pattern.search(name) != null:
+		return "PlayStation"
+	return "Xbox / Gamepad"
+
+
+static func is_ps5_name(device_name: String) -> bool:
+	var name := device_name.to_lower()
+	if "dualsense" in name or "ps5" in name:
+		return true
+	var product_pattern := RegEx.new()
+	product_pattern.compile(r"(?:\bvendor:\s*0*54c\s+product:\s*0*(?:ce6|df2|e5f)\b|^0*54c-0*(?:ce6|df2|e5f)-)")
+	return product_pattern.search(name) != null
 
 
 static func confirmation_action(device: int) -> StringName:
@@ -69,8 +88,7 @@ static func icon_paths(device: int, action: StringName) -> PackedStringArray:
 		elif device >= 0 and event is InputEventJoypadButton:
 			var ps5 := false
 			if Input.get_connected_joypads().has(device):
-				var name := Input.get_joy_name(device).to_lower()
-				ps5 = "dualsense" in name or "ps5" in name
+				ps5 = is_ps5_name(Input.get_joy_name(device))
 			path = joypad_icon(device_family(device), event.button_index, ps5)
 		if not path.is_empty() and ResourceLoader.exists(path) and not paths.has(path):
 			paths.append(path)

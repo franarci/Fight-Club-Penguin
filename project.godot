@@ -18,6 +18,11 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 
 MultiplayerInput="*uid://bcyq56cdp86j4"
 PlayerManager="*uid://dbcjp5k4psojg"
+Music="*res://src/audio/music.gd"
+
+[audio]
+
+default_bus_layout="res://default_bus_layout.tres"
 
 [display]
 

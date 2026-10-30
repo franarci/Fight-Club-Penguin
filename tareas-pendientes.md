@@ -338,3 +338,36 @@ Actualización de imágenes del 30/10/2026: recibidas y conectadas las cuatro il
 - [x] Quitar el fondo negro del retrato de Demolisher. El selector usa demolisher-transparent.png y se conserva el WebP original. Transparencia comprobada con Godot.
 
 - [x] Verificar nombres, bloqueo de personajes no disponibles, restauración del color al navegar y materiales independientes por jugador con `tests/character_availability_smoke.gd`. Regresión de perfiles, selector, tutorial/countdown y partida integrada aprobada.
+
+## Feedback al recibir daño
+
+- [ ] Mostrar un efecto visible en el personaje cuando reciba daño efectivo.
+    - [ ] Definir la presentación visual. Propuesta pendiente: destello breve blanco o rojizo y pequeña inclinación del sprite, con recuperación rápida.
+    - [ ] Aplicar la reacción únicamente a la representación visual; conservar la forma de colisión y la dirección física del personaje.
+    - [ ] Mantener los colores identificadores de jugadores al terminar el efecto y distinguirlo de la protección temporal al reaparecer.
+    - [ ] Resolver impactos consecutivos sin acumular inclinaciones ni dejar el personaje teñido.
+    - [ ] Probar legibilidad durante combate y en proyector; evitar depender exclusivamente del rojo o de un parpadeo repetido.
+    - [ ] Complementar más adelante con un efecto de sonido de impacto en el bus de FX.
+
+## Música original — primera propuesta
+
+Rama: `feature/music`. El feedback visual al recibir daño queda para otra rama después de revisar la música.
+
+- [x] Componer un bucle para Home y selección: drum and bass chiptune divertido, pianito y sintetizador minimalista.
+- [x] Componer un bucle de combate más intenso con batería marcada, bajo pesado y sintetizador de fondo, compartiendo el motivo del menú.
+- [x] Guardar WAV y generador reproducible sin samples externos en el proyecto.
+- [x] Integrar reproducción persistente entre menús y cambio a combate al terminar el contador, también en revancha.
+- [x] Separar buses Music y FX, manteniendo Options oculto hasta implementar su configuración real.
+- [x] Verificar con Godot 4.7.2 la importación WAV, bucles PCM estéreo completos, buses separados, transiciones interrumpidas y reproducción durante pausa. Pruebas de integración y tutorial/contador aprobadas. Archivos sin saturación digital y continuidad de muestras en el límite del bucle comprobada; falta aprobación auditiva del usuario.
+- [ ] Escuchar y aprobar las dos pistas con el usuario; ajustar timbres, ritmo, mezcla o melodía según su devolución.
+
+- [x] Segunda propuesta musical: conservar BPM y patrones de batería, reforzar drones oscuros y fríos, bajo de combate y acentos metálicos; reducir el brillo melódico. Pendiente de escucha del usuario.
+
+## Identificación de mandos en exportación web
+
+- [x] El usuario confirmó que los botones funcionan y el problema es únicamente visual.
+- [ ] Reproducir con mando físico la exportación publicada; confirmar navegador, sistema operativo y nombre/ID reportado.
+- [x] Ampliar la detección visual de PlayStation para nombres y vendor ID 054c en formatos web de Chromium y Firefox/Safari, incluidos ceros omitidos. Reconocer PS5 por nombre o IDs de producto conocidos. Conservar el mapeo de acciones.
+- [x] Probar clasificadores, iconos, falsos positivos, selector y tutorial/contador con Godot 4.7.2. No implica validación con mandos físicos en navegador.
+- [ ] Si el navegador entrega una identidad genérica, ofrecer selección manual de iconos por jugador sin modificar el mapeo de acciones.
+- [ ] Probar dos mandos de marcas distintas y reconexión en la versión publicada. No asumir que el GUID web identifica un dispositivo físico; puede ser simplemente standard.

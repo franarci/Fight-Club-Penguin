@@ -5,6 +5,7 @@ extends Control
 
 
 func _ready() -> void:
+	Music.play_menu()
 	play_button.grab_focus()
 
 

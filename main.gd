@@ -26,6 +26,7 @@ var round_finished := false
 	spawn_4
 ]
 func _ready() -> void:
+	Music.play_menu()
 	$SharedCamera.show_arena($Arena.world_size)
 	pre_match.completed.connect(_on_tutorial_completed)
 	round_result.replay_requested.connect(_replay_round)
@@ -49,6 +50,7 @@ func prepare_match(skip_tutorial: bool = false) -> void:
 
 func _on_tutorial_completed() -> void:
 	if not round_finished and not gamepad_recovery.has_missing_players():
+		Music.play_combat()
 		get_tree().paused = false
 
 
