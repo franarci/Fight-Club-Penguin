@@ -62,6 +62,7 @@ var protection_left := 0.0
 @onready var arm: Sprite2D = get_node_or_null("Arm") as Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var dash_audio: AudioStreamPlayer = $DashAudio
+@onready var dash_push_audio: AudioStreamPlayer = $DashPushAudio
 @onready var death_audio: AudioStreamPlayer = $DeathAudio
 @onready var standing_weapon_position: Vector2 = $Weapon.position
 @onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
@@ -230,6 +231,10 @@ func configure_arena(boundary: CollisionPolygon2D) -> void:
 
 func play_dash_sound() -> void:
 	dash_audio.play()
+
+
+func play_dash_push_sound() -> void:
+	dash_push_audio.play()
 
 
 func check_arena_bounds() -> void:
@@ -598,6 +603,7 @@ func check_dash_impact() -> void:
 			continue
 
 		other.receive_push(dash_direction)
+		play_dash_push_sound()
 
 		velocity = Vector2.ZERO
 		movement_state_machine.change_state(&"Idle")
