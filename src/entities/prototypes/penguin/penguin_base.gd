@@ -61,10 +61,19 @@ var protection_left := 0.0
 @onready var weapon_socket: Node2D = $Weapon
 @onready var arm: Sprite2D = get_node_or_null("Arm") as Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var dash_audio: AudioStreamPlayer = $DashAudio
+@onready var death_audio: AudioStreamPlayer = $DeathAudio
 @onready var standing_weapon_position: Vector2 = $Weapon.position
 @onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
 
 var current_weapon: WeaponBase
+@export var death_sprite_sheet: Texture2D
+var death_animation_active := false
+var death_sprite_frames_active := false
+var death_visibility_saved := false
+var arm_was_visible_before_death := false
+var weapon_was_visible_before_death := true
+var indicator_was_visible_before_death := true
 @export_category("Weapon Attachment")
 ## Directional hand positions in Weapon socket coordinates. Shared by all equipped weapons.
 @export var hand_positions: Resource
@@ -204,7 +213,7 @@ func update_editor_preview() -> void:
 	body.stop()
 
 @export_category("Push")
-@export var push_speed: float = 500.0
+@export var push_speed: float = 375.0
 @export var push_friction: float = 600.0
 
 var is_being_pushed := false
@@ -217,6 +226,10 @@ func configure_arena(boundary: CollisionPolygon2D) -> void:
 	ice_boundary = boundary
 	respawn_position = global_position
 	arena_configured = true
+
+
+func play_dash_sound() -> void:
+	dash_audio.play()
 
 
 func check_arena_bounds() -> void:
@@ -235,6 +248,8 @@ func _ready() -> void:
 		update_editor_preview()
 		update_equipment_preview()
 		return
+	if not body.animation_finished.is_connected(_on_body_animation_finished):
+		body.animation_finished.connect(_on_body_animation_finished)
 	set_health(max_health)
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
@@ -605,8 +620,9 @@ func receive_damage(amount: float, source: Node2D = null, direction: Vector2 = V
 	if is_dead or protection_left > 0.0 or amount <= 0.0 or source == self:
 		return false
 	set_health(current_health - amount)
+	damage_feedback.play_hit_sound()
 	if current_health <= 0.0:
-		lose_life()
+		lose_life(true)
 	else:
 		if direction.is_zero_approx() and is_instance_valid(source):
 			direction = global_position - source.global_position
@@ -619,7 +635,7 @@ func set_health(value: float) -> void:
 	health_changed.emit(current_health, max_health)
 
 
-func lose_life() -> void:
+func lose_life(from_damage: bool = false) -> void:
 	if is_dead:
 		return
 	# Set the guard before signals/overlaps can cause a second death this frame.
@@ -637,7 +653,21 @@ func lose_life() -> void:
 			current_weapon.cancel_attack()
 		current_weapon.can_attack = false
 		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
-	hide()
+	if from_damage and death_sprite_sheet != null:
+		death_visibility_saved = true
+		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
+		weapon_was_visible_before_death = weapon_socket.visible
+		indicator_was_visible_before_death = player_indicator.visible
+		weapon_socket.hide()
+		player_indicator.hide()
+		if is_instance_valid(arm):
+			arm.hide()
+		body.visible = true
+		death_animation_active = true
+		play_death_animation()
+		death_audio.play()
+	else:
+		hide()
 	if PlayerManager.get_lives(player_index) <= 0:
 		is_eliminated = true
 		eliminated.emit(player_index)
@@ -648,6 +678,18 @@ func lose_life() -> void:
 func _on_respawn_timer_timeout() -> void:
 	if is_eliminated:
 		return
+	death_animation_active = false
+	death_audio.stop()
+	if death_sprite_frames_active:
+		body.sprite_frames = p_spriteframes
+		body.visible = true
+		if death_visibility_saved:
+			player_indicator.visible = indicator_was_visible_before_death
+			weapon_socket.visible = weapon_was_visible_before_death
+			if is_instance_valid(arm):
+				arm.visible = arm_was_visible_before_death
+		death_sprite_frames_active = false
+		death_visibility_saved = false
 	damage_feedback.reset()
 	weapon_attack_ready_at = 0
 	global_position = respawn_position
@@ -667,6 +709,52 @@ func _on_respawn_timer_timeout() -> void:
 		current_weapon.process_mode = Node.PROCESS_MODE_INHERIT
 	is_dead = false
 	show()
+
+
+func play_death_animation() -> void:
+	const FRAME_SIZE := 280
+	var death_frames := SpriteFrames.new()
+	var row_for_direction := {
+		&"up": 0,
+		&"down": 1,
+		&"right": 2,
+		&"left": 3,
+		&"down_right": 4,
+	}
+	for direction in row_for_direction:
+		var animation_name := StringName("death_" + String(direction))
+		death_frames.add_animation(animation_name)
+		death_frames.set_animation_loop(animation_name, false)
+		death_frames.set_animation_speed(animation_name, 10.0)
+		var row: int = row_for_direction[direction]
+		for column in range(4):
+			var frame := AtlasTexture.new()
+			frame.atlas = death_sprite_sheet
+			frame.region = Rect2(column * FRAME_SIZE, row * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE)
+			death_frames.add_frame(animation_name, frame)
+	body.sprite_frames = death_frames
+	death_sprite_frames_active = true
+	var animation_name := &"death_up"
+	body.flip_h = false
+	match facing:
+		&"down":
+			animation_name = &"death_down"
+		&"right":
+			animation_name = &"death_right"
+		&"left":
+			animation_name = &"death_left"
+		&"down_right":
+			animation_name = &"death_down_right"
+		&"down_left":
+			animation_name = &"death_down_right"
+			body.flip_h = true
+	body.play(animation_name)
+
+
+func _on_body_animation_finished() -> void:
+	if death_animation_active:
+		death_animation_active = false
+		hide()
 
 
 func rebind_device(new_device: int) -> void:

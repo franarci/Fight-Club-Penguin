@@ -1,20 +1,47 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://psyjoyusx8n0"]
 
-[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="base"]
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/hammer_data.tres" id="data"]
-[ext_resource type="SpriteFrames" path="res://src/entities/prototypes/weapons/melee/hammer_frames.tres" id="frames"]
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/hammer_visual_profile.tres" id="poses"]
+[ext_resource type="AudioStream" uid="uid://cv2evmw0yoqq3" path="res://assets/audio/charge-completed.mp3" id="8_21t8r"]
+[ext_resource type="PackedScene" uid="uid://b6eph1rwjt5c2" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="base"]
+[ext_resource type="PackedScene" uid="uid://buvv102u6m3pk" path="res://src/entities/prototypes/weapons/melee/HammerWave.tscn" id="charged_wave"]
+[ext_resource type="Resource" uid="uid://bdcnb5uu0ucrg" path="res://src/entities/prototypes/weapons/melee/hammer_data.tres" id="data"]
+[ext_resource type="SpriteFrames" uid="uid://b11xr6rqbimkx" path="res://src/entities/prototypes/weapons/melee/hammer_frames.tres" id="frames"]
+[ext_resource type="AudioStream" uid="uid://dohoap8mqb311" path="res://assets/audio/punch-hammer-hit.mp3" id="hit_sound"]
+[ext_resource type="Resource" uid="uid://d4agsm3livnsh" path="res://src/entities/prototypes/weapons/melee/hammer_visual_profile.tres" id="poses"]
+[ext_resource type="AudioStream" uid="uid://bg7fp0hwtlkqb" path="res://assets/audio/hammer-swing.wav" id="swing_sound"]
 
-[node name="Hammer" instance=ExtResource("base")]
+[node name="Hammer" unique_id=1317529856 instance=ExtResource("base")]
 scale = Vector2(0.1, 0.1)
-default_weapon_data = ExtResource("data")
+impact_sound = ExtResource("hit_sound")
+swing_sound = ExtResource("swing_sound")
+charge_loop_sound = null
+charged_sound = null
+charged_wave_scene = ExtResource("charged_wave")
+charge_duration = 1.4
+charge_area_radius = 176.0
+charge_damage = 60.0
+charge_knockback = 700.0
+charge_camera_shake = 16.0
 preview_weapon_data = ExtResource("data")
+default_weapon_data = ExtResource("data")
 visual_profile = ExtResource("poses")
 
-[node name="Body" parent="." index="0"]
+[node name="Body" parent="." index="0" unique_id=1429468655]
 position = Vector2(240, 40)
 sprite_frames = ExtResource("frames")
 animation = &"idle_right"
 
-[node name="CollisionShape2D" parent="Hitbox" index="0"]
+[node name="CollisionShape2D" parent="Hitbox" parent_id_path=PackedInt32Array(314684964) index="0" unique_id=698488743]
 position = Vector2(240, 140)
+
+[node name="HitAudio" parent="." index="3" unique_id=1154512761]
+volume_db = -16.231
+
+[node name="SwingAudio" parent="." index="4"]
+stream = ExtResource("swing_sound")
+volume_db = 6.679
+
+[node name="ChargeAudio" parent="." index="5"]
+autoplay = false
+
+[node name="ChargedAudio" parent="." index="6"]
+stream = ExtResource("8_21t8r")
