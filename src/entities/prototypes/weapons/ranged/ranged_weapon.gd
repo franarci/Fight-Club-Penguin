@@ -7,6 +7,7 @@ signal reload_changed(is_reloading: bool, progress: float)
 
 var ranged_data: RangedWeaponData
 @export var shot_sound: AudioStream
+@export var muzzle_flash_scene: PackedScene
 @onready var shot_audio: AudioStreamPlayer = $ShotAudio
 var current_ammo := 0
 var burst_shots_left := 0
@@ -112,6 +113,7 @@ func attack() -> void:
 		ranged_data.projectile_speed,
 		ranged_data.damage
 	)
+	play_muzzle_flash(shot_direction)
 	if shot_sound != null:
 		shot_audio.stream = shot_sound
 		shot_audio.play()
@@ -125,6 +127,17 @@ func attack() -> void:
 				begin_reload()
 			else:
 				burst_recovery_left = ranged_data.burst_pause
+
+
+func play_muzzle_flash(direction: Vector2) -> void:
+	if muzzle_flash_scene == null:
+		return
+	var flash := muzzle_flash_scene.instantiate() as AnimatedSprite2D
+	add_child(flash)
+	flash.global_position = get_muzzle_global_position()
+	# Align the bright core with the barrel tip and make the plume extend along the shot.
+	flash.global_rotation = direction.angle()
+	flash.scale = body.scale
 
 
 func begin_reload() -> void:
