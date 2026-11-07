@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://buvv102u6m3pk"]
+
+[ext_resource type="Texture2D" uid="uid://hpvl2ejtoy32" path="res://assets/textures/effects/hammer-wave.png" id="1_texture"]
+[ext_resource type="Script" uid="uid://cyhxi5cuby8f5" path="res://src/entities/prototypes/weapons/melee/hammer_wave.gd" id="2_script"]
+
+[sub_resource type="AtlasTexture" id="Frame1"]
+atlas = ExtResource("1_texture")
+region = Rect2(143, 300, 153, 200)
+
+[sub_resource type="AtlasTexture" id="Frame2"]
+atlas = ExtResource("1_texture")
+region = Rect2(443, 290, 267, 220)
+
+[sub_resource type="AtlasTexture" id="Frame3"]
+atlas = ExtResource("1_texture")
+region = Rect2(796, 280, 357, 240)
+
+[sub_resource type="AtlasTexture" id="Frame4"]
+atlas = ExtResource("1_texture")
+region = Rect2(1230, 280, 421, 240)
+
+[sub_resource type="AtlasTexture" id="Frame5"]
+atlas = ExtResource("1_texture")
+region = Rect2(1724, 290, 204, 220)
+
+[sub_resource type="AtlasTexture" id="Frame6"]
+atlas = ExtResource("1_texture")
+region = Rect2(1986, 300, 102, 200)
+
+[sub_resource type="SpriteFrames" id="WaveFrames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Frame1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Frame2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Frame3")
+}, {
+"duration": 1.0,
+"texture": SubResource("Frame4")
+}, {
+"duration": 1.0,
+"texture": SubResource("Frame5")
+}, {
+"duration": 1.0,
+"texture": SubResource("Frame6")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="HammerWave" type="Node2D" unique_id=944612922]
+z_index = -1
+script = ExtResource("2_script")
+
+[node name="Animation" type="AnimatedSprite2D" parent="." unique_id=2042472229]
+texture_filter = 1
+scale = Vector2(0.47, 0.47)
+sprite_frames = SubResource("WaveFrames")
+offset = Vector2(0, -100)

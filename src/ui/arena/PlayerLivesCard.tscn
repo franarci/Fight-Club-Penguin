@@ -1,0 +1,210 @@
+[gd_scene format=3 uid="uid://jfh4b3vwpk1t"]
+
+[ext_resource type="Script" uid="uid://bxo8udomxgc0d" path="res://src/ui/arena/player_lives_card.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://dndbyr87x05qi" path="res://src/ui/arena/ammo_bullets.gd" id="2_ammo"]
+[ext_resource type="Script" uid="uid://cmwul6d7kosqs" path="res://src/ui/arena/heart.gd" id="3_heart"]
+[ext_resource type="Texture2D" uid="uid://0vede67wywa5" path="res://assets/textures/character_select/gunner.webp" id="4_gunner"]
+
+[sub_resource type="StyleBoxFlat" id="CardStyle"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0627451, 0.1137255, 0.1960784, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1529412, 0.5882353, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 4
+
+[sub_resource type="StyleBoxFlat" id="PortraitStyle"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0627451, 0.1137255, 0.1960784, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1529412, 0.5882353, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="HealthBackground"]
+bg_color = Color(0.027451, 0.0627451, 0.1215686, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2039216, 0.2745098, 0.3686275, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.1529412, 0.5882353, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="MeterFill"]
+bg_color = Color(0.9529412, 0.7137255, 0.2980392, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="PlayerLivesCard" type="PanelContainer" unique_id=81853713]
+custom_minimum_size = Vector2(232, 0)
+offset_right = 232.0
+offset_bottom = 179.0
+theme_override_styles/panel = SubResource("CardStyle")
+script = ExtResource("1_card")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1458116765]
+layout_mode = 2
+
+[node name="Content" type="HBoxContainer" parent="MarginContainer" unique_id=503604663]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PortraitFrame" type="PanelContainer" parent="MarginContainer/Content" unique_id=2106814291]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PortraitStyle")
+
+[node name="Portrait" type="TextureRect" parent="MarginContainer/Content/PortraitFrame" unique_id=1321948058]
+texture_filter = 1
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("4_gunner")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="PlayerId" type="Label" parent="MarginContainer/Content/PortraitFrame" unique_id=706629830]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.0627451, 0.1137255, 0.1960784, 1)
+theme_override_font_sizes/font_size = 9
+text = "P1"
+horizontal_alignment = 1
+
+[node name="Info" type="VBoxContainer" parent="MarginContainer/Content" unique_id=822650502]
+custom_minimum_size = Vector2(144, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="MarginContainer/Content/Info" unique_id=1393798523]
+custom_minimum_size = Vector2(144, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.858824, 0.913725, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "GUNNER"
+
+[node name="HealthHeader" type="HBoxContainer" parent="MarginContainer/Content/Info" unique_id=1775680693]
+layout_mode = 2
+
+[node name="Caption" type="Label" parent="MarginContainer/Content/Info/HealthHeader" unique_id=1196461694]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.647059, 0.721569, 0.815686, 1)
+theme_override_font_sizes/font_size = 11
+text = "HP"
+
+[node name="HealthLabel" type="Label" parent="MarginContainer/Content/Info/HealthHeader" unique_id=574518425]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.929412, 0.960784, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "100 / 100"
+
+[node name="HealthBar" type="ProgressBar" parent="MarginContainer/Content/Info" unique_id=1192937108]
+custom_minimum_size = Vector2(144, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("HealthBackground")
+theme_override_styles/fill = SubResource("HealthFill")
+value = 100.0
+show_percentage = false
+
+[node name="WeaponStatus" type="Control" parent="MarginContainer/Content/Info" unique_id=2025196581]
+custom_minimum_size = Vector2(144, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AmmoPips" type="Control" parent="MarginContainer/Content/Info/WeaponStatus" unique_id=774588481]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_ammo")
+bullet_size = Vector2(8, 19.48)
+
+[node name="ReloadBar" type="ProgressBar" parent="MarginContainer/Content/Info/WeaponStatus" unique_id=860495547]
+visible = false
+custom_minimum_size = Vector2(144, 8)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.0
+offset_top = -4.0
+offset_right = 72.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("HealthBackground")
+theme_override_styles/fill = SubResource("MeterFill")
+show_percentage = false
+
+[node name="WeaponMeter" type="VBoxContainer" parent="MarginContainer/Content/Info" unique_id=800430454]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="WeaponMeterLabel" type="Label" parent="MarginContainer/Content/Info/WeaponMeter" unique_id=9534024]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.647059, 0.721569, 0.815686, 1)
+theme_override_font_sizes/font_size = 10
+text = "CHARGE"
+
+[node name="WeaponMeterBar" type="ProgressBar" parent="MarginContainer/Content/Info/WeaponMeter" unique_id=410849579]
+custom_minimum_size = Vector2(144, 8)
+layout_mode = 2
+theme_override_styles/background = SubResource("HealthBackground")
+theme_override_styles/fill = SubResource("MeterFill")
+value = 35.0
+show_percentage = false
+
+[node name="Hearts" type="HBoxContainer" parent="MarginContainer/Content/Info" unique_id=532744286]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Heart1" type="Control" parent="MarginContainer/Content/Info/Hearts" unique_id=958068974]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_heart")
+
+[node name="Heart2" type="Control" parent="MarginContainer/Content/Info/Hearts" unique_id=1937368581]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_heart")
+
+[node name="Heart3" type="Control" parent="MarginContainer/Content/Info/Hearts" unique_id=661398791]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_heart")

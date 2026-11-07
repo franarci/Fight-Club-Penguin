@@ -7,10 +7,15 @@ class_name DamageFeedback
 
 @onready var body: AnimatedSprite2D = $"../Body"
 @onready var rest_rotation: float = body.rotation
+@onready var hit_audio: AudioStreamPlayer = $HitAudio
 
 var effect_tween: Tween
 var flash_material: ShaderMaterial
 var active := false
+
+
+func play_hit_sound() -> void:
+	hit_audio.play()
 
 
 func play(hit_direction: Vector2 = Vector2.RIGHT) -> void:

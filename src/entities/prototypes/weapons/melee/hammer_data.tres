@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_pbv7y")
-knockback = 337.5
+knockback = 250.0
 windup_duration = 0.07
 recovery_duration = 0.18
 windup_angle = -45.0

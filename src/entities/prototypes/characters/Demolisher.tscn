@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://carstxgfei871" path="res://assets/textures/entities/demolisher/dash.png" id="3_73gk6"]
 [ext_resource type="Texture2D" uid="uid://dpw3vp7htmmyn" path="res://assets/textures/entities/demolisher/demolisher.png" id="3_pbv7y"]
 [ext_resource type="Texture2D" uid="uid://s6t104wf17t5" path="res://assets/textures/entities/demolisher/arm.png" id="7_23g6v"]
+[ext_resource type="Texture2D" path="res://assets/textures/entities/demolisher/dying-transparent.png" id="death_sheet"]
 [ext_resource type="AnimationLibrary" uid="uid://c1jcgfprts37n" path="res://src/entities/prototypes/characters/demolisher_dash_poses.tres" id="dash_poses"]
 [ext_resource type="Resource" uid="uid://dedacs08cpqjf" path="res://src/entities/prototypes/characters/demolisher_hand_positions.tres" id="hand_positions"]
 [ext_resource type="Resource" uid="uid://bdcnb5uu0ucrg" path="res://src/entities/prototypes/weapons/melee/hammer_data.tres" id="standalone_Resource_7ikj4"]
@@ -471,6 +472,7 @@ animations = [{
 [node name="Demolisher" type="Node2D" unique_id=1245259463]
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_l7qj1")]
+death_sprite_sheet = ExtResource("death_sheet")
 hand_positions = ExtResource("hand_positions")
 starting_weapon_data = ExtResource("standalone_Resource_7ikj4")
 base_speed = 165.0

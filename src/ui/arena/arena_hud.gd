@@ -1,7 +1,7 @@
 extends CanvasLayer
 ## Screen-space cards follow slot/spawn order, even when slots are nonconsecutive.
 
-const PlayerCard = preload("res://src/ui/arena/player_lives_card.gd")
+const PlayerCard = preload("res://src/ui/arena/PlayerLivesCard.tscn")
 const CORNERS := [Vector2(0, 0), Vector2(0, 1), Vector2(1, 0), Vector2(1, 1)]
 const MARGIN := 20.0
 var cards: Dictionary = {}
@@ -19,7 +19,7 @@ func show_players(active_players: Array[Dictionary]) -> void:
 	for player in active_players:
 		var slot: int = player["slot"]
 		var corner: Vector2 = CORNERS[slot]
-		var card := PlayerCard.new()
+		var card := PlayerCard.instantiate() as PlayerLivesCard
 		card.name = "Player%d" % (slot + 1)
 		add_child(card)
 		card.configure(player, corner.x > 0)

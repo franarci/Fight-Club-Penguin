@@ -1,5 +1,47 @@
 [gd_scene format=3]
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/Projectile.tscn" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/projectiles/bullets.png" id="2_bullets"]
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame1"]
+atlas = ExtResource("2_bullets")
+region = Rect2(0, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame2"]
+atlas = ExtResource("2_bullets")
+region = Rect2(362, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame3"]
+atlas = ExtResource("2_bullets")
+region = Rect2(724, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame4"]
+atlas = ExtResource("2_bullets")
+region = Rect2(1086, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame5"]
+atlas = ExtResource("2_bullets")
+region = Rect2(1448, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="ProjectileFrame6"]
+atlas = ExtResource("2_bullets")
+region = Rect2(1810, 0, 362, 724)
+
+[sub_resource type="SpriteFrames" id="ProjectileFrames"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("ProjectileFrame1")}, {"duration": 1.0, "texture": SubResource("ProjectileFrame2")}, {"duration": 1.0, "texture": SubResource("ProjectileFrame3")}, {"duration": 1.0, "texture": SubResource("ProjectileFrame4")}, {"duration": 1.0, "texture": SubResource("ProjectileFrame5")}, {"duration": 1.0, "texture": SubResource("ProjectileFrame6")}],
+"loop": true,
+"name": &"flight",
+"speed": 18.0
+}]
+
 [node name="RifleProjectile" instance=ExtResource("1")]
+texture = null
 speed = 800.0
 lifetime = 1.5
+
+[node name="Animation" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.04, 0.04)
+sprite_frames = SubResource("ProjectileFrames")
+animation = &"flight"
+autoplay = "flight"

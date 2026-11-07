@@ -1,3 +1,4 @@
+@tool
 extends Control
 ## Drawn geometry keeps hearts crisp without a font glyph or external texture.
 

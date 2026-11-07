@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/effects/shots.png" id="1_texture"]
+[ext_resource type="Script" path="res://src/entities/prototypes/weapons/ranged/muzzle_flash.gd" id="2_script"]
+
+[sub_resource type="AtlasTexture" id="Shot1"]
+atlas = ExtResource("1_texture")
+region = Rect2(0, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="Shot2"]
+atlas = ExtResource("1_texture")
+region = Rect2(362, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="Shot3"]
+atlas = ExtResource("1_texture")
+region = Rect2(724, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="Shot4"]
+atlas = ExtResource("1_texture")
+region = Rect2(1086, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="Shot5"]
+atlas = ExtResource("1_texture")
+region = Rect2(1448, 0, 362, 724)
+
+[sub_resource type="AtlasTexture" id="Shot6"]
+atlas = ExtResource("1_texture")
+region = Rect2(1810, 0, 362, 724)
+
+[sub_resource type="SpriteFrames" id="MuzzleFrames"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Shot1")}, {"duration": 1.0, "texture": SubResource("Shot2")}, {"duration": 1.0, "texture": SubResource("Shot3")}, {"duration": 1.0, "texture": SubResource("Shot4")}, {"duration": 1.0, "texture": SubResource("Shot5")}, {"duration": 1.0, "texture": SubResource("Shot6")}],
+"loop": false,
+"name": &"muzzle",
+"speed": 18.0
+}]
+
+[node name="MuzzleFlash" type="AnimatedSprite2D"]
+texture_filter = 1
+z_index = 2
+scale = Vector2(0.06, 0.06)
+sprite_frames = SubResource("MuzzleFrames")
+animation = &"muzzle"
+offset = Vector2(71, 0)
+script = ExtResource("2_script")
