@@ -21,7 +21,11 @@ func run_checks() -> void:
 		"045e-0b13-Xbox Wireless Controller": "Xbox / Gamepad",
 		"Generic Gamepad (Vendor: 1234 Product: 054c)": "Xbox / Gamepad",
 		"Generic Gamepad (Vendor: 054c0 Product: 1234)": "Xbox / Gamepad",
-		"Wireless Controller": "Xbox / Gamepad",
+		"Wireless Controller": "PlayStation",
+		"Wireless controller (STANDARD GAMEPAD)": "PlayStation",
+		"  Wireless Controller (standard gamepad)  ": "PlayStation",
+		"Xbox Wireless Controller (STANDARD GAMEPAD)": "Xbox / Gamepad",
+		"Generic Wireless Gamepad": "Xbox / Gamepad",
 		"": "Xbox / Gamepad"
 	}
 	for device_name in cases:

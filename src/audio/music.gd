@@ -20,6 +20,7 @@ func _create_player(track_path: String, player_name: String) -> AudioStreamPlaye
 	var player := AudioStreamPlayer.new()
 	player.name = player_name
 	player.bus = &"Music"
+	player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 	player.stream = load(track_path) as AudioStreamWAV
 	player.volume_linear = 0.0
 	add_child(player)

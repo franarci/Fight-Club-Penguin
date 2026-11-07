@@ -5,12 +5,26 @@ static func device_family(device: int) -> String:
 	if device < 0:
 		return "Keyboard"
 	if Input.get_connected_joypads().has(device):
-		return family_from_name(Input.get_joy_name(device))
+		return family_from_name(device_name(device))
 	return "Xbox / Gamepad"
 
 
+static func device_name(device: int) -> String:
+	if OS.has_feature("web"):
+		var navigator = JavaScriptBridge.get_interface("navigator")
+		if navigator != null:
+			var pads = navigator.getGamepads()
+			if pads != null and device >= 0 and device < int(pads.length):
+				var pad = pads[device]
+				if pad != null and bool(pad.connected):
+					return str(pad.id)
+	return Input.get_joy_name(device)
+
+
 static func family_from_name(device_name: String) -> String:
-	var name := device_name.to_lower()
+	var name := device_name.strip_edges().to_lower()
+	if name.trim_suffix(" (standard gamepad)").strip_edges() == "wireless controller":
+		return "PlayStation"
 	for keyword in ["sony", "playstation", "dualshock", "dualsense", "ps4", "ps5"]:
 		if keyword in name:
 			return "PlayStation"
@@ -88,7 +102,7 @@ static func icon_paths(device: int, action: StringName) -> PackedStringArray:
 		elif device >= 0 and event is InputEventJoypadButton:
 			var ps5 := false
 			if Input.get_connected_joypads().has(device):
-				ps5 = is_ps5_name(Input.get_joy_name(device))
+				ps5 = is_ps5_name(device_name(device))
 			path = joypad_icon(device_family(device), event.button_index, ps5)
 		if not path.is_empty() and ResourceLoader.exists(path) and not paths.has(path):
 			paths.append(path)
