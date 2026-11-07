@@ -42,6 +42,8 @@ var charge_elapsed := 0.0
 var charge_ready := false
 var charged_swing_pending := false
 
+const MAX_CHARGED_ATTACK_DAMAGE := 70.0
+
 @export_category("Swing Preview")
 ## Assign the same MeleeWeaponData as the penguin's Starting Weapon Data.
 @export var preview_weapon_data: MeleeWeaponData
@@ -280,7 +282,10 @@ func perform_charged_attack() -> void:
 		var away_direction: Vector2 = target.global_position - impact_point
 		if away_direction.is_zero_approx():
 			away_direction = aim_direction
-		var effective_charge_damage: float = charge_damage * maxf(wielder.melee_power, 0.0)
+		var effective_charge_damage: float = minf(
+			charge_damage * maxf(wielder.melee_power, 0.0),
+			MAX_CHARGED_ATTACK_DAMAGE
+		)
 		var accepted = target.receive_damage(effective_charge_damage, wielder, away_direction.normalized())
 		if accepted == true:
 			if charge_knockback > 0.0:

@@ -135,5 +135,6 @@ func set_weapon_meter(label: String, progress: float, visible: bool = true) -> v
 	weapon_meter.visible = visible
 
 
-func set_charge_progress(progress: float, visible: bool) -> void:
-	set_weapon_meter("CHARGE", progress, visible)
+func set_charge_progress(progress: float, _visible: bool) -> void:
+	# Keep the melee charge meter present while idle so players can track it at a glance.
+	set_weapon_meter("CHARGE", progress, true)
