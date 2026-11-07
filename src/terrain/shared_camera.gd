@@ -9,6 +9,9 @@ extends Camera2D
 
 var players: Node2D
 var arena_size := Vector2.ZERO
+var shake_strength := 0.0
+var shake_duration := 0.0
+var shake_time_left := 0.0
 
 
 func show_arena(size: Vector2) -> void:
@@ -26,6 +29,28 @@ func _process(delta: float) -> void:
 		_update_frame(delta, false)
 	elif arena_size != Vector2.ZERO:
 		show_arena(arena_size)
+	_update_shake(delta)
+
+
+func request_shake(strength: float, duration: float) -> void:
+	shake_strength = maxf(shake_strength, strength)
+	shake_duration = maxf(shake_duration, duration)
+	shake_time_left = maxf(shake_time_left, duration)
+
+
+func _update_shake(delta: float) -> void:
+	if shake_time_left <= 0.0:
+		offset = Vector2.ZERO
+		shake_strength = 0.0
+		shake_duration = 0.0
+		return
+	shake_time_left = maxf(shake_time_left - delta, 0.0)
+	var fade := shake_time_left / maxf(shake_duration, 0.001)
+	offset = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * shake_strength * fade
+	if shake_time_left == 0.0:
+		offset = Vector2.ZERO
+		shake_strength = 0.0
+		shake_duration = 0.0
 
 
 func _update_frame(delta: float, snap: bool) -> void:

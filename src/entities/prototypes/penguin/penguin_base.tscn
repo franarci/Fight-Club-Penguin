@@ -5,9 +5,12 @@
 [ext_resource type="Script" uid="uid://cypcexwkq7j7u" path="res://src/entities/prototypes/penguin/idle.gd" id="3_heltl"]
 [ext_resource type="Script" uid="uid://udsj8kat7jdd" path="res://src/entities/prototypes/penguin/walk.gd" id="4_3sbks"]
 [ext_resource type="Script" uid="uid://wep6mjx4eei" path="res://src/entities/prototypes/penguin/dash.gd" id="5_ypmey"]
-[ext_resource type="Script" path="res://src/entities/prototypes/penguin/feet_marker.gd" id="6_feet"]
-
-[ext_resource type="Script" path="res://src/entities/prototypes/penguin/damage_feedback.gd" id="7_damage_feedback"]
+[ext_resource type="Script" uid="uid://f0k2n4x5dogk" path="res://src/entities/prototypes/penguin/feet_marker.gd" id="6_feet"]
+[ext_resource type="Script" uid="uid://c7a4yn6jr7f0g" path="res://src/entities/prototypes/penguin/damage_feedback.gd" id="7_damage_feedback"]
+[ext_resource type="AudioStream" uid="uid://u50dcuhdbkbp" path="res://assets/audio/penguin-squawk.mp3" id="8_squawk"]
+[ext_resource type="AudioStream" uid="uid://bcpbt78i0wiac" path="res://assets/audio/penguin_dash.wav" id="9_dash_sound"]
+[ext_resource type="AudioStream" uid="uid://ct2m2vld531ti" path="res://assets/audio/penguin-explosion.mp3" id="10_death_sound"]
+[ext_resource type="AudioStream" uid="uid://bwnopwnja7nqb" path="res://assets/audio/penguin_dash_push.wav" id="11_dash_push_sound"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
 radius = 4.0
@@ -26,9 +29,9 @@ shape = SubResource("CapsuleShape2D_3sbks")
 
 [node name="Hitbox" type="Area2D" parent="." unique_id=446355126]
 
-[node name="FeetMarker" type="Marker2D" parent="."]
-position = Vector2(0, 17)
+[node name="FeetMarker" type="Marker2D" parent="." unique_id=47077882]
 z_index = 10
+position = Vector2(0, 17)
 script = ExtResource("6_feet")
 
 [node name="PlayerIndicator" type="Node2D" parent="." unique_id=287483043]
@@ -74,8 +77,23 @@ script = ExtResource("4_3sbks")
 [node name="Dash" type="Node" parent="MovementStateMachine" unique_id=763498626]
 script = ExtResource("5_ypmey")
 
-[node name="DamageFeedback" type="Node" parent="."]
+[node name="DamageFeedback" type="Node" parent="." unique_id=1243604808]
 script = ExtResource("7_damage_feedback")
+
+[node name="HitAudio" type="AudioStreamPlayer" parent="DamageFeedback" unique_id=1643377228]
+stream = ExtResource("8_squawk")
+
+[node name="DashAudio" type="AudioStreamPlayer" parent="." unique_id=297456650]
+stream = ExtResource("9_dash_sound")
+volume_db = -10.012
+
+[node name="DashPushAudio" type="AudioStreamPlayer" parent="." unique_id=814178080]
+stream = ExtResource("11_dash_push_sound")
+volume_db = 6.22
+
+[node name="DeathAudio" type="AudioStreamPlayer" parent="." unique_id=617620160]
+stream = ExtResource("10_death_sound")
+volume_db = -15.029
 
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]
 [connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]

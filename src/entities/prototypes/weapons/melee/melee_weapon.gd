@@ -2,8 +2,24 @@
 extends WeaponBase
 class_name MeleeWeapon
 
+signal charge_progress_changed(progress: float, visible: bool)
 
 @onready var hitbox: Area2D = $Hitbox
+@onready var hit_audio: AudioStreamPlayer = $HitAudio
+@onready var swing_audio: AudioStreamPlayer = $SwingAudio
+@onready var charge_audio: AudioStreamPlayer = $ChargeAudio
+@onready var charged_audio: AudioStreamPlayer = $ChargedAudio
+
+@export var impact_sound: AudioStream
+@export var swing_sound: AudioStream
+@export var charge_loop_sound: AudioStream
+@export var charged_sound: AudioStream
+@export var charged_wave_scene: PackedScene
+@export_range(0.25, 4.0, 0.05) var charge_duration := 1.4
+@export_range(32.0, 512.0, 8.0) var charge_area_radius := 176.0
+@export_range(0.0, 200.0, 1.0) var charge_damage := 60.0
+@export_range(0.0, 1200.0, 10.0) var charge_knockback := 700.0
+@export_range(0.0, 30.0, 0.5) var charge_camera_shake := 16.0
 
 var melee_data: MeleeWeaponData
 var swing_time_left := 0.0
@@ -21,12 +37,23 @@ var pending_aim := Vector2.RIGHT
 var resting_animation: StringName
 var resting_flip_h := false
 var resting_flip_v := false
+var is_charging := false
+var charge_elapsed := 0.0
+var charge_ready := false
+var charged_swing_pending := false
+
+const MAX_CHARGED_ATTACK_DAMAGE := 70.0
 
 @export_category("Swing Preview")
 ## Assign the same MeleeWeaponData as the penguin's Starting Weapon Data.
 @export var preview_weapon_data: MeleeWeaponData
 ## Scrub the swing in the editor: 0 = rest, 1 = finished. Uses Preview Direction.
 @export_range(0.0, 1.0, 0.01) var preview_swing_progress: float = 0.0
+
+
+func _ready() -> void:
+	if not charge_audio.finished.is_connected(_on_charge_audio_finished):
+		charge_audio.finished.connect(_on_charge_audio_finished)
 
 
 func setup(p_device: int, p_weapon_data: WeaponData) -> void:
@@ -57,8 +84,73 @@ func _process(_delta: float) -> void:
 			configure_swing_timing(preview_weapon_data)
 			apply_swing_visual(preview_swing_progress * total_swing_duration(), preview_weapon_data)
 		return
-	if get_node("/root/MultiplayerInput").is_action_just_pressed(device, "attack"):
-		try_attack()
+	var multiplayer_input = get_node("/root/MultiplayerInput")
+	if is_charging:
+		if multiplayer_input.is_action_pressed(device, "attack"):
+			update_charge(_delta)
+		elif multiplayer_input.is_action_just_released(device, "attack"):
+			finish_charge()
+	elif can_attack and multiplayer_input.is_action_just_pressed(device, "attack"):
+		begin_charge()
+
+
+func begin_charge() -> void:
+	if not can_attack or melee_data == null or not is_instance_valid(wielder):
+		return
+	is_charging = true
+	charge_elapsed = 0.0
+	charge_ready = false
+	charge_progress_changed.emit(0.0, true)
+	if charge_loop_sound != null:
+		charge_audio.stream = charge_loop_sound
+		charge_audio.pitch_scale = 0.8
+		charge_audio.play()
+
+
+func _on_charge_audio_finished() -> void:
+	if is_charging and charge_loop_sound != null:
+		charge_audio.play()
+
+
+func update_charge(delta: float) -> void:
+	charge_elapsed = minf(charge_elapsed + delta, maxf(charge_duration, 0.01))
+	var progress := charge_progress()
+	charge_progress_changed.emit(progress, true)
+	if charge_audio.playing:
+		charge_audio.pitch_scale = lerpf(0.8, 1.55, progress)
+	if progress >= 1.0 and not charge_ready:
+		charge_ready = true
+		charge_audio.stop()
+		if charged_sound != null:
+			charged_audio.stream = charged_sound
+		if charged_audio.stream != null:
+			charged_audio.play()
+
+
+func charge_progress() -> float:
+	return clampf(charge_elapsed / maxf(charge_duration, 0.01), 0.0, 1.0)
+
+
+func finish_charge() -> void:
+	if not is_charging:
+		return
+	var full_charge := charge_ready
+	is_charging = false
+	charge_ready = false
+	charge_audio.stop()
+	if full_charge:
+		charge_progress_changed.emit(1.0, true)
+		charged_swing_pending = true
+		attack()
+		_hide_charge_meter_after_flash()
+	else:
+		charge_progress_changed.emit(0.0, false)
+		attack()
+
+
+func _hide_charge_meter_after_flash() -> void:
+	await get_tree().create_timer(0.18).timeout
+	charge_progress_changed.emit(0.0, false)
 
 func try_attack() -> void:
 	if not can_attack or melee_data == null:
@@ -71,6 +163,9 @@ func attack() -> void:
 	if not can_attack or melee_data == null or not is_instance_valid(wielder):
 		return
 	can_attack = false
+	if swing_sound != null:
+		swing_audio.stream = swing_sound
+		swing_audio.play()
 	swing_direction = aim_direction
 	pending_aim = aim_direction
 	capture_resting_pose()
@@ -96,7 +191,11 @@ func _physics_process(delta: float) -> void:
 	# Interval intersection also catches an impact window crossed by a long frame.
 	if swing_elapsed >= swing_windup and previous_elapsed < swing_windup + swing_active_duration:
 		update_hitbox(swing_direction)
-		apply_swing_hits()
+		if charged_swing_pending:
+			charged_swing_pending = false
+			perform_charged_attack()
+		else:
+			apply_swing_hits()
 	if swing_time_left == 0.0:
 		restore_resting_pose()
 		super.set_aim_direction(pending_aim)
@@ -120,8 +219,12 @@ func apply_swing_hits() -> void:
 			continue
 		hit_targets[target_id] = true
 		var accepted = target.receive_damage(get_effective_damage(), wielder, swing_direction)
-		if accepted == true and target is Penguin and melee_data.knockback > 0.0:
-			target.receive_push(swing_direction, melee_data.knockback)
+		if accepted == true and target is Penguin:
+			if impact_sound != null:
+				hit_audio.stream = impact_sound
+				hit_audio.play()
+			if melee_data.knockback > 0.0:
+				target.receive_push(swing_direction, melee_data.knockback)
 
 
 func update_hitbox(direction: Vector2) -> void:
@@ -135,10 +238,62 @@ func update_hitbox(direction: Vector2) -> void:
 
 
 func cancel_attack() -> void:
+	cancel_charge()
+	charged_swing_pending = false
 	if swing_time_left > 0.0:
 		restore_resting_pose()
 	swing_time_left = 0.0
 	hit_targets.clear()
+
+
+func cancel_charge() -> void:
+	if not is_charging:
+		return
+	is_charging = false
+	charge_ready = false
+	charge_audio.stop()
+	charge_progress_changed.emit(0.0, false)
+
+
+func perform_charged_attack() -> void:
+	if melee_data == null or not is_instance_valid(wielder):
+		return
+	var impact_point := hitbox.global_position
+	if charged_wave_scene != null and is_instance_valid(wielder.get_parent()):
+		var wave := charged_wave_scene.instantiate() as Node2D
+		wielder.get_parent().add_child(wave)
+		wave.global_position = impact_point
+	var query := PhysicsShapeQueryParameters2D.new()
+	var area_shape := CircleShape2D.new()
+	area_shape.radius = charge_area_radius
+	query.shape = area_shape
+	query.transform = Transform2D(0.0, impact_point)
+	query.collision_mask = hitbox.collision_mask
+	query.exclude = [wielder.get_rid()]
+	var hit_targets_once: Dictionary = {}
+	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var target = result.collider
+		if target == wielder or not target is Penguin:
+			continue
+		var target_id: int = target.get_instance_id()
+		if hit_targets_once.has(target_id):
+			continue
+		hit_targets_once[target_id] = true
+		var away_direction: Vector2 = target.global_position - impact_point
+		if away_direction.is_zero_approx():
+			away_direction = aim_direction
+		var effective_charge_damage: float = minf(
+			charge_damage * maxf(wielder.melee_power, 0.0),
+			MAX_CHARGED_ATTACK_DAMAGE
+		)
+		var accepted = target.receive_damage(effective_charge_damage, wielder, away_direction.normalized())
+		if accepted == true:
+			if charge_knockback > 0.0:
+				target.receive_push(away_direction.normalized(), charge_knockback)
+	if charge_camera_shake > 0.0:
+		var camera := get_viewport().get_camera_2d()
+		if camera != null and camera.has_method("request_shake"):
+			camera.request_shake(charge_camera_shake, 0.32)
 
 func get_effective_damage() -> float:
 	var power: float = wielder.melee_power if wielder is Penguin else 1.0

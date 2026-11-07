@@ -21,9 +21,11 @@ Hit Radius and Attack Duration. Ranged weapons expose Spread (radians),
 Projectile Speed, Projectile Scene and Automatic. A weapon with zero spread
 cannot become more accurate, so use attack speed for an immediate ranged bonus.
 
-Damage per bullet remains the same for every wielder. Reloading/ammunition are
-not implemented; handling currently affects only spread. Melee cooldown still
-starts after the active swing window. Ranged attack speed does not change it.
+Damage per bullet remains the same for every wielder. The Gunner rifle fires
+four-shot bursts from a 12-round magazine and reloads for 1.2 seconds. Other
+ranged weapons without a magazine capacity keep their existing firing behavior.
+Handling currently affects only spread. Melee cooldown still starts after the
+active swing window. Ranged attack speed does not change it.
 
 Runtime calculations never edit shared weapon data. Assigning the same weapon
 and data to a different penguin uses that penguin's modifiers. Equipping still
