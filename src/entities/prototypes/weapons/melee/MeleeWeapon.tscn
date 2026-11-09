@@ -9,6 +9,7 @@ radius = 12.0
 [node name="MeleeWeapon" unique_id=1466300965 instance=ExtResource("1")]
 script = ExtResource("2")
 impact_sound = null
+charged_impact_sound = null
 preview_weapon_data = null
 preview_swing_progress = 0.0
 
@@ -30,3 +31,7 @@ volume_db = -12.0
 
 [node name="ChargedAudio" type="AudioStreamPlayer" parent="." index="6"]
 volume_db = -8.0
+
+[node name="ChargedImpactAudio" type="AudioStreamPlayer" parent="." index="7"]
+volume_db = -6.0
+max_polyphony = 2

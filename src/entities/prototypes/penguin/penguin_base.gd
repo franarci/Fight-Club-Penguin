@@ -389,15 +389,17 @@ func update_facing(input_dir: Vector2) -> void:
 	if current_weapon is MeleeWeapon and current_weapon.swing_time_left > 0.0:
 		return
 
-	if is_instance_valid(current_weapon):
-		current_weapon.set_aim_direction(input_dir)
-
 	# Equal 45-degree sectors also work with analog stick input.
 	var sector := posmod(roundi(input_dir.angle() / (PI / 4.0)), 8)
 	var directions: Array[StringName] = [
 		&"right", &"down_right", &"down", &"down_left",
 		&"left", &"up_left", &"up", &"up_right",
 	]
+	if is_instance_valid(current_weapon):
+		# Keep the actual attack angle in sync with the 8-way pose. Passing the
+		# raw stick vector here lets small axis noise make shots look diagonal
+		# while the penguin and weapon sprites are still facing horizontally.
+		current_weapon.set_aim_direction(Vector2(current_weapon.snap_to_8_directions(input_dir)))
 	facing = directions[sector]
 	if arm != null:
 		arm.visible = facing == &"right"

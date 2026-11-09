@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://psyjoyusx8n0"]
 
 [ext_resource type="AudioStream" uid="uid://cv2evmw0yoqq3" path="res://assets/audio/charge-completed.mp3" id="8_21t8r"]
+[ext_resource type="AudioStream" uid="uid://na1fr5a2ytmv" path="res://assets/audio/demolisher_charged_hammer_ground_hit.wav" id="ground_impact_sound"]
 [ext_resource type="PackedScene" uid="uid://b6eph1rwjt5c2" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="base"]
 [ext_resource type="PackedScene" uid="uid://buvv102u6m3pk" path="res://src/entities/prototypes/weapons/melee/HammerWave.tscn" id="charged_wave"]
 [ext_resource type="Resource" uid="uid://bdcnb5uu0ucrg" path="res://src/entities/prototypes/weapons/melee/hammer_data.tres" id="data"]
@@ -15,6 +16,7 @@ impact_sound = ExtResource("hit_sound")
 swing_sound = ExtResource("swing_sound")
 charge_loop_sound = null
 charged_sound = null
+charged_impact_sound = ExtResource("ground_impact_sound")
 charged_wave_scene = ExtResource("charged_wave")
 charge_duration = 1.4
 charge_area_radius = 176.0

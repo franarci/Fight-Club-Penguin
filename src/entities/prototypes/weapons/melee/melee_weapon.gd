@@ -9,11 +9,13 @@ signal charge_progress_changed(progress: float, visible: bool)
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
 @onready var charge_audio: AudioStreamPlayer = $ChargeAudio
 @onready var charged_audio: AudioStreamPlayer = $ChargedAudio
+@onready var charged_impact_audio: AudioStreamPlayer = $ChargedImpactAudio
 
 @export var impact_sound: AudioStream
 @export var swing_sound: AudioStream
 @export var charge_loop_sound: AudioStream
 @export var charged_sound: AudioStream
+@export var charged_impact_sound: AudioStream
 @export var charged_wave_scene: PackedScene
 @export_range(0.25, 4.0, 0.05) var charge_duration := 1.4
 @export_range(32.0, 512.0, 8.0) var charge_area_radius := 176.0
@@ -260,6 +262,9 @@ func perform_charged_attack() -> void:
 		return
 	var impact_point := hitbox.global_position
 	if charged_wave_scene != null and is_instance_valid(wielder.get_parent()):
+		if charged_impact_sound != null:
+			charged_impact_audio.stream = charged_impact_sound
+			charged_impact_audio.play()
 		var wave := charged_wave_scene.instantiate() as Node2D
 		wielder.get_parent().add_child(wave)
 		wave.global_position = impact_point
