@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/entities/prototypes/weapons/melee/harpoon_projectile.gd" id="1_script"]
+
+[node name="HarpoonProjectile" type="Node2D"]
+visible = false
+script = ExtResource("1_script")
+
+[node name="RopeOutline" type="Line2D" parent="."]
+z_index = -2
+width = 4.0
+default_color = Color(0.13, 0.15, 0.06, 1)
+antialiased = false
+
+[node name="Rope" type="Line2D" parent="."]
+z_index = -1
+width = 2.4
+default_color = Color(0.32, 0.36, 0.09, 1)
+antialiased = false
+
+[node name="Body" type="AnimatedSprite2D" parent="."]

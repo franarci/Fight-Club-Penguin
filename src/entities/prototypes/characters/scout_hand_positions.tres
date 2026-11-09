@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://src/entities/prototypes/penguin/hand_positions.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+right = Vector2(15, 20)
+down_right = Vector2(12, 20)
+down = Vector2(0, 20)
+down_left = Vector2(-12, 20)
+left = Vector2(-15, 20)
+up_left = Vector2(-12, 16)
+up = Vector2(0, 15)
+up_right = Vector2(12, 16)
+behind_body_directions = Array[String](["down_left", "left", "up_left", "up", "up_right"])

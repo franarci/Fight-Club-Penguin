@@ -1,0 +1,102 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://d4ifn3trd1wnc"]
+
+[ext_resource type="Texture2D" uid="uid://43o1islsxest" path="res://assets/textures/weapons/scout_rifle/scout_rifle.png" id="1"]
+
+[sub_resource type="AtlasTexture" id="down"]
+atlas = ExtResource("1")
+region = Rect2(0, 448, 448, 448)
+
+[sub_resource type="AtlasTexture" id="down_left"]
+atlas = ExtResource("1")
+region = Rect2(448, 448, 448, 448)
+
+[sub_resource type="AtlasTexture" id="down_right"]
+atlas = ExtResource("1")
+region = Rect2(1344, 0, 448, 448)
+
+[sub_resource type="AtlasTexture" id="left"]
+atlas = ExtResource("1")
+region = Rect2(896, 448, 448, 448)
+
+[sub_resource type="AtlasTexture" id="right"]
+atlas = ExtResource("1")
+region = Rect2(896, 0, 448, 448)
+
+[sub_resource type="AtlasTexture" id="up"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 448, 448)
+
+[sub_resource type="AtlasTexture" id="up_left"]
+atlas = ExtResource("1")
+region = Rect2(1344, 448, 448, 448)
+
+[sub_resource type="AtlasTexture" id="up_right"]
+atlas = ExtResource("1")
+region = Rect2(448, 0, 448, 448)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("down")
+}],
+"loop": 1,
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("down_left")
+}],
+"loop": 1,
+"name": &"idle_down_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("down_right")
+}],
+"loop": 1,
+"name": &"idle_down_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("left")
+}],
+"loop": 1,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("right")
+}],
+"loop": 1,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("up")
+}],
+"loop": 1,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("up_left")
+}],
+"loop": 1,
+"name": &"idle_up_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("up_right")
+}],
+"loop": 1,
+"name": &"idle_up_right",
+"speed": 5.0
+}]

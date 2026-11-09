@@ -3,11 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_vtukd"]
 [ext_resource type="Texture2D" uid="uid://b22cg6bmux0ly" path="res://assets/textures/entities/gunner/gunners.png" id="3_5x5m2"]
 [ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="3_lm2ft"]
-[ext_resource type="Texture2D" path="res://assets/textures/entities/gunner/dying-transparent.png" id="death_sheet"]
-[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/Rifle.tscn" id="3_nh8tt"]
+[ext_resource type="PackedScene" uid="uid://cuvth30ixcj0h" path="res://src/entities/prototypes/weapons/ranged/Rifle.tscn" id="3_nh8tt"]
 [ext_resource type="AnimationLibrary" uid="uid://tje7mx7f3w87" path="res://src/entities/prototypes/characters/gunner_dash_poses.tres" id="dash_poses"]
+[ext_resource type="Texture2D" uid="uid://br2rfy5yay7k8" path="res://assets/textures/entities/gunner/dying-transparent.png" id="death_sheet"]
 [ext_resource type="Resource" path="res://src/entities/prototypes/characters/gunner_hand_positions.tres" id="hand_positions"]
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/ranged/gunner_rifle_data.tres" id="standalone_Resource_41i6s"]
+[ext_resource type="Resource" uid="uid://cfv5ps12jsnqk" path="res://src/entities/prototypes/weapons/ranged/gunner_rifle_data.tres" id="standalone_Resource_41i6s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ikj4"]
 atlas = ExtResource("3_5x5m2")
@@ -447,17 +447,17 @@ p_autoplay = "idle_right"
 
 [node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
 position = Vector2(1.3333335, 8.666667)
-scale = Vector2(0.11, 0.11)
+scale = Vector2(0.175, 0.175)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
 animation = &"idle_right"
 flip_h = true
 
-[node name="FeetMarker" parent="PenguinBase" index="3"]
+[node name="FeetMarker" parent="PenguinBase" index="3" unique_id=47077882]
 visible = false
 
 [node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
-position = Vector2(1.333334, -3.6383333)
-scale = Vector2(0.6495789, 0.6495789)
+position = Vector2(1.333334, -8.545833)
+scale = Vector2(1.033421, 1.033421)
 
 [node name="Label" parent="PenguinBase/PlayerIndicator" index="0" unique_id=214354687]
 offset_left = -9.5
@@ -482,7 +482,7 @@ libraries/ = ExtResource("dash_poses")
 [node name="Arm" type="Sprite2D" parent="PenguinBase" unique_id=1583356965]
 z_index = 2
 position = Vector2(-1.3333334, 8)
-scale = Vector2(0.155, 0.155)
+scale = Vector2(0.215, 0.215)
 texture = ExtResource("3_lm2ft")
 
 [editable path="PenguinBase"]

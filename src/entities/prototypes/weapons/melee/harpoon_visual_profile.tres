@@ -1,0 +1,67 @@
+[gd_resource type="Resource" format=3 uid="uid://cmexb1unf0lj8"]
+
+[ext_resource type="Script" uid="uid://br1hnyhg41n0n" path="res://src/entities/prototypes/weapons/base/weapon_visual_profile.gd" id="1_profile"]
+[ext_resource type="Script" uid="uid://d15t0yme1hhfv" path="res://src/entities/prototypes/weapons/base/weapon_pose.gd" id="2_pose"]
+
+[sub_resource type="Resource" id="Pose_right"]
+script = ExtResource("2_pose")
+hand_position = Vector2(-29.167, 83.333)
+grip_offset = Vector2(-81, 5)
+
+[sub_resource type="Resource" id="Pose_down_right"]
+script = ExtResource("2_pose")
+direction = "down_right"
+animation = &"idle_down_right"
+hand_position = Vector2(-20.833, 95.833)
+grip_offset = Vector2(-57, -38)
+
+[sub_resource type="Resource" id="Pose_down"]
+script = ExtResource("2_pose")
+direction = "down"
+animation = &"idle_down"
+hand_position = Vector2(-62.5, 91.667)
+grip_offset = Vector2(-8, -62)
+
+[sub_resource type="Resource" id="Pose_down_left"]
+script = ExtResource("2_pose")
+direction = "down_left"
+animation = &"idle_down_left"
+hand_position = Vector2(-20.833, 41.667)
+grip_offset = Vector2(36, -57)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_left"]
+script = ExtResource("2_pose")
+direction = "left"
+animation = &"idle_left"
+hand_position = Vector2(29.167, 83.333)
+grip_offset = Vector2(79, -8)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_up_left"]
+script = ExtResource("2_pose")
+direction = "up_left"
+animation = &"idle_up_left"
+hand_position = Vector2(-62.5, 83.333)
+grip_offset = Vector2(55, 37)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_up"]
+script = ExtResource("2_pose")
+direction = "up"
+animation = &"idle_up"
+hand_position = Vector2(62.5, 83.333)
+grip_offset = Vector2(5, 60)
+layer = -1
+
+[sub_resource type="Resource" id="Pose_up_right"]
+script = ExtResource("2_pose")
+direction = "up_right"
+animation = &"idle_up_right"
+hand_position = Vector2(62.5, 83.333)
+grip_offset = Vector2(-39, 55)
+layer = -1
+
+[resource]
+script = ExtResource("1_profile")
+poses = Array[Resource]([SubResource("Pose_right"), SubResource("Pose_down_right"), SubResource("Pose_down"), SubResource("Pose_down_left"), SubResource("Pose_left"), SubResource("Pose_up_left"), SubResource("Pose_up"), SubResource("Pose_up_right")])

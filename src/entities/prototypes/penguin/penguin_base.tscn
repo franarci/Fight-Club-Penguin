@@ -35,6 +35,8 @@ position = Vector2(0, 17)
 script = ExtResource("6_feet")
 
 [node name="PlayerIndicator" type="Node2D" parent="." unique_id=287483043]
+z_index = 4096
+z_as_relative = false
 position = Vector2(0, -8.35)
 
 [node name="Label" type="Label" parent="PlayerIndicator" unique_id=214354687]

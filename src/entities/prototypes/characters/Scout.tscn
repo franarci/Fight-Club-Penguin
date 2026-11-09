@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://dr2ujmgfb8elo"]
+
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_base"]
+[ext_resource type="SpriteFrames" uid="uid://bsa5hy5cjpouy" path="res://src/entities/prototypes/characters/scout_sprite_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" uid="uid://c5xs86qfdcx85" path="res://assets/textures/entities/scout/scout_death.png" id="3_death"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/ranged/ScoutRifle.tscn" id="4_rifle"]
+[ext_resource type="Resource" uid="uid://bqppljddd5pnc" path="res://src/entities/prototypes/weapons/ranged/scout_rifle_data.tres" id="5_rifle_data"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/characters/scout_hand_positions.tres" id="6_hands"]
+[ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="7_arm"]
+
+[node name="Scout" type="Node2D" unique_id=949162407]
+
+[node name="PenguinBase" parent="." unique_id=1889705062 instance=ExtResource("1_base")]
+death_sprite_sheet = ExtResource("3_death")
+hand_positions = ExtResource("6_hands")
+starting_weapon_data = ExtResource("5_rifle_data")
+p_spriteframes = ExtResource("2_frames")
+p_autoplay = "idle_down"
+
+[node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
+position = Vector2(0, 14)
+scale = Vector2(0.28, 0.28)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle_down"
+
+[node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
+position = Vector2(0, -24.02)
+scale = Vector2(1.7949474, 1.7949474)
+
+[node name="Label" parent="PenguinBase/PlayerIndicator" index="0" unique_id=214354687]
+offset_left = -9.5
+offset_top = -33.0
+offset_right = 9.5
+offset_bottom = -10.0
+text = "P1"
+
+[node name="Arrow" parent="PenguinBase/PlayerIndicator" index="1" unique_id=1252359202]
+position = Vector2(0, -8)
+
+[node name="EquippedWeapon" parent="PenguinBase/Weapon" parent_id_path=PackedInt32Array(1889705062, 1150368172) index="0" unique_id=1878591160 instance=ExtResource("4_rifle")]
+z_index = -1
+
+[node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
+scale = Vector2(0.235, 0.17)
+
+[node name="Arm" type="Sprite2D" parent="PenguinBase" unique_id=25212068]
+z_index = 2
+position = Vector2(-3.5, 13.8)
+scale = Vector2(0.32, 0.32)
+texture = ExtResource("7_arm")
+
+[editable path="PenguinBase"]
+[editable path="PenguinBase/Weapon/EquippedWeapon"]

@@ -1,9 +1,7 @@
 extends Node
 
-const GUNNER = preload("uid://dppv4b2b7ef31")
-const HUNTER = preload("uid://sej7wre0em41")
-const DEMOLISHER = preload("uid://bplqlfsdkfml5")
-const EXPLORER = preload("uid://8d2uraygf2eo")
+const PLAYER_DEPTH_Z_PER_PIXEL := 3.0
+const PLAYER_DEPTH_Z_LIMIT := 4090
 
 @onready var character_select = $MenuLayer/CharacterSelect
 @onready var players: Node2D = $Players
@@ -40,6 +38,21 @@ func _ready() -> void:
 		PlayerManager.replay_requested = false
 		prepare_match.call_deferred(true)
 
+
+func _process(_delta: float) -> void:
+	if not round_started:
+		return
+	for character in players.get_children():
+		if not character is Node2D or character.get_child_count() == 0:
+			continue
+		var penguin := character.get_child(0) as Penguin
+		if penguin == null or not is_instance_valid(penguin.feet_marker):
+			continue
+		# Character scenes use a wrapper Node2D that stays at spawn. Sort by the
+		# moving PenguinBase feet instead so the lower penguin draws in front.
+		var depth := roundi(penguin.feet_marker.global_position.y * PLAYER_DEPTH_Z_PER_PIXEL)
+		character.z_index = clampi(depth, -PLAYER_DEPTH_Z_LIMIT, PLAYER_DEPTH_Z_LIMIT)
+
 func prepare_match(skip_tutorial: bool = false) -> void:
 	if round_started:
 		return
@@ -74,17 +87,11 @@ func spawn_players() -> void:
 
 
 func spawn_player(player_data: Dictionary) -> void:
-	var character: String = player_data["character"].key
-	var penguin: Node
-	
-	if character == "Gunner":
-		penguin = GUNNER.instantiate()
-	elif character == "Demolisher":
-		penguin = DEMOLISHER.instantiate()
-	elif character == "Explorer":
-		penguin = EXPLORER.instantiate()
-	else:
-		penguin = HUNTER.instantiate()
+	var character_data: CharacterData = player_data.get("character")
+	if character_data == null or character_data.character_scene == null:
+		push_error("Cannot spawn player without a character scene: %s" % player_data)
+		return
+	var penguin: Node = character_data.character_scene.instantiate()
 	var slot: int = player_data["slot"]
 	var device: int = player_data["device"]
 

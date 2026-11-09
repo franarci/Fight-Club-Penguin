@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RangedWeaponData" format=3 uid="uid://bqppljddd5pnc"]
+
+[ext_resource type="Script" uid="uid://bohxhlwhv07ng" path="res://RangedWeaponData.gd" id="1_script"]
+[ext_resource type="SpriteFrames" uid="uid://d4ifn3trd1wnc" path="res://src/entities/prototypes/weapons/ranged/scout_rifle_frames.tres" id="2_frames"]
+[ext_resource type="Resource" uid="uid://c3dpndb3fipw3" path="res://src/entities/prototypes/weapons/ranged/scout_rifle_visual_profile.tres" id="3_visual"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/ScoutRifleProjectile.tscn" id="4_projectile"]
+
+[resource]
+script = ExtResource("1_script")
+projectile_scene = ExtResource("4_projectile")
+projectile_speed = 950.0
+magazine_capacity = 1
+reload_duration = 1.6
+recoil_strength = 80.0
+weapon_name = "ScoutRifle"
+damage = 35.0
+attack_cooldown = 0.25
+sprite_frames = ExtResource("2_frames")
+visual_profile = ExtResource("3_visual")

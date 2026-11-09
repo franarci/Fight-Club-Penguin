@@ -1,46 +1,57 @@
 [gd_scene format=3 uid="uid://sej7wre0em41"]
 
-[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_ggrhy"]
-[ext_resource type="Texture2D" uid="uid://btabyxj5w0ek0" path="res://assets/textures/entities/gunner/lr_penguin2.png" id="2_8p7r8"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8p7r8"]
-atlas = ExtResource("2_8p7r8")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_048j4"]
-atlas = ExtResource("2_8p7r8")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r3qsi"]
-atlas = ExtResource("2_8p7r8")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_111wl"]
-atlas = ExtResource("2_8p7r8")
-region = Rect2(160, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_048j4"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8p7r8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_048j4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r3qsi")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_111wl")
-}],
-"loop": 1,
-"name": &"idle_right",
-"speed": 5.0
-}]
+[ext_resource type="PackedScene" uid="uid://1p0rrharlx4b" path="res://src/entities/prototypes/penguin/penguin_base.tscn" id="1_base"]
+[ext_resource type="SpriteFrames" uid="uid://dht84uu5pg5j" path="res://src/entities/prototypes/characters/hunter_sprite_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" uid="uid://biykvaldttomc" path="res://assets/textures/entities/hunter/hunter_death.png" id="3_death"]
+[ext_resource type="Resource" uid="uid://cnawotbe1ywi" path="res://src/entities/prototypes/characters/hunter_hand_positions.tres" id="4_hands"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/melee/Harpoon.tscn" id="5_harpoon"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/harpoon_data.tres" id="6_harpoon_data"]
 
 [node name="Hunter" type="Node2D" unique_id=288995503]
 
-[node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_ggrhy")]
-p_spriteframes = SubResource("SpriteFrames_048j4")
-p_autoplay = "idle_right"
+[node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_base")]
+death_sprite_sheet = ExtResource("3_death")
+hand_positions = ExtResource("4_hands")
+starting_weapon_data = ExtResource("6_harpoon_data")
+p_spriteframes = ExtResource("2_frames")
+p_autoplay = "idle_down"
+
+[node name="Body" parent="PenguinBase" index="0" unique_id=1076287710]
+position = Vector2(0, 14)
+scale = Vector2(0.235, 0.235)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle_down"
+
+[node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
+position = Vector2(0, -18.2)
+scale = Vector2(1.6400527, 1.6400527)
+
+[node name="Label" parent="PenguinBase/PlayerIndicator" index="0" unique_id=214354687]
+offset_left = -9.5
+offset_top = -33.0
+offset_right = 9.5
+offset_bottom = -10.0
+text = "P1"
+
+[node name="Arrow" parent="PenguinBase/PlayerIndicator" index="1" unique_id=1252359202]
+position = Vector2(0, -8)
+
+[node name="Weapon" parent="PenguinBase" index="6" unique_id=1150368172]
+position = Vector2(1, 2)
+metadata/_edit_group_ = true
+
+[node name="EquippedWeapon" parent="PenguinBase/Weapon" index="0" unique_id=1301067030 instance=ExtResource("5_harpoon")]
+stab_distance = null
+stab_windup_distance = null
+swing_sound = null
+charged_wave_scene = null
+charge_area_radius = 176.0
+charge_damage = 60.0
+charge_knockback = 700.0
+charge_camera_shake = 16.0
+
+[node name="Body" parent="PenguinBase/Weapon/EquippedWeapon" index="0" unique_id=1429468655]
+animation = &"attack_up_left"
+
+[editable path="PenguinBase"]
+[editable path="PenguinBase/Weapon/EquippedWeapon"]
