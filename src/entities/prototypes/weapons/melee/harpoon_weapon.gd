@@ -99,6 +99,7 @@ func launch_harpoon() -> void:
 	if not can_attack or not is_instance_valid(wielder) or harpoon_projectile_scene == null:
 		return
 	can_attack = false
+	play_charged_impact_sound()
 	swing_direction = aim_direction.normalized()
 	var origin := body.global_position
 	var rope_anchor_offset := get_current_grip_offset()

@@ -97,6 +97,8 @@ func find_target(candidate_position: Vector2) -> Penguin:
 
 func hook_target(target: Penguin) -> void:
 	var accepted := target.receive_damage(damage, wielder, flight_direction)
+	if accepted:
+		harpoon_weapon.call("play_impact_sound")
 	if accepted and pull_strength > 0.0:
 		var pull_direction := wielder.global_position - target.global_position
 		if not pull_direction.is_zero_approx():
