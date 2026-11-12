@@ -7,6 +7,7 @@ const ControlPrompt = preload("res://src/ui/shared/control_prompt.gd")
 
 @onready var players_container: HBoxContainer = $CenterContainer/PlayersContainer
 @onready var footer_actions: HBoxContainer = $Footer/Margin/Actions
+@onready var minimum_players_hint: Label = $MinimumPlayersHint
 @onready var ready_dialog: Control = $ReadyDialog
 @onready var ready_prompts: HBoxContainer = $ReadyDialog/Center/Panel/Margin/Content/Prompts
 
@@ -111,6 +112,7 @@ func _available_devices() -> Array:
 
 
 func _refresh_selection() -> void:
+	minimum_players_hint.visible = PlayerManager.players.size() < 2
 	if ready_dialog.visible and not are_all_players_ready():
 		_close_ready_dialog()
 	_update_footer()
