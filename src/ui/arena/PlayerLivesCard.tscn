@@ -111,6 +111,13 @@ theme_override_colors/font_color = Color(0.858824, 0.913725, 1, 1)
 theme_override_font_sizes/font_size = 13
 text = "GUNNER"
 
+[node name="EliminationStatus" type="Label" parent="MarginContainer/Content/Info"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "Eliminated"
+
 [node name="HealthHeader" type="HBoxContainer" parent="MarginContainer/Content/Info" unique_id=1775680693]
 layout_mode = 2
 

@@ -6,6 +6,7 @@ class_name PlayerLivesCard
 @onready var portrait: TextureRect = $MarginContainer/Content/PortraitFrame/Portrait
 @onready var player_id: Label = $MarginContainer/Content/PortraitFrame/PlayerId
 @onready var title: Label = $MarginContainer/Content/Info/Title
+@onready var elimination_status: Label = $MarginContainer/Content/Info/EliminationStatus
 @onready var health_header: HBoxContainer = $MarginContainer/Content/Info/HealthHeader
 @onready var health_label: Label = $MarginContainer/Content/Info/HealthHeader/HealthLabel
 @onready var health_bar: ProgressBar = $MarginContainer/Content/Info/HealthBar
@@ -22,6 +23,7 @@ var observed_penguin: Penguin
 var observed_ranged_weapon: RangedWeapon
 var observed_melee_weapon: MeleeWeapon
 var right_side := false
+var eliminated := false
 
 
 func _ready() -> void:
@@ -46,6 +48,7 @@ func configure(player: Dictionary, p_right_side: bool) -> void:
 	var character: CharacterData = player.get("character")
 	title.text = character.key.to_upper() if character != null else "PLAYER %d" % (slot + 1)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT if right_side else HORIZONTAL_ALIGNMENT_LEFT
+	elimination_status.horizontal_alignment = title.horizontal_alignment
 	player_id.text = "P%d" % (slot + 1)
 	portrait.texture = character.Img if character != null else null
 	portrait_frame.visible = character != null
@@ -65,6 +68,8 @@ func configure(player: Dictionary, p_right_side: bool) -> void:
 
 
 func set_lives(lives: int) -> void:
+	eliminated = lives <= 0
+	_update_elimination_status()
 	for index in hearts.size():
 		hearts[index].set("filled", index < lives)
 
@@ -103,6 +108,15 @@ func bind_penguin(penguin: Penguin) -> void:
 	else:
 		observed_melee_weapon = null
 		weapon_meter.hide()
+	_update_elimination_status()
+
+
+func _update_elimination_status() -> void:
+	elimination_status.visible = eliminated
+	portrait.self_modulate = Color(0.5, 0.5, 0.5, 1.0) if eliminated else Color.WHITE
+	if eliminated:
+		weapon_status.hide()
+		weapon_meter.hide()
 
 
 func set_health(current: float, maximum: float) -> void:
@@ -132,7 +146,7 @@ func set_weapon_meter(label: String, progress: float, visible: bool = true) -> v
 	var fill_style := weapon_meter_bar.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
 	fill_style.bg_color = Color("#f2b64c").lerp(Color("#ff3030"), clampf(progress, 0.0, 1.0))
 	weapon_meter_bar.add_theme_stylebox_override("fill", fill_style)
-	weapon_meter.visible = visible
+	weapon_meter.visible = visible and not eliminated
 
 
 func set_charge_progress(progress: float, _visible: bool) -> void:
