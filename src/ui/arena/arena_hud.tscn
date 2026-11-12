@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bxfop7lp0u256" path="res://src/ui/arena/arena_hud.gd" id="1"]
 
+[ext_resource type="PackedScene" path="res://src/ui/arena/MatchClock.tscn" id="2_clock"]
+
 [node name="ArenaHUD" type="CanvasLayer" unique_id=133186521]
 layer = 10
 script = ExtResource("1")
+
+[node name="MatchClock" parent="." instance=ExtResource("2_clock")]

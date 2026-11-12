@@ -4,6 +4,7 @@ signal replay_requested
 signal menu_requested
 
 @onready var title: Label = $Background/CenterContainer/PanelContainer/MarginContainer/Content/Title
+@onready var reason_label: Label = $Background/CenterContainer/PanelContainer/MarginContainer/Content/Reason
 @onready var replay_button: Button = $Background/CenterContainer/PanelContainer/MarginContainer/Content/ReplayButton
 @onready var menu_button: Button = $Background/CenterContainer/PanelContainer/MarginContainer/Content/MenuButton
 
@@ -16,8 +17,10 @@ func _ready() -> void:
 	menu_button.pressed.connect(_on_menu_pressed)
 
 
-func show_result(winner_slot: int) -> void:
+func show_result(winner_slot: int, reason: String = "") -> void:
 	active = true
+	reason_label.text = reason
+	reason_label.visible = not reason.is_empty()
 	title.text = "Draw!" if winner_slot < 0 else "Player %d wins!" % (winner_slot + 1)
 	title.add_theme_color_override("font_color", Color.WHITE if winner_slot < 0 else PlayerManager.get_player_color(winner_slot))
 	show()

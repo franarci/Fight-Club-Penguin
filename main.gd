@@ -11,6 +11,7 @@ const EXPLORER = preload("uid://8d2uraygf2eo")
 @onready var pause_menu = $PauseMenu
 @onready var gamepad_recovery = $GamepadRecovery
 @onready var pre_match = $PreMatch
+@onready var match_clock = $ArenaHUD/MatchClock
 
 var round_started := false
 var round_finished := false
@@ -29,6 +30,7 @@ func _ready() -> void:
 	Music.play_menu()
 	$SharedCamera.show_arena($Arena.world_size)
 	pre_match.completed.connect(_on_tutorial_completed)
+	match_clock.expired.connect(_on_time_limit_reached, CONNECT_DEFERRED)
 	round_result.replay_requested.connect(_replay_round)
 	round_result.menu_requested.connect(_return_to_menu)
 	pause_menu.resume_requested.connect(_resume_round)
@@ -51,6 +53,7 @@ func prepare_match(skip_tutorial: bool = false) -> void:
 func _on_tutorial_completed() -> void:
 	if not round_finished and not gamepad_recovery.has_missing_players():
 		Music.play_combat()
+		match_clock.start()
 		get_tree().paused = false
 
 
@@ -116,11 +119,56 @@ func _check_round_result() -> void:
 			survivors.append(slot)
 	if survivors.size() > 1:
 		return
+	_finish_round(survivors[0] if survivors.size() == 1 else -1)
+
+
+func _on_time_limit_reached() -> void:
+	if not round_started or round_finished:
+		return
+	_check_round_result()
+	if round_finished:
+		return
+	var contenders: Array[Dictionary] = []
+	var most_lives := 0
+	for character in players.get_children():
+		var penguin := character.get_child(0) as Penguin
+		if penguin == null:
+			continue
+		var lives := PlayerManager.get_lives(penguin.player_index)
+		if lives <= 0 or lives < most_lives:
+			continue
+		if lives > most_lives:
+			most_lives = lives
+			contenders.clear()
+		var health: float = penguin.max_health if penguin.is_dead else penguin.current_health
+		contenders.append({"slot": penguin.player_index, "health": health})
+	if contenders.size() == 1:
+		_finish_round(contenders[0]["slot"], "Time's up! Most lives remaining.")
+		return
+	var winners: Array[int] = []
+	var most_health := -1.0
+	for contender in contenders:
+		var health: float = contender["health"]
+		if is_equal_approx(health, most_health):
+			winners.append(contender["slot"])
+		elif health > most_health:
+			most_health = health
+			winners.assign([contender["slot"]])
+	if winners.size() == 1:
+		_finish_round(winners[0], "Time's up! Highest HP after tied lives.")
+	else:
+		_finish_round(-1, "Time's up! Equal lives and HP.")
+
+
+func _finish_round(winner_slot: int, reason: String = "") -> void:
+	if round_finished:
+		return
 	round_finished = true
+	match_clock.stop()
 	gamepad_recovery.stop()
 	pause_menu.dismiss()
 	get_tree().paused = true
-	round_result.show_result(survivors[0] if survivors.size() == 1 else -1)
+	round_result.show_result(winner_slot, reason)
 
 
 func _replay_round() -> void:
