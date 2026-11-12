@@ -210,10 +210,15 @@ func apply_swing_hits() -> void:
 	query.shape = attack_shape
 	query.transform = hitbox.global_transform
 	query.collision_mask = hitbox.collision_mask
+	query.collide_with_areas = true
 	if wielder is CollisionObject2D:
 		query.exclude = [wielder.get_rid()]
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
 		var target = result.collider
+		if target is Area2D:
+			var area_parent: Node = target.get_parent()
+			if area_parent != null and area_parent.has_method("receive_damage"):
+				target = area_parent
 		if target == wielder or not target.has_method("receive_damage"):
 			continue
 		var target_id: int = target.get_instance_id()
@@ -277,10 +282,15 @@ func perform_charged_attack() -> void:
 	query.shape = area_shape
 	query.transform = Transform2D(0.0, impact_point)
 	query.collision_mask = hitbox.collision_mask
+	query.collide_with_areas = true
 	query.exclude = [wielder.get_rid()]
 	var hit_targets_once: Dictionary = {}
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
 		var target = result.collider
+		if target is Area2D:
+			var area_parent: Node = target.get_parent()
+			if area_parent != null and area_parent.has_method("receive_damage"):
+				target = area_parent
 		if target == wielder or not target is Penguin:
 			continue
 		var target_id: int = target.get_instance_id()

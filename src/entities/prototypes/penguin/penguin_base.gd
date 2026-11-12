@@ -44,6 +44,8 @@ var player_palette_instance: ShaderMaterial
 @onready var respawn_timer: Timer = $RespawnTimer
 @onready var original_collision_layer: int = collision_layer
 @onready var original_collision_mask: int = collision_mask
+@onready var damage_hitbox: Area2D = $Hitbox
+@onready var original_damage_hitbox_collision_layer: int = damage_hitbox.collision_layer
 
 var current_health: float
 var is_dead := false
@@ -705,6 +707,7 @@ func lose_life(from_damage: bool = false) -> void:
 	movement_state_machine.change_state(&"Idle")
 	set_deferred("collision_layer", 0)
 	set_deferred("collision_mask", 0)
+	damage_hitbox.set_deferred("collision_layer", 0)
 	if is_instance_valid(current_weapon):
 		if current_weapon.has_method("cancel_attack"):
 			current_weapon.cancel_attack()
@@ -760,6 +763,7 @@ func _on_respawn_timer_timeout() -> void:
 	body.self_modulate.a = 0.5 if protection_left > 0.0 else 1.0
 	set_deferred("collision_layer", original_collision_layer)
 	set_deferred("collision_mask", original_collision_mask)
+	damage_hitbox.set_deferred("collision_layer", original_damage_hitbox_collision_layer)
 	if is_instance_valid(current_weapon):
 		current_weapon.attack_cooldown.stop()
 		current_weapon.can_attack = true

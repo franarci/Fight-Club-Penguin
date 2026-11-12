@@ -87,9 +87,14 @@ func find_target(candidate_position: Vector2) -> Penguin:
 	query.shape = hit_shape
 	query.transform = Transform2D(0.0, candidate_position)
 	query.collision_mask = collision_mask
+	query.collide_with_areas = true
 	query.exclude = [wielder.get_rid()]
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 32):
 		var target = result.collider
+		if target is Area2D:
+			var area_parent: Node = target.get_parent()
+			if area_parent is Penguin:
+				target = area_parent
 		if target is Penguin and target != wielder:
 			return target
 	return null
