@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://src/ui/tutorial/pre_match.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://src/ui/character_selection/CountdownOverlay.tscn" id="2_countdown"]
+[ext_resource type="Script" path="res://src/ui/shared/action_button.gd" id="3_action"]
 
 [sub_resource type="StyleBoxFlat" id="Panel"]
 bg_color = Color(0.025, 0.05, 0.12, 0.96)
@@ -87,18 +88,13 @@ visible = false
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Back"
+script = ExtResource("3_action")
 
 [node name="NextButton" type="Button" parent="Background/Center/Panel/Margin/Content/Navigation"]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Next"
-
-[node name="Hint" type="HBoxContainer" parent="Background/Center/Panel/Margin/Content"]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
+script = ExtResource("3_action")
 
 [node name="Countdown" type="Timer" parent="."]
 one_shot = true

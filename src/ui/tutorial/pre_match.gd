@@ -11,9 +11,8 @@ const STEP_DURATION := 1.0
 @onready var title: Label = $Background/Center/Panel/Margin/Content/Title
 @onready var objective: Label = $Background/Center/Panel/Margin/Content/Objective
 @onready var controls: HBoxContainer = $Background/Center/Panel/Margin/Content/Controls
-@onready var back_button: Button = $Background/Center/Panel/Margin/Content/Navigation/BackButton
-@onready var next_button: Button = $Background/Center/Panel/Margin/Content/Navigation/NextButton
-@onready var hint: HBoxContainer = $Background/Center/Panel/Margin/Content/Hint
+@onready var back_button: ActionButton = $Background/Center/Panel/Margin/Content/Navigation/BackButton
+@onready var next_button: ActionButton = $Background/Center/Panel/Margin/Content/Navigation/NextButton
 @onready var countdown: Timer = $Countdown
 @onready var countdown_overlay = $CountdownOverlay
 
@@ -68,18 +67,12 @@ func _build_controls() -> void:
 		controls.add_child(column)
 
 
-func _update_navigation_hints() -> void:
-	_clear_children(hint)
+func _update_navigation_actions() -> void:
 	var devices: Array = []
 	for player in PlayerManager.players:
 		devices.append(player["device"])
-	var advance_prompt := ControlPrompt.new()
-	advance_prompt.configure("Continue", devices, ["menu_confirm"])
-	hint.add_child(advance_prompt)
-	if page > 0:
-		var back_prompt := ControlPrompt.new()
-		back_prompt.configure("Back", devices, ["selection_cancel"])
-		hint.add_child(back_prompt)
+	next_button.configure("Next" if page == 0 else "Start countdown", devices, ["menu_confirm"])
+	back_button.configure("Back", devices, ["selection_cancel"])
 
 
 func _clear_children(parent: Node) -> void:
@@ -94,8 +87,7 @@ func _show_page() -> void:
 	objective.visible = page == 0
 	controls.visible = page == 1
 	back_button.visible = page > 0
-	next_button.text = "Next" if page == 0 else "Start countdown"
-	_update_navigation_hints()
+	_update_navigation_actions()
 	next_button.grab_focus()
 
 

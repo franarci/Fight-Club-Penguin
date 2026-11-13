@@ -32,7 +32,7 @@ func run_checks() -> void:
 	assert(tutorial.page == 0)
 	tutorial.advance()
 	assert(tutorial.page == 1 and tutorial.controls.visible and tutorial.back_button.visible)
-	assert(tutorial.next_button.text == "Start countdown" and tutorial.hint.get_child_count() == 2)
+	assert(tutorial.next_button.caption == "Start countdown" and tutorial.back_button.caption == "Back")
 	for column in tutorial.controls.get_children():
 		var attack_prompt: HBoxContainer = column.get_child(3)
 		assert(attack_prompt.get_child(0).text == "Attack")

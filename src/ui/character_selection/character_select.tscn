@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://1cuqdu5t240p" path="res://src/ui/character_selection/character_select.gd" id="1_vmxbt"]
 [ext_resource type="PackedScene" uid="uid://btcmdje4rpi20" path="res://src/ui/character_selection/PlayerSelection.tscn" id="2_672rp"]
+[ext_resource type="Script" path="res://src/ui/shared/action_button.gd" id="3_action"]
 
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
@@ -164,28 +165,22 @@ text = "Everyone has chosen a character.
 Start the match or keep choosing."
 horizontal_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="ReadyDialog/Center/Panel/Margin/Content"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="Accept" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Buttons"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-text = "Let's play"
-
-[node name="Cancel" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Buttons"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-size_flags_horizontal = 3
-focus_mode = 0
-text = "Keep choosing"
-
 [node name="Prompts" type="HBoxContainer" parent="ReadyDialog/Center/Panel/Margin/Content"]
 layout_mode = 2
 theme_override_constants/separation = 24
 alignment = 1
+
+[node name="Accept" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Prompts"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("3_action")
+
+[node name="Cancel" type="Button" parent="ReadyDialog/Center/Panel/Margin/Content/Prompts"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("3_action")
 
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection4" to="." method="_on_player_ready_changed"]
 [connection signal="ready_changed" from="CenterContainer/PlayersContainer/PlayerSelection3" to="." method="_on_player_ready_changed"]
