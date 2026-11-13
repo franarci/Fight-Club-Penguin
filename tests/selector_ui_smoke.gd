@@ -65,9 +65,13 @@ func run_checks() -> void:
 	var cards: Rect2 = selector.players_container.get_global_rect()
 	assert(cards.position.y >= 40 and cards.end.y < footer.get_global_rect().position.y)
 	for slot in selector.player_slots:
-		assert(slot.size.x == 220 and slot.size.y == 500)
+		assert(slot.size.x == 220 and slot.size.y == 460)
+		assert(slot.slot_number.text == "PLAYER %d" % (slot.slot_index + 1))
+		for content in [slot.character_container, slot.player_label, slot.stats_container, slot.navigation]:
+			assert(slot.get_global_rect().encloses(content.get_global_rect()))
 	for i in [1, 2, 3]:
 		selector.player_slots[i].confirm_character()
+		assert(selector.player_slots[i].ready_badge.visible)
 	Input.action_press("selection_accept")
 	selector.player_slots[0].confirm_character()
 	await process_frame
@@ -107,6 +111,8 @@ func run_checks() -> void:
 	await process_frame
 	assert(not selector.ready_dialog.visible and not main.round_started)
 	assert(manager.players.size() == 1)
+	assert(selector.player_slots[1].empty_state.visible)
+	assert(not selector.player_slots[1].ready_badge.visible)
 	main.free()
 	manager.clear_players()
 	print("PASS: centered fixed-width cards, one-row black footer, PNG prompts, modal input release, cancel/reopen and disconnect")

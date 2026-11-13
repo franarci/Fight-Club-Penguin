@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends HBoxContainer
 class_name StatRow
 
 @onready var name_label: Label = $NameLabel

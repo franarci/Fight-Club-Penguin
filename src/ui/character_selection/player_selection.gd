@@ -17,6 +17,10 @@ var slot_index := -1
 @onready var select_button: Button = $VBoxContainer/Navigation/Select
 @onready var prev_button: Button = $VBoxContainer/Navigation/Prev
 @onready var next_button: Button = $VBoxContainer/Navigation/Next
+@onready var slot_number: Label = $VBoxContainer/SlotHeader/SlotNumber
+@onready var slot_header: PanelContainer = $VBoxContainer/SlotHeader
+@onready var empty_state: Control = $VBoxContainer/EmptyState
+@onready var ready_badge: Label = $VBoxContainer/ReadyBadge
 var is_ready := false
 
 @export var characters: Array[CharacterData] = []
@@ -43,6 +47,9 @@ func activate(p_device: int, player_number: int) -> void:
 
 	select_button.text = "Select"
 	configure_slot(player_number)
+	empty_state.hide()
+	player_label.show()
+	ready_badge.hide()
 	character_container.visible = true
 	stats_container.show()
 	navigation.visible = true
@@ -63,6 +70,9 @@ func deactivate() -> void:
 
 	player_label.text = "PRESS\nSTART"
 
+	empty_state.show()
+	player_label.hide()
+	ready_badge.hide()
 	character_container.visible = false
 	stats_container.hide()
 	navigation.visible = false
@@ -75,8 +85,8 @@ func _ready() -> void:
 
 	border_style.content_margin_left = 12
 	border_style.content_margin_right = 12
-	border_style.content_margin_top = 12
-	border_style.content_margin_bottom = 16
+	border_style.content_margin_top = 20
+	border_style.content_margin_bottom = 20
 
 	add_theme_stylebox_override("panel", border_style)
 
@@ -127,6 +137,7 @@ func confirm_character() -> void:
 	prev_button.hide()
 	next_button.hide()
 	select_button.text = "Change"
+	ready_badge.show()
 
 	border_blink_timer.stop()
 	set_border_visible(true)
@@ -139,6 +150,7 @@ func cancel_selection() -> void:
 
 	if is_ready:
 		is_ready = false
+		ready_badge.hide()
 		PlayerManager.set_ready(device, false)
 
 		prev_button.show()
@@ -155,21 +167,26 @@ func cancel_selection() -> void:
 func configure_slot(index: int) -> void:
 	slot_index = index
 	player_index = index
+	slot_number.text = "PLAYER %d" % (index + 1)
 	set_player_color(PlayerManager.get_player_color(index))
 
 
 func set_player_color(color: Color) -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	player_border_color = color
-	border_style.bg_color = color
-
-	border_style.border_color = Color("#120305")
-	border_style.border_width_left = 5
-	border_style.border_width_top = 5
-	border_style.border_width_right = 5
-	border_style.border_width_bottom = 5
+	border_style.bg_color = Color(0.035, 0.085, 0.16, 0.97)
+	var header_style := slot_header.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	header_style.bg_color = color.darkened(0.35)
+	header_style.border_width_bottom = 2
+	header_style.border_color = color
+	slot_header.add_theme_stylebox_override("panel", header_style)
+	border_style.border_width_left = 3
+	border_style.border_width_top = 3
+	border_style.border_width_right = 3
+	border_style.border_width_bottom = 3
 
 	add_theme_stylebox_override("panel", border_style)
+	set_border_visible(border_visible)
 
 func set_border_visible(value: bool) -> void:
 	border_visible = value
@@ -178,11 +195,13 @@ func set_border_visible(value: bool) -> void:
 		return
 
 	if not active:
-		border_style.border_color = Color.TRANSPARENT
-	elif is_ready or value:
+		border_style.border_color = Color("8398aa")
+	elif is_ready:
+		border_style.border_color = player_border_color
+	elif value:
 		border_style.border_color = Color.WHITE
 	else:
-		border_style.border_color = Color.BLACK
+		border_style.border_color = player_border_color
 
 
 func _on_border_blink_timer_timeout() -> void:
