@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://dqa0d1iiigmpy" path="res://src/ui/character_selection/CharacterData.gd" id="2_7cru3"]
 [ext_resource type="Texture2D" path="res://assets/textures/character_select/gunner.webp" id="3_3weqg"]
 [ext_resource type="Texture2D" path="res://assets/textures/character_select/demolisher-transparent.png" id="4_yla77"]
-[ext_resource type="Texture2D" path="res://assets/textures/character_select/explorer.webp" id="5_kktns"]
 [ext_resource type="Texture2D" path="res://assets/textures/character_select/hunter.webp" id="6_tolr6"]
 [ext_resource type="PackedScene" uid="uid://cs3ta2ahnlymh" path="res://src/ui/character_selection/StatRow.tscn" id="7_kktns"]
 
@@ -12,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Demolisher.tscn" id="9_demolisher_profile"]
 
 [ext_resource type="Shader" path="res://src/ui/character_selection/portrait.gdshader" id="10_portrait"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Hunter.tscn" id="11_hunter_profile"]
+[ext_resource type="Texture2D" path="res://assets/textures/character_select/explorer.webp" id="12_scout_portrait"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Scout.tscn" id="13_scout_profile"]
 
 [sub_resource type="ShaderMaterial" id="PortraitMaterial"]
 resource_local_to_scene = true
@@ -36,15 +38,16 @@ metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
 [sub_resource type="Resource" id="Resource_5aohr"]
 script = ExtResource("2_7cru3")
-key = "Explorer"
-selectable = false
-Img = ExtResource("5_kktns")
+key = "Scout"
+selectable = true
+character_scene = ExtResource("13_scout_profile")
+Img = ExtResource("12_scout_portrait")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 
 [sub_resource type="Resource" id="Resource_yla77"]
 script = ExtResource("2_7cru3")
 key = "Hunter"
-selectable = false
+character_scene = ExtResource("11_hunter_profile")
 Img = ExtResource("6_tolr6")
 metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 

@@ -24,16 +24,20 @@ func run_checks() -> void:
 	assert(image.detect_alpha() != Image.ALPHA_NONE)
 	assert(image.get_pixel(0, 0).a == 0.0)
 	assert(image.get_pixel(image.get_width() - 1, 0).a == 0.0)
-	for expected in ["Explorer", "Hunter"]:
+	for expected in ["Scout", "Hunter"]:
 		card.next()
 		assert(card.player_label.text == expected)
-		assert(card.select_button.disabled)
-		assert(card.select_button.text == "Unavailable")
-		assert(card.character.material.get_shader_parameter("saturation") == 0.0)
+		assert(not card.select_button.disabled)
+		assert(card.select_button.text == "Select")
+		assert(card.character.material.get_shader_parameter("saturation") == 1.0)
+		if expected == "Scout":
+			var scout_data: CharacterData = card.characters[card.selected_character]
+			assert(scout_data.character_scene.resource_path == "res://src/entities/prototypes/characters/Scout.tscn")
+			assert(scout_data.Img.resource_path == "res://assets/textures/character_select/explorer.webp")
 		card.confirm_character()
-		card._on_select_pressed()
-		assert(not card.is_ready)
-		assert(not manager.get_player_by_device(-1).ready)
+		assert(card.is_ready)
+		assert(manager.get_player_by_device(-1).character.key == expected)
+		card.cancel_selection()
 	var other = selector.player_slots[1]
 	other.activate(0, 2)
 	assert(other.player_label.text == "Gunner")
@@ -53,5 +57,5 @@ func run_checks() -> void:
 	assert(card.player_label.text == "PRESS\nSTART")
 	selector.free()
 	manager.clear_players()
-	print("PASS: transparent portrait, character names, unavailable selection blocked and independent grayscale")
+	print("PASS: Scout reuses the color Explorer portrait and selectable scene; portraits retain independent materials")
 	quit()
