@@ -11,7 +11,8 @@ const STEP_DURATION := 1.0
 @onready var title: Label = $Background/Center/Panel/Margin/Content/Title
 @onready var objective: Label = $Background/Center/Panel/Margin/Content/Objective
 @onready var controls: HBoxContainer = $Background/Center/Panel/Margin/Content/Controls
-@onready var next_button: Button = $Background/Center/Panel/Margin/Content/NextButton
+@onready var back_button: Button = $Background/Center/Panel/Margin/Content/Navigation/BackButton
+@onready var next_button: Button = $Background/Center/Panel/Margin/Content/Navigation/NextButton
 @onready var hint: HBoxContainer = $Background/Center/Panel/Margin/Content/Hint
 @onready var countdown: Timer = $Countdown
 @onready var countdown_overlay = $CountdownOverlay
@@ -25,6 +26,7 @@ var countdown_step := -1
 func _ready() -> void:
 	hide()
 	next_button.pressed.connect(advance)
+	back_button.pressed.connect(go_back)
 	countdown.timeout.connect(_on_countdown_timeout)
 
 
@@ -43,12 +45,9 @@ func open(skip_tutorial: bool = false) -> void:
 
 func _build_controls() -> void:
 	_clear_children(controls)
-	_clear_children(hint)
 	var families := PackedStringArray()
-	var devices: Array = []
 	for player in PlayerManager.players:
 		var device: int = player["device"]
-		devices.append(device)
 		var family: String = ControlHints.device_family(device)
 		if families.has(family):
 			continue
@@ -67,9 +66,20 @@ func _build_controls() -> void:
 			prompt.configure(captions[action], [device], [action])
 			column.add_child(prompt)
 		controls.add_child(column)
+
+
+func _update_navigation_hints() -> void:
+	_clear_children(hint)
+	var devices: Array = []
+	for player in PlayerManager.players:
+		devices.append(player["device"])
 	var advance_prompt := ControlPrompt.new()
 	advance_prompt.configure("Continue", devices, ["menu_confirm"])
 	hint.add_child(advance_prompt)
+	if page > 0:
+		var back_prompt := ControlPrompt.new()
+		back_prompt.configure("Back", devices, ["selection_cancel"])
+		hint.add_child(back_prompt)
 
 
 func _clear_children(parent: Node) -> void:
@@ -83,7 +93,9 @@ func _show_page() -> void:
 	title.text = "How to win" if page == 0 else "Controls"
 	objective.visible = page == 0
 	controls.visible = page == 1
+	back_button.visible = page > 0
 	next_button.text = "Next" if page == 0 else "Start countdown"
+	_update_navigation_hints()
 	next_button.grab_focus()
 
 
@@ -95,6 +107,13 @@ func advance() -> void:
 		_show_page()
 	else:
 		start_countdown()
+
+
+func go_back() -> void:
+	if not active or suspended or countdown_step >= 0 or page <= 0:
+		return
+	page -= 1
+	_show_page()
 
 
 func start_countdown() -> void:
@@ -123,7 +142,9 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 	if PlayerManager.get_player_by_device(device).is_empty():
 		return
-	if event.is_action_pressed(MultiplayerInput.get_action_name(device, ControlHints.confirmation_action(device))):
+	if event.is_action_pressed(MultiplayerInput.get_action_name(device, "selection_cancel")):
+		go_back()
+	elif event.is_action_pressed(MultiplayerInput.get_action_name(device, ControlHints.confirmation_action(device))):
 		advance()
 
 

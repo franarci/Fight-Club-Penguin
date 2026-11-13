@@ -65,7 +65,11 @@ text = "Be the last penguin standing!
 
 Push rivals off the ice or attack them to take their lives.
 Falling off the ice or running out of HP costs one life.
-Lose all three lives and you are eliminated."
+Lose all three lives and you are eliminated.
+
+Matches last up to 5 minutes.
+When time runs out: most lives wins, then most HP.
+Still tied? It's a draw."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -74,9 +78,21 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 28
 
-[node name="NextButton" type="Button" parent="Background/Center/Panel/Margin/Content"]
+[node name="Navigation" type="HBoxContainer" parent="Background/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BackButton" type="Button" parent="Background/Center/Panel/Margin/Content/Navigation"]
+visible = false
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Back"
+
+[node name="NextButton" type="Button" parent="Background/Center/Panel/Margin/Content/Navigation"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Next"
 
 [node name="Hint" type="HBoxContainer" parent="Background/Center/Panel/Margin/Content"]
