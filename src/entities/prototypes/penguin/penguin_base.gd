@@ -44,11 +44,14 @@ var player_palette_instance: ShaderMaterial
 @onready var respawn_timer: Timer = $RespawnTimer
 @onready var original_collision_layer: int = collision_layer
 @onready var original_collision_mask: int = collision_mask
+@onready var damage_hitbox: Area2D = $Hitbox
+@onready var original_damage_hitbox_collision_layer: int = damage_hitbox.collision_layer
 
 var current_health: float
 var is_dead := false
 var is_eliminated := false
 var protection_left := 0.0
+var hit_animation_active := false
 
 
 @onready var body: AnimatedSprite2D = $Body
@@ -130,7 +133,45 @@ func update_player_identifier() -> void:
 	# Put the triangle tip at the identifier origin, and center the label above it.
 	player_arrow.position = Vector2(-arrow_bounds.get_center().x, -arrow_bounds.end.y)
 	player_label.size = label_size
-	player_label.position = Vector2(-label_size.x * 0.5, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
+	var label_offset := get_identifier_label_separation(label_size)
+	var label_local_offset := label_offset / maxf(absf(player_indicator.global_scale.x), 0.001)
+	player_label.position = Vector2(-label_size.x * 0.5 + label_local_offset, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
+
+func get_identifier_label_separation(label_size: Vector2) -> float:
+	var nearby: Array[Penguin] = [self]
+	var self_anchor := player_indicator.global_position
+	var self_width := label_size.x * absf(player_indicator.global_scale.x)
+	var self_height := label_size.y * absf(player_indicator.global_scale.y)
+	var cluster_width := self_width
+	for candidate in get_tree().get_nodes_in_group("active_penguins"):
+		var other := candidate as Penguin
+		if other == null or other == self or other.is_dead or other.is_eliminated:
+			continue
+		if not is_instance_valid(other.player_indicator) or not is_instance_valid(other.player_label):
+			continue
+		var other_size := other.player_label.get_minimum_size()
+		var other_width := other_size.x * absf(other.player_indicator.global_scale.x)
+		var other_height := other_size.y * absf(other.player_indicator.global_scale.y)
+		var anchor_delta := self_anchor - other.get_player_identifier_anchor_global()
+		var horizontal_limit := (self_width + other_width) * 0.5
+		var vertical_limit := maxf(self_height, other_height) * 1.2
+		if absf(anchor_delta.x) < horizontal_limit and absf(anchor_delta.y) < vertical_limit:
+			nearby.append(other)
+			cluster_width = maxf(cluster_width, other_width)
+	if nearby.size() == 1:
+		return 0.0
+	nearby.sort_custom(func(a: Penguin, b: Penguin) -> bool: return a.player_index < b.player_index)
+	var position_in_cluster := nearby.find(self)
+	var centered_position := float(position_in_cluster) - float(nearby.size() - 1) * 0.5
+	return centered_position * cluster_width * 1.1
+
+func get_player_identifier_anchor_global() -> Vector2:
+	var sprite_rect := get_body_display_rect()
+	if not sprite_rect.has_area():
+		return global_position
+	var bounds: Rect2 = body.transform * sprite_rect
+	var anchor := Vector2(bounds.get_center().x, bounds.position.y - identifier_head_gap) + identifier_offset
+	return to_global(anchor)
 
 func get_identifier_reference_width() -> float:
 	var frames := body.sprite_frames
@@ -165,6 +206,7 @@ func get_body_display_rect() -> Rect2:
 
 @export_category("Weapon")
 @export var starting_weapon_data: WeaponData
+@export var animate_death_on_life_loss: bool = false
 
 var player_index: int
 var device: int
@@ -349,15 +391,17 @@ func update_facing(input_dir: Vector2) -> void:
 	if current_weapon is MeleeWeapon and current_weapon.swing_time_left > 0.0:
 		return
 
-	if is_instance_valid(current_weapon):
-		current_weapon.set_aim_direction(input_dir)
-
 	# Equal 45-degree sectors also work with analog stick input.
 	var sector := posmod(roundi(input_dir.angle() / (PI / 4.0)), 8)
 	var directions: Array[StringName] = [
 		&"right", &"down_right", &"down", &"down_left",
 		&"left", &"up_left", &"up", &"up_right",
 	]
+	if is_instance_valid(current_weapon):
+		# Keep the actual attack angle in sync with the 8-way pose. Passing the
+		# raw stick vector here lets small axis noise make shots look diagonal
+		# while the penguin and weapon sprites are still facing horizontally.
+		current_weapon.set_aim_direction(Vector2(current_weapon.snap_to_8_directions(input_dir)))
 	facing = directions[sector]
 	if arm != null:
 		arm.visible = facing == &"right"
@@ -368,6 +412,8 @@ func has_body_animation(animation_name: String) -> bool:
 
 
 func play_animation(state: StringName) -> void:
+	if hit_animation_active and state != &"hit":
+		return
 	var animation_name := String(state) + "_" + String(facing)
 	var requested_animation := animation_name
 	# Existing cardinal left animations use right-facing artwork.
@@ -383,8 +429,12 @@ func play_animation(state: StringName) -> void:
 			# Keep the same action when diagonal artwork is missing.
 			animation_name = String(state) + "_" + direction_name.get_slice("_", 0)
 	if not has_body_animation(animation_name):
+		if state == &"hit":
+			return
 		animation_name = p_autoplay
 		body.flip_h = false
+	if state == &"hit":
+		hit_animation_active = true
 	var timeline_name := requested_animation if animation_player.has_animation(requested_animation) else animation_name
 	if state == &"dash" and animation_player.has_animation(timeline_name):
 		# One timeline owns body frames and attachment positions during the dash.
@@ -456,6 +506,7 @@ func initialize_player() -> void:
 		return
 
 	player_initialized = true
+	add_to_group("active_penguins")
 
 	apply_player_identity()
 	current_weapon = weapon_socket.get_node_or_null("EquippedWeapon") as WeaponBase
@@ -633,6 +684,7 @@ func receive_damage(amount: float, source: Node2D = null, direction: Vector2 = V
 		if direction.is_zero_approx() and is_instance_valid(source):
 			direction = global_position - source.global_position
 		damage_feedback.play(direction)
+		play_animation(&"hit")
 	return true
 
 
@@ -646,6 +698,7 @@ func lose_life(from_damage: bool = false) -> void:
 		return
 	# Set the guard before signals/overlaps can cause a second death this frame.
 	is_dead = true
+	hit_animation_active = false
 	damage_feedback.reset()
 	set_health(0.0)
 	PlayerManager.lose_life(player_index)
@@ -654,12 +707,13 @@ func lose_life(from_damage: bool = false) -> void:
 	movement_state_machine.change_state(&"Idle")
 	set_deferred("collision_layer", 0)
 	set_deferred("collision_mask", 0)
+	damage_hitbox.set_deferred("collision_layer", 0)
 	if is_instance_valid(current_weapon):
 		if current_weapon.has_method("cancel_attack"):
 			current_weapon.cancel_attack()
 		current_weapon.can_attack = false
 		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
-	if from_damage and death_sprite_sheet != null:
+	if (from_damage or animate_death_on_life_loss) and death_sprite_sheet != null:
 		death_visibility_saved = true
 		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
 		weapon_was_visible_before_death = weapon_socket.visible
@@ -709,6 +763,7 @@ func _on_respawn_timer_timeout() -> void:
 	body.self_modulate.a = 0.5 if protection_left > 0.0 else 1.0
 	set_deferred("collision_layer", original_collision_layer)
 	set_deferred("collision_mask", original_collision_mask)
+	damage_hitbox.set_deferred("collision_layer", original_damage_hitbox_collision_layer)
 	if is_instance_valid(current_weapon):
 		current_weapon.attack_cooldown.stop()
 		current_weapon.can_attack = true
@@ -724,7 +779,7 @@ func play_death_animation() -> void:
 		&"up": 0,
 		&"down": 1,
 		&"right": 2,
-		&"left": 3,
+		&"up_right": 3,
 		&"down_right": 4,
 	}
 	for direction in row_for_direction:
@@ -748,7 +803,13 @@ func play_death_animation() -> void:
 		&"right":
 			animation_name = &"death_right"
 		&"left":
-			animation_name = &"death_left"
+			animation_name = &"death_right"
+			body.flip_h = true
+		&"up_right":
+			animation_name = &"death_up_right"
+		&"up_left":
+			animation_name = &"death_up_right"
+			body.flip_h = true
 		&"down_right":
 			animation_name = &"death_down_right"
 		&"down_left":
@@ -758,6 +819,12 @@ func play_death_animation() -> void:
 
 
 func _on_body_animation_finished() -> void:
+	if hit_animation_active:
+		hit_animation_active = false
+		if movement_state_machine.current_state != null:
+			var state_name := StringName(String(movement_state_machine.current_state.name).to_lower())
+			play_animation(state_name)
+		return
 	if death_animation_active:
 		death_animation_active = false
 		hide()

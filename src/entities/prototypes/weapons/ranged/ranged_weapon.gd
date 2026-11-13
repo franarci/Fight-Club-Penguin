@@ -113,6 +113,9 @@ func attack() -> void:
 		ranged_data.projectile_speed,
 		ranged_data.damage
 	)
+	if ranged_data.recoil_strength > 0.0 and wielder is Penguin:
+		var shooter := wielder as Penguin
+		shooter.velocity -= shot_direction * ranged_data.recoil_strength / maxf(shooter.mass, 0.1)
 	play_muzzle_flash(shot_direction)
 	if shot_sound != null:
 		shot_audio.stream = shot_sound

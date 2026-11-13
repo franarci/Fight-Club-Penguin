@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://cj7cv46o72klr"]
+
+[ext_resource type="PackedScene" uid="uid://b6eph1rwjt5c2" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://baj4acture8si" path="res://src/entities/prototypes/weapons/melee/harpoon_weapon.gd" id="2_script"]
+[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/harpoon_data.tres" id="3_data"]
+[ext_resource type="Resource" uid="uid://cmexb1unf0lj8" path="res://src/entities/prototypes/weapons/melee/harpoon_visual_profile.tres" id="4_profile"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/melee/HarpoonProjectile.tscn" id="5_projectile"]
+[ext_resource type="SpriteFrames" uid="uid://ba38qk5k7t44n" path="res://src/entities/prototypes/weapons/melee/harpoon_frames.tres" id="6_frames"]
+[ext_resource type="AudioStream" uid="uid://brr10dfjoyydr" path="res://assets/audio/harpoon_stab.wav" id="7_stab_sound"]
+[ext_resource type="AudioStream" uid="uid://cvl0h122o4enb" path="res://assets/audio/harpoon_hit.wav" id="8_hit_sound"]
+[ext_resource type="AudioStream" uid="uid://cdtx6s5y4d7y5" path="res://assets/audio/harpoon_flying.wav" id="9_flying_sound"]
+[ext_resource type="AudioStream" uid="uid://cv2evmw0yoqq3" path="res://assets/audio/charge-completed.mp3" id="10_rt2w3"]
+
+[node name="Harpoon" unique_id=1084632099 instance=ExtResource("1_base")]
+scale = Vector2(0.24, 0.24)
+script = ExtResource("2_script")
+projectile_radius = 6.0
+projectile_range = 176.0
+projectile_speed = 640.0
+return_speed = 800.0
+pull_speed = 210.0
+stab_windup_distance = 6.0
+harpoon_projectile_scene = ExtResource("5_projectile")
+impact_sound = ExtResource("8_hit_sound")
+swing_sound = ExtResource("7_stab_sound")
+charge_loop_sound = null
+charged_sound = null
+charged_impact_sound = ExtResource("9_flying_sound")
+charged_wave_scene = null
+charge_duration = 0.8
+charge_area_radius = 176.0
+charge_damage = 60.0
+charge_knockback = 700.0
+charge_camera_shake = 16.0
+preview_weapon_data = ExtResource("3_data")
+default_weapon_data = ExtResource("3_data")
+visual_profile = ExtResource("4_profile")
+
+[node name="Body" parent="." index="0" unique_id=1429468655]
+sprite_frames = ExtResource("6_frames")
+animation = &"idle_right"
+
+[node name="HitAudio" parent="." index="3" unique_id=1154512761]
+stream = ExtResource("8_hit_sound")
+volume_db = 4.326
+
+[node name="SwingAudio" parent="." index="4"]
+stream = ExtResource("7_stab_sound")
+volume_db = 4.326
+
+[node name="ChargedAudio" parent="." index="6"]
+stream = ExtResource("10_rt2w3")
+volume_db = 1.877
+
+[node name="ChargedImpactAudio" parent="." index="7"]
+stream = ExtResource("8_hit_sound")
+volume_db = 9.106

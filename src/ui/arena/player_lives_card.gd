@@ -56,8 +56,10 @@ func configure(player: Dictionary, p_right_side: bool) -> void:
 	health_bar.fill_mode = ProgressBar.FILL_END_TO_BEGIN if right_side else ProgressBar.FILL_BEGIN_TO_END
 	health_header.alignment = BoxContainer.ALIGNMENT_END if right_side else BoxContainer.ALIGNMENT_BEGIN
 	hearts_row.alignment = BoxContainer.ALIGNMENT_END if right_side else BoxContainer.ALIGNMENT_BEGIN
-	weapon_status.visible = character != null and character.key == "Gunner"
-	ammo_pips.configure(12, 12, right_side)
+	var is_scout := character != null and character.key == "Scout"
+	weapon_status.visible = character != null and character.key in ["Gunner", "Scout"]
+	ammo_pips.single_bullet_mode = is_scout
+	ammo_pips.configure(1 if is_scout else 12, 1 if is_scout else 12, right_side)
 	reload_bar.fill_mode = ProgressBar.FILL_END_TO_BEGIN if right_side else ProgressBar.FILL_BEGIN_TO_END
 	ammo_pips.show()
 	reload_bar.hide()
@@ -90,6 +92,9 @@ func bind_penguin(penguin: Penguin) -> void:
 	var ranged_weapon := penguin.current_weapon as RangedWeapon
 	if is_instance_valid(ranged_weapon) and ranged_weapon.magazine_enabled:
 		observed_ranged_weapon = ranged_weapon
+		var single_round := ranged_weapon.ranged_data.magazine_capacity == 1
+		ammo_pips.single_bullet_mode = single_round
+		ammo_pips.configure(ranged_weapon.ranged_data.magazine_capacity, ranged_weapon.current_ammo, right_side)
 		weapon_status.show()
 		ranged_weapon.ammo_changed.connect(set_ammo)
 		ranged_weapon.reload_changed.connect(set_reload_progress)
@@ -133,6 +138,11 @@ func set_ammo(current: int, capacity: int) -> void:
 
 
 func set_reload_progress(is_reloading: bool, progress: float) -> void:
+	if ammo_pips.single_bullet_mode:
+		ammo_pips.show()
+		reload_bar.hide()
+		ammo_pips.set_recharge_progress(1.0 if not is_reloading else progress)
+		return
 	var show_reload := is_reloading and weapon_status.visible
 	ammo_pips.visible = not show_reload
 	reload_bar.visible = show_reload

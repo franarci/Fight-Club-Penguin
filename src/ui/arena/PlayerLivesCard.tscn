@@ -143,7 +143,7 @@ value = 100.0
 show_percentage = false
 
 [node name="WeaponStatus" type="Control" parent="MarginContainer/Content/Info" unique_id=2025196581]
-custom_minimum_size = Vector2(144, 20)
+custom_minimum_size = Vector2(144, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 

@@ -73,6 +73,10 @@ func _is_shooter(target: Node2D) -> bool:
 func _handle_hit(target: Node2D) -> void:
 	if _removed or target == null or _is_shooter(target):
 		return
+	if target is Area2D:
+		var area_parent := target.get_parent() as Node2D
+		if is_instance_valid(area_parent) and area_parent.has_method("receive_damage"):
+			target = area_parent
 	# Mark consumed before notifying listeners, preventing duplicate hits.
 	_remove()
 	var source: Node2D = shooter if is_instance_valid(shooter) else null

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://lupinmmsb2ak"]
+
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/projectiles/RifleProjectile.tscn" id="1_base"]
+
+[sub_resource type="CircleShape2D" id="ScoutBulletHitbox"]
+radius = 3.0
+
+[node name="ScoutRifleProjectile" unique_id=416310156 instance=ExtResource("1_base")]
+speed = 950.0
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+shape = SubResource("ScoutBulletHitbox")
+
+[node name="Animation" parent="." index="2"]
+scale = Vector2(0.16, 0.11)

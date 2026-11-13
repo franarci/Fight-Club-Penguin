@@ -9,11 +9,13 @@ signal charge_progress_changed(progress: float, visible: bool)
 @onready var swing_audio: AudioStreamPlayer = $SwingAudio
 @onready var charge_audio: AudioStreamPlayer = $ChargeAudio
 @onready var charged_audio: AudioStreamPlayer = $ChargedAudio
+@onready var charged_impact_audio: AudioStreamPlayer = $ChargedImpactAudio
 
 @export var impact_sound: AudioStream
 @export var swing_sound: AudioStream
 @export var charge_loop_sound: AudioStream
 @export var charged_sound: AudioStream
+@export var charged_impact_sound: AudioStream
 @export var charged_wave_scene: PackedScene
 @export_range(0.25, 4.0, 0.05) var charge_duration := 1.4
 @export_range(32.0, 512.0, 8.0) var charge_area_radius := 176.0
@@ -208,10 +210,15 @@ func apply_swing_hits() -> void:
 	query.shape = attack_shape
 	query.transform = hitbox.global_transform
 	query.collision_mask = hitbox.collision_mask
+	query.collide_with_areas = true
 	if wielder is CollisionObject2D:
 		query.exclude = [wielder.get_rid()]
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
 		var target = result.collider
+		if target is Area2D:
+			var area_parent: Node = target.get_parent()
+			if area_parent != null and area_parent.has_method("receive_damage"):
+				target = area_parent
 		if target == wielder or not target.has_method("receive_damage"):
 			continue
 		var target_id: int = target.get_instance_id()
@@ -220,11 +227,16 @@ func apply_swing_hits() -> void:
 		hit_targets[target_id] = true
 		var accepted = target.receive_damage(get_effective_damage(), wielder, swing_direction)
 		if accepted == true and target is Penguin:
-			if impact_sound != null:
-				hit_audio.stream = impact_sound
-				hit_audio.play()
+			play_impact_sound()
 			if melee_data.knockback > 0.0:
 				target.receive_push(swing_direction, melee_data.knockback)
+
+
+func play_impact_sound() -> void:
+	if impact_sound == null:
+		return
+	hit_audio.stream = impact_sound
+	hit_audio.play()
 
 
 func update_hitbox(direction: Vector2) -> void:
@@ -260,6 +272,7 @@ func perform_charged_attack() -> void:
 		return
 	var impact_point := hitbox.global_position
 	if charged_wave_scene != null and is_instance_valid(wielder.get_parent()):
+		play_charged_impact_sound()
 		var wave := charged_wave_scene.instantiate() as Node2D
 		wielder.get_parent().add_child(wave)
 		wave.global_position = impact_point
@@ -269,10 +282,15 @@ func perform_charged_attack() -> void:
 	query.shape = area_shape
 	query.transform = Transform2D(0.0, impact_point)
 	query.collision_mask = hitbox.collision_mask
+	query.collide_with_areas = true
 	query.exclude = [wielder.get_rid()]
 	var hit_targets_once: Dictionary = {}
 	for result in get_world_2d().direct_space_state.intersect_shape(query, 64):
 		var target = result.collider
+		if target is Area2D:
+			var area_parent: Node = target.get_parent()
+			if area_parent != null and area_parent.has_method("receive_damage"):
+				target = area_parent
 		if target == wielder or not target is Penguin:
 			continue
 		var target_id: int = target.get_instance_id()
@@ -294,6 +312,13 @@ func perform_charged_attack() -> void:
 		var camera := get_viewport().get_camera_2d()
 		if camera != null and camera.has_method("request_shake"):
 			camera.request_shake(charge_camera_shake, 0.32)
+
+
+func play_charged_impact_sound() -> void:
+	if charged_impact_sound == null:
+		return
+	charged_impact_audio.stream = charged_impact_sound
+	charged_impact_audio.play()
 
 func get_effective_damage() -> float:
 	var power: float = wielder.melee_power if wielder is Penguin else 1.0
