@@ -570,7 +570,7 @@ func apply_equipment_color(color: Color) -> void:
 	player_palette_instance = equipment_palette.duplicate() as ShaderMaterial
 	player_palette_instance.set_shader_parameter("damage_flash", 0.0)
 	player_palette_instance.set_shader_parameter("player_color", color)
-	player_palette_instance.set_shader_parameter("preserve_original", not Engine.is_editor_hint() and player_index == 0)
+	player_palette_instance.set_shader_parameter("preserve_original", false)
 	body.material = player_palette_instance
 	for path in equipment_sprite_paths:
 		var equipment_sprite := get_node_or_null(path) as CanvasItem

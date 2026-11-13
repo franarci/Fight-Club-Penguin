@@ -42,8 +42,7 @@ func activate(p_device: int, player_number: int) -> void:
 	device = p_device
 
 	select_button.text = "Select"
-	var player_color = PlayerManager.get_player_color(player_number)
-	set_player_color(player_color)
+	configure_slot(player_number)
 	character_container.visible = true
 	stats_container.show()
 	navigation.visible = true
@@ -153,9 +152,16 @@ func cancel_selection() -> void:
 
 	ready_changed.emit()
 
+func configure_slot(index: int) -> void:
+	slot_index = index
+	player_index = index
+	set_player_color(PlayerManager.get_player_color(index))
+
+
 func set_player_color(color: Color) -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	player_border_color = Color("#120305")
+	player_border_color = color
+	border_style.bg_color = color
 
 	border_style.border_color = Color("#120305")
 	border_style.border_width_left = 5

@@ -25,7 +25,9 @@ func _ready() -> void:
 	for child in players_container.get_children():
 		if child is PlayerSelection:
 			player_slots.append(child)
-	for slot in player_slots:
+	for index in range(player_slots.size()):
+		var slot := player_slots[index]
+		slot.configure_slot(index)
 		slot.preview_changed.connect(_update_footer)
 		slot.deactivate()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)

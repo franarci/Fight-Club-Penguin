@@ -7,18 +7,6 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_672rp"]
 bg_color = Color(0.2, 0, 0.76862746, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7m7el"]
-bg_color = Color(0.70980394, 0.29803923, 0.23529412, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qt4e8"]
-bg_color = Color(0.15319598, 0.58931094, 0.9999785, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xui14"]
-bg_color = Color(0.612107, 0.4616382, 0.2913878, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6myx"]
-bg_color = Color(0.18039216, 0.8, 0.44313726, 1)
-
 [sub_resource type="StyleBoxFlat" id="FooterStyle"]
 bg_color = Color(0, 0, 0, 1)
 
@@ -88,19 +76,15 @@ alignment = 1
 
 [node name="PlayerSelection4" parent="CenterContainer/PlayersContainer" unique_id=1031974683 instance=ExtResource("2_672rp")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_7m7el")
 
 [node name="PlayerSelection3" parent="CenterContainer/PlayersContainer" unique_id=1366234303 instance=ExtResource("2_672rp")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_qt4e8")
 
 [node name="PlayerSelection" parent="CenterContainer/PlayersContainer" unique_id=1169863188 instance=ExtResource("2_672rp")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_xui14")
 
 [node name="PlayerSelection2" parent="CenterContainer/PlayersContainer" unique_id=1759641934 instance=ExtResource("2_672rp")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_y6myx")
 
 [node name="Footer" type="PanelContainer" parent="."]
 layout_mode = 1
