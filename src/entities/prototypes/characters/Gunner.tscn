@@ -431,6 +431,10 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="BodyContactShape"]
+radius = 7.2
+height = 20.8
+
 [node name="Gunner" type="Node2D" unique_id=1018647709]
 
 [node name="PenguinBase" parent="." unique_id=1683410569 instance=ExtResource("1_vtukd")]
@@ -451,6 +455,11 @@ scale = Vector2(0.175, 0.175)
 sprite_frames = SubResource("SpriteFrames_tnhwq")
 animation = &"idle_right"
 flip_h = true
+
+[node name="Collision" parent="PenguinBase" index="1" unique_id=900449280]
+position = Vector2(-1.6, 11.2)
+rotation = 1.5707964
+shape = SubResource("BodyContactShape")
 
 [node name="FeetMarker" parent="PenguinBase" index="3" unique_id=47077882]
 visible = false

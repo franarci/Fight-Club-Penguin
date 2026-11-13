@@ -1,12 +1,12 @@
-extends SceneTree
+extends Node
 
 
-func _initialize() -> void:
+func _ready() -> void:
 	call_deferred("run_checks")
 
 
 func run_checks() -> void:
-	var manager = root.get_node("PlayerManager")
+	var manager = get_tree().root.get_node("PlayerManager")
 	manager.clear_players()
 	var character_keys := ["Gunner", "Demolisher", "Scout"]
 	var character_scenes := [
@@ -23,15 +23,15 @@ func run_checks() -> void:
 		manager.players[slot]["ready"] = true
 	var main = load("res://Main.tscn").instantiate()
 	main.process_mode = Node.PROCESS_MODE_DISABLED
-	root.add_child(main)
-	current_scene = main
+	get_tree().root.add_child(main)
+	get_tree().current_scene = main
 	var selection = main.get_node("MenuLayer/CharacterSelect")
 	assert(selection.selection_finished.is_connected(main.prepare_match))
 	selection._open_ready_dialog()
 	selection.finish_character_selection()
 	assert(main.players.get_child_count() == character_keys.size())
 	assert(selection.is_queued_for_deletion())
-	assert(main.pre_match.active and paused)
+	assert(main.pre_match.active and get_tree().paused)
 	for index in character_keys.size():
 		var character: Node = main.players.get_child(index)
 		assert(character.name == character_keys[index])
@@ -40,10 +40,10 @@ func run_checks() -> void:
 	assert(scout.current_weapon is RangedWeapon)
 	assert((scout.current_weapon as RangedWeapon).ranged_data.weapon_name == "ScoutRifle")
 	assert((scout.current_weapon as RangedWeapon).ranged_data.magazine_capacity == 1)
-	await process_frame
+	await get_tree().process_frame
 	assert(not main.has_node("MenuLayer/CharacterSelect"))
-	paused = false
+	get_tree().paused = false
 	main.free()
 	manager.clear_players()
 	print("PASS: ready confirmation spawns Gunner, Demolisher and Scout from their selected scenes; Scout has its single-shot rifle")
-	quit()
+	get_tree().quit()

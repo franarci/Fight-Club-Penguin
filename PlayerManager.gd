@@ -5,10 +5,10 @@ const MAX_PLAYERS := 4
 const STARTING_LIVES := 3
 signal lives_changed(slot: int, lives: int)
 const PLAYER_COLORS := [
-	Color("#4b5c28"),
+	Color("#ff3347"),
 	Color("#2796ff"),
-	Color("#9c764a"),
-	Color("#2ecc71")
+	Color("#2ecc71"),
+	Color("#9c764a")
 ]
 
 var players: Array[Dictionary] = []

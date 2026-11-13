@@ -4,6 +4,8 @@ extends CanvasLayer
 const PlayerCard = preload("res://src/ui/arena/PlayerLivesCard.tscn")
 const CORNERS := [Vector2(0, 0), Vector2(0, 1), Vector2(1, 0), Vector2(1, 1)]
 const MARGIN := 20.0
+@onready var elimination_feed: EliminationFeed = $EliminationFeed
+
 var cards: Dictionary = {}
 
 
@@ -12,6 +14,7 @@ func _ready() -> void:
 
 
 func show_players(active_players: Array[Dictionary]) -> void:
+	elimination_feed.reset()
 	for card in cards.values():
 		remove_child(card)
 		card.queue_free()
@@ -41,6 +44,8 @@ func show_players(active_players: Array[Dictionary]) -> void:
 func _on_lives_changed(slot: int, lives: int) -> void:
 	if cards.has(slot):
 		cards[slot].set_lives(lives)
+		if lives <= 0:
+			elimination_feed.announce(slot)
 
 
 func bind_penguin(penguin: Penguin) -> void:

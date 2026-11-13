@@ -212,9 +212,8 @@ Decisiones acordadas: 1.b, recuperación automática si es inequívoca y confirm
     - [x] Hay apuntado en ocho direcciones, recarga entre disparos y correcciones de posición/orden visual del arma.
     - [x] El editor muestra una vista previa del sprite sin ejecutar la lógica de partida.
     - [x] El compañero agregó cinco scripts de pruebas de armas, proyectiles, poses del dash y salud/vidas; su ejecución completa sigue pendiente de corregir, según los resultados al final de este archivo.
-    - [x] Integrar el arpón de Hunter: estocada de mayor alcance, carga configurable y lanzamiento que atrae al rival y regresa a la mano; pendiente de ajuste visual y prueba manual.
     - [ ] Confirmar personajes, equipamientos y controles definitivos antes de preparar la pantalla de controles.
-    - [ ] Ajustar el balance de daño, alcance, carga y tirón del arpón tras probarlo con mandos.
+    - [ ] Confirmar si se termina el arma melee: hoy es una plantilla con hitbox temporal y no se encontró aplicación de daño propia.
     - [x] Acordar la base de las próximas tareas: el usuario eligió weapons_2 (`af545f4`).
     - [ ] Coordinar la integración de weapons_2 en master y la base de cada PR.
     - [ ] Probar que armas respeten pausa, eliminación, revancha y limpieza de proyectiles.
@@ -335,8 +334,7 @@ Actualización de imágenes del 30/10/2026: recibidas y conectadas las cuatro il
 - [x] Permitir seleccionar únicamente Gunner y Demolisher. Explorer y Hunter se pueden previsualizar en gris, con el botón Unavailable deshabilitado.
 - [x] Proteger también la confirmación por teclado/joystick para que no puedan elegir personajes bloqueados, ni disparar la confirmación de partida con ellos.
 - [x] Usar un material de retrato independiente por tarjeta para que el filtro gris no afecte a los demás jugadores.
-- [ ] Completar Explorer y habilitar su campo selectable cuando esté listo para jugar.
-- [x] Integrar Hunter al selector con movimiento, dash, reacción al daño, muerte y arpón; pendiente de prueba visual y de jugabilidad.
+- [ ] Completar Explorer y Hunter y habilitar su campo selectable cuando estén listos para jugar.
 - [x] Quitar el fondo negro del retrato de Demolisher. El selector usa demolisher-transparent.png y se conserva el WebP original. Transparencia comprobada con Godot.
 
 - [x] Verificar nombres, bloqueo de personajes no disponibles, restauración del color al navegar y materiales independientes por jugador con `tests/character_availability_smoke.gd`. Regresión de perfiles, selector, tutorial/countdown y partida integrada aprobada.

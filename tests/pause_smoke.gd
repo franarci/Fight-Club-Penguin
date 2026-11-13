@@ -50,6 +50,7 @@ func run_checks() -> void:
 		manager.join_player(slot - 1, slot)
 		var data := CharacterData.new()
 		data.key = "Gunner"
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		manager.set_character(slot - 1, data)
 	var main = load("res://Main.tscn").instantiate()
 	root.add_child(main)
@@ -84,6 +85,8 @@ func run_checks() -> void:
 	assert(main.pause_menu._is_owner_event(joy_event(0, JOY_BUTTON_A)))
 	assert(not main.pause_menu._is_owner_event(joy_event(1, JOY_BUTTON_A)))
 	main.pause_menu._move_focus(1)
+	assert(main.pause_menu.options_button.has_focus())
+	main.pause_menu._move_focus(1)
 	assert(main.pause_menu.exit_button.has_focus())
 	main.pause_menu._input(joy_event(0, JOY_BUTTON_A))
 	assert(main.pause_menu.confirmation.visible)
@@ -104,6 +107,7 @@ func run_checks() -> void:
 		manager.join_player(slot - 1, slot)
 		var data := CharacterData.new()
 		data.key = "Gunner"
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		manager.set_character(slot - 1, data)
 	var next_main = load("res://Main.tscn").instantiate()
 	current_scene.free()

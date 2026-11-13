@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/ui/home/polar_background.gd" id="1_background"]
+[ext_resource type="Texture2D" path="res://assets/textures/home/polar_coast.png" id="2_coast"]
+[ext_resource type="Texture2D" path="res://assets/textures/home/penguin_sentry.png" id="3_penguin"]
+[ext_resource type="Shader" path="res://src/ui/home/polar_water.gdshader" id="4_water"]
+[ext_resource type="Shader" path="res://src/ui/home/polar_snow.gdshader" id="5_snow"]
+[ext_resource type="Script" path="res://src/ui/home/scarf.gd" id="6_scarf"]
+
+[sub_resource type="ShaderMaterial" id="Water"]
+shader = ExtResource("4_water")
+
+[sub_resource type="ShaderMaterial" id="Snow"]
+shader = ExtResource("5_snow")
+
+[node name="PolarBackground" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_background")
+
+[node name="Landscape" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("Water")
+texture = ExtResource("2_coast")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Scarf" type="Node2D" parent="."]
+script = ExtResource("6_scarf")
+
+[node name="Penguin" type="TextureRect" parent="."]
+layout_mode = 0
+mouse_filter = 2
+texture = ExtResource("3_penguin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Snow" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("Snow")

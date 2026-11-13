@@ -1,0 +1,71 @@
+[gd_resource type="Theme" load_steps=7 format=3]
+
+[sub_resource type="StyleBoxFlat" id="Normal"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.035, 0.095, 0.18, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.68, 0.82, 1)
+
+[sub_resource type="StyleBoxFlat" id="Hover"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.13, 0.28, 0.43, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.82, 0.94, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="Pressed"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.02, 0.06, 0.12, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.8, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="Focus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="BarBackground"]
+bg_color = Color(0.025, 0.065, 0.12, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.56, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="BarFill"]
+bg_color = Color(0.35, 0.78, 0.96, 1)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.62, 0.91, 1, 1)
+
+[resource]
+default_font_size = 16
+Label/colors/font_color = Color(0.92, 0.97, 1, 1)
+Button/colors/font_color = Color(0.95, 0.98, 1, 1)
+Button/styles/normal = SubResource("Normal")
+Button/styles/hover = SubResource("Hover")
+Button/styles/pressed = SubResource("Pressed")
+Button/styles/focus = SubResource("Focus")
+Button/styles/disabled = SubResource("Normal")
+ProgressBar/styles/background = SubResource("BarBackground")
+ProgressBar/styles/fill = SubResource("BarFill")

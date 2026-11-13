@@ -68,7 +68,7 @@ func run_checks() -> void:
 	var tutorial = main.pre_match
 	assert(main.round_started and tutorial.active and paused)
 	assert(tutorial.page == 0 and tutorial.countdown_step == -1)
-	assert(tutorial.hint.get_child_count() == 1)
+	assert(tutorial.next_button is ActionButton and tutorial.next_button.caption == "Next")
 	assert(main.players.get_child_count() == 2)
 	var position_before: Vector2 = main.players.get_child(0).get_child(0).global_position
 	await create_timer(0.12).timeout

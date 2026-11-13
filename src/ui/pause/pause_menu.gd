@@ -14,6 +14,9 @@ signal recovery_slot_requested(device: int, slot: int)
 @onready var recovery_choices: VBoxContainer = $Background/CenterContainer/MainPanel/Margin/Content/RecoveryChoices
 @onready var recovery_slots: VBoxContainer = $Background/CenterContainer/MainPanel/Margin/Content/RecoveryChoices/Slots
 
+@onready var options_button: Button = $Background/CenterContainer/MainPanel/Margin/Content/OptionsButton
+@onready var audio_options: Control = $AudioOptions
+
 var shared_control := false
 var resume_allowed := true
 var device_choices: Dictionary = {}
@@ -26,6 +29,8 @@ var owner_device := -99
 func _ready() -> void:
 	hide()
 	confirmation.hide()
+	options_button.pressed.connect(_open_options)
+	audio_options.closed.connect(options_button.grab_focus)
 	continue_button.pressed.connect(_resume)
 	exit_button.pressed.connect(_show_confirmation)
 	confirm_exit.pressed.connect(_confirm_exit)
@@ -33,6 +38,7 @@ func _ready() -> void:
 
 
 func open(device: int, slot: int) -> void:
+	audio_options.close()
 	owner_device = device
 	shared_control = false
 	resume_allowed = true
@@ -46,6 +52,7 @@ func open(device: int, slot: int) -> void:
 
 
 func show_recovery(missing_slots: Array[int], choices: Dictionary) -> void:
+	audio_options.close()
 	shared_control = true
 	active = true
 	resume_allowed = missing_slots.is_empty()
@@ -86,7 +93,7 @@ func _choose_slot(slot: int) -> void:
 
 
 func _process(_delta: float) -> void:
-	if not active:
+	if not active or audio_options.visible:
 		return
 	var devices: Array = [-1] + MultiplayerInput.device_actions.keys() if shared_control else [owner_device]
 	for device in devices:
@@ -102,6 +109,9 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if not active:
+		return
+	if audio_options.visible:
+		audio_options.handle_input(event)
 		return
 	if not _is_owner_event(event):
 		get_viewport().set_input_as_handled()
@@ -155,6 +165,7 @@ func _buttons() -> Array[Button]:
 	buttons.append_array(choice_buttons)
 	if resume_allowed:
 		buttons.append(continue_button)
+	buttons.append(options_button)
 	buttons.append(exit_button)
 	return buttons
 
@@ -170,6 +181,7 @@ func _move_focus(direction: int) -> void:
 
 
 func dismiss() -> void:
+	audio_options.close()
 	active = false
 	shared_control = false
 	_clear_choices()
@@ -202,3 +214,8 @@ func _confirm_exit() -> void:
 	active = false
 	hide()
 	menu_requested.emit()
+
+
+func _open_options() -> void:
+	if active:
+		audio_options.open(owner_device, shared_control)

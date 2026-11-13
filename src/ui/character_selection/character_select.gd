@@ -7,8 +7,11 @@ const ControlPrompt = preload("res://src/ui/shared/control_prompt.gd")
 
 @onready var players_container: HBoxContainer = $CenterContainer/PlayersContainer
 @onready var footer_actions: HBoxContainer = $Footer/Margin/Actions
+@onready var minimum_players_hint: Label = $MinimumPlayersHint
 @onready var ready_dialog: Control = $ReadyDialog
 @onready var ready_prompts: HBoxContainer = $ReadyDialog/Center/Panel/Margin/Content/Prompts
+@onready var ready_accept: ActionButton = $ReadyDialog/Center/Panel/Margin/Content/Prompts/Accept
+@onready var ready_cancel: ActionButton = $ReadyDialog/Center/Panel/Margin/Content/Prompts/Cancel
 
 @export var player_selection_scene: PackedScene
 
@@ -24,12 +27,14 @@ func _ready() -> void:
 	for child in players_container.get_children():
 		if child is PlayerSelection:
 			player_slots.append(child)
-	for slot in player_slots:
+	for index in range(player_slots.size()):
+		var slot := player_slots[index]
+		slot.configure_slot(index)
 		slot.preview_changed.connect(_update_footer)
 		slot.deactivate()
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	$ReadyDialog/Center/Panel/Margin/Content/Buttons/Accept.pressed.connect(finish_character_selection)
-	$ReadyDialog/Center/Panel/Margin/Content/Buttons/Cancel.pressed.connect(_dismiss_ready_dialog)
+	ready_accept.pressed.connect(finish_character_selection)
+	ready_cancel.pressed.connect(_dismiss_ready_dialog)
 	_refresh_selection()
 
 
@@ -111,6 +116,7 @@ func _available_devices() -> Array:
 
 
 func _refresh_selection() -> void:
+	minimum_players_hint.visible = PlayerManager.players.size() < 2
 	if ready_dialog.visible and not are_all_players_ready():
 		_close_ready_dialog()
 	_update_footer()
@@ -163,9 +169,8 @@ func _open_ready_dialog() -> void:
 		return
 	dialog_armed = false
 	_set_slots_processing(false)
-	_clear_children(ready_prompts)
-	_add_prompt(ready_prompts, "Let's play", _participant_devices(), ["menu_confirm"])
-	_add_prompt(ready_prompts, "Keep choosing", _participant_devices(), ["selection_cancel"])
+	ready_accept.configure("Let's play", _participant_devices(), ["menu_confirm"])
+	ready_cancel.configure("Keep choosing", _participant_devices(), ["selection_cancel"])
 	ready_dialog.show()
 
 

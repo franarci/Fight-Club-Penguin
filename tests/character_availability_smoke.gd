@@ -43,7 +43,7 @@ func run_checks() -> void:
 	assert(other.player_label.text == "Gunner")
 	assert(other.character.material != card.character.material)
 	assert(other.character.material.get_shader_parameter("saturation") == 1.0)
-	assert(card.character.material.get_shader_parameter("saturation") == 0.0)
+	assert(card.character.material.get_shader_parameter("saturation") == 1.0)
 	card.prev()
 	card.prev()
 	assert(card.player_label.text == "Demolisher")

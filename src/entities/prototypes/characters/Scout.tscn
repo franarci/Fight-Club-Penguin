@@ -8,6 +8,10 @@
 [ext_resource type="Resource" path="res://src/entities/prototypes/characters/scout_hand_positions.tres" id="6_hands"]
 [ext_resource type="Texture2D" uid="uid://bpe6fgj8w5lft" path="res://assets/textures/entities/gunner/arm.png" id="7_arm"]
 
+[sub_resource type="CapsuleShape2D" id="BodyContactShape"]
+radius = 16.0
+height = 48.0
+
 [node name="Scout" type="Node2D" unique_id=949162407]
 
 [node name="PenguinBase" parent="." unique_id=1889705062 instance=ExtResource("1_base")]
@@ -23,6 +27,11 @@ position = Vector2(0, 14)
 scale = Vector2(0.28, 0.28)
 sprite_frames = ExtResource("2_frames")
 animation = &"idle_down"
+
+[node name="Collision" parent="PenguinBase" index="1" unique_id=900449280]
+position = Vector2(0, 22)
+rotation = 1.5707964
+shape = SubResource("BodyContactShape")
 
 [node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
 position = Vector2(0, -24.02)

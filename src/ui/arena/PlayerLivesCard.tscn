@@ -29,11 +29,6 @@ content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 2.0
 bg_color = Color(0.0627451, 0.1137255, 0.1960784, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.1529412, 0.5882353, 1, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -110,6 +105,13 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.858824, 0.913725, 1, 1)
 theme_override_font_sizes/font_size = 13
 text = "GUNNER"
+
+[node name="EliminationStatus" type="Label" parent="MarginContainer/Content/Info"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "Eliminated"
 
 [node name="HealthHeader" type="HBoxContainer" parent="MarginContainer/Content/Info" unique_id=1775680693]
 layout_mode = 2

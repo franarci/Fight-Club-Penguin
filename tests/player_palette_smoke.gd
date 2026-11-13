@@ -18,7 +18,7 @@ func run_checks() -> void:
 		assert(penguin.body.material is ShaderMaterial)
 		assert(penguin.body.material != penguin.equipment_palette)
 		assert(penguin.body.material.get_shader_parameter("player_color") == expected)
-		assert(penguin.body.material.get_shader_parameter("preserve_original") == (index == 0))
+		assert(penguin.body.material.get_shader_parameter("preserve_original") == false)
 		assert(penguin.arm.material == penguin.body.material)
 		assert(penguin.current_weapon.body.material == null)
 		assert(penguin.player_arrow.color == expected)

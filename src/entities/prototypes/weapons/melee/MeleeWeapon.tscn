@@ -21,17 +21,22 @@ monitoring = false
 shape = SubResource("hit")
 
 [node name="HitAudio" type="AudioStreamPlayer" parent="." index="3" unique_id=1154512761]
+bus = &"FX"
 volume_db = -9.618
 
 [node name="SwingAudio" type="AudioStreamPlayer" parent="." index="4"]
+bus = &"FX"
 volume_db = -9.618
 
 [node name="ChargeAudio" type="AudioStreamPlayer" parent="." index="5"]
+bus = &"FX"
 volume_db = -12.0
 
 [node name="ChargedAudio" type="AudioStreamPlayer" parent="." index="6"]
+bus = &"FX"
 volume_db = -8.0
 
 [node name="ChargedImpactAudio" type="AudioStreamPlayer" parent="." index="7"]
+bus = &"FX"
 volume_db = -6.0
 max_polyphony = 2
