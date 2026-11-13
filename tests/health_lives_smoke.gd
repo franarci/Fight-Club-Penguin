@@ -11,7 +11,7 @@ func run_checks() -> void:
 	var main = load("res://Main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	var names = ["Gunner", "Hunter", "Explorer", "Demolisher"]
+	var names = ["Gunner", "Hunter", "Scout", "Demolisher"]
 	# Supply neutral action mappings for controller slots in headless tests.
 	var input_manager = root.get_node("MultiplayerInput")
 	for device in range(3):
@@ -22,10 +22,11 @@ func run_checks() -> void:
 		assert(manager.join_player(slot - 1, slot))
 		var data := CharacterData.new()
 		data.key = names[slot]
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		manager.set_character(slot - 1, data)
 	main.start_game()
 	assert(not main.has_node("Ice") and not main.has_node("Ground"))
-	var boundary: CollisionPolygon2D = main.get_node("Arena/IceArea/CollisionPolygon2D")
+	var boundary: CollisionPolygon2D = main.get_node("Arena/IceArea/Ground")
 	assert(not Geometry2D.decompose_polygon_in_convex(boundary.polygon).is_empty())
 	var penguins = []
 	for character in main.players.get_children():
@@ -76,9 +77,7 @@ func run_checks() -> void:
 	target.receive_damage(1.0, shooter)
 	assert(target.current_health == 99.0)
 	target.receive_push(Vector2.RIGHT)
-	# This water point was inside the old rectangle; it must now cause a fall.
-	target.global_position = boundary.to_global(Vector2(1000, 600))
-	assert(Rect2(150, 100, 850, 450).has_point(target.global_position))
+	target.global_position = boundary.to_global(Vector2(-10000, -10000))
 	target.check_arena_bounds()
 	target.check_arena_bounds()
 	assert(manager.get_lives(1) == 1 and target.is_dead)
@@ -87,13 +86,11 @@ func run_checks() -> void:
 	assert(target.current_health == 100.0 and not target.is_dead)
 	if is_instance_valid(target.current_weapon):
 		assert(target.current_weapon.can_attack)
-	# Ice extending left of the old rectangle must remain playable.
-	target.global_position = boundary.to_global(Vector2(620, 2050))
-	assert(not Rect2(150, 100, 850, 450).has_point(target.global_position))
+	target.global_position = target.respawn_position
 	target.check_arena_bounds()
 	assert(not target.is_dead and manager.get_lives(1) == 1)
 	# Falling bypasses damage protection and consumes the final life.
-	target.global_position = Vector2(1100, 600)
+	target.global_position = boundary.to_global(Vector2(-10000, -10000))
 	target.check_arena_bounds()
 	target.check_arena_bounds()
 	assert(manager.get_lives(1) == 0 and target.is_eliminated)

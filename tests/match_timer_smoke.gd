@@ -122,6 +122,7 @@ func create_match() -> Node:
 		assert(PlayerManager.join_player(entry.device, entry.slot))
 		var data := CharacterData.new()
 		data.key = entry.key
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		PlayerManager.set_character(entry.device, data)
 		PlayerManager.set_ready(entry.device, true)
 	var main = load("res://Main.tscn").instantiate()

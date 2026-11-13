@@ -50,6 +50,7 @@ func run_checks() -> void:
 		manager.join_player(slot - 1, slot)
 		var data := CharacterData.new()
 		data.key = "Gunner"
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		manager.set_character(slot - 1, data)
 	var main = load("res://Main.tscn").instantiate()
 	root.add_child(main)
@@ -106,6 +107,7 @@ func run_checks() -> void:
 		manager.join_player(slot - 1, slot)
 		var data := CharacterData.new()
 		data.key = "Gunner"
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		manager.set_character(slot - 1, data)
 	var next_main = load("res://Main.tscn").instantiate()
 	current_scene.free()

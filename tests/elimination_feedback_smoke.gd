@@ -13,6 +13,7 @@ func run_checks() -> void:
 		assert(PlayerManager.join_player(device, slot))
 		var data := CharacterData.new()
 		data.key = "Gunner" if slot != 1 else "Demolisher"
+		data.character_scene = load("res://src/entities/prototypes/characters/%s.tscn" % data.key)
 		PlayerManager.set_character(device, data)
 		PlayerManager.set_ready(device, true)
 		if device >= 0:

@@ -37,5 +37,6 @@ bus = &"FX"
 volume_db = -8.0
 
 [node name="ChargedImpactAudio" type="AudioStreamPlayer" parent="." index="7"]
+bus = &"FX"
 volume_db = -6.0
 max_polyphony = 2

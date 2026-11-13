@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/four_class_integration_smoke.gd" id="1"]
+
+[node name="FourClassIntegrationSmoke" type="Node"]
+script = ExtResource("1")
