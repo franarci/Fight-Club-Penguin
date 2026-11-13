@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" path="res://src/ui/home/PolarBackground.tscn" id="2_background"]
 [ext_resource type="FontFile" path="res://assets/fonts/press_start_2p/PressStart2P-Regular.ttf" id="3_font"]
 
+[ext_resource type="PackedScene" path="res://src/ui/options/AudioOptions.tscn" id="4_options"]
+
 [sub_resource type="StyleBoxFlat" id="ButtonNormal"]
 content_margin_left = 20.0
 content_margin_top = 12.0
@@ -102,10 +104,11 @@ size_flags_horizontal = 0
 text = "PLAY"
 
 [node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1568705128]
-visible = false
 custom_minimum_size = Vector2(380, 68)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "OPTIONS"
+
+[node name="AudioOptions" parent="." instance=ExtResource("4_options")]
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

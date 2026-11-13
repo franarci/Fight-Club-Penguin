@@ -11,7 +11,7 @@ func run_checks() -> void:
 	get_tree().root.add_child(home)
 	get_tree().current_scene = home
 	var backdrop: Control = home.get_node("Background")
-	assert(home.play_button.has_focus() and not home.options_button.visible)
+	assert(home.play_button.has_focus() and home.options_button.visible)
 	assert(home.title_top.text == "FIGHT CLUB" and home.title_bottom.text == "PENGUIN")
 	assert(home.title_top.get_theme_color("font_color").b > home.title_top.get_theme_color("font_color").r)
 	assert(home.title_top.get_theme_color("font_shadow_color").r > 0.9)

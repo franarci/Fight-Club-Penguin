@@ -84,6 +84,8 @@ func run_checks() -> void:
 	assert(main.pause_menu._is_owner_event(joy_event(0, JOY_BUTTON_A)))
 	assert(not main.pause_menu._is_owner_event(joy_event(1, JOY_BUTTON_A)))
 	main.pause_menu._move_focus(1)
+	assert(main.pause_menu.options_button.has_focus())
+	main.pause_menu._move_focus(1)
 	assert(main.pause_menu.exit_button.has_focus())
 	main.pause_menu._input(joy_event(0, JOY_BUTTON_A))
 	assert(main.pause_menu.confirmation.visible)

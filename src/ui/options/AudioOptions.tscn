@@ -1,0 +1,141 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/ui/options/audio_options.gd" id="1_script"]
+[ext_resource type="Theme" path="res://src/ui/character_selection/dossier_theme.tres" id="2_theme"]
+[ext_resource type="FontFile" path="res://assets/fonts/press_start_2p/PressStart2P-Regular.ttf" id="3_font"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.025, 0.065, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.8, 0.92, 1)
+shadow_color = Color(0, 0.02, 0.06, 0.6)
+shadow_size = 8
+shadow_offset = Vector2(4, 6)
+
+[node name="AudioOptions" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+z_index = 20
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.02, 0.06, 0.8)
+
+[node name="Center" type="CenterContainer" parent="Dim"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Dim/Center"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Margin" type="MarginContainer" parent="Dim/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="Dim/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 22
+text = "AUDIO OPTIONS"
+horizontal_alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Music"
+
+[node name="MusicMute" type="CheckBox" parent="Dim/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Mute music"
+
+[node name="MusicVolume" type="HBoxContainer" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Slider" type="HSlider" parent="Dim/Center/Panel/Margin/Content/MusicVolume"]
+custom_minimum_size = Vector2(280, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 5.0
+value = 100.0
+scrollable = false
+
+[node name="Value" type="Label" parent="Dim/Center/Panel/Margin/Content/MusicVolume"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="FxLabel" type="Label" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Sound effects"
+
+[node name="FxMute" type="CheckBox" parent="Dim/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Mute sound effects"
+
+[node name="FxVolume" type="HBoxContainer" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Slider" type="HSlider" parent="Dim/Center/Panel/Margin/Content/FxVolume"]
+custom_minimum_size = Vector2(280, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 5.0
+value = 100.0
+scrollable = false
+
+[node name="Value" type="Label" parent="Dim/Center/Panel/Margin/Content/FxVolume"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Help" type="Label" parent="Dim/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.78, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Up / Down: choose    Left / Right: volume"
+horizontal_alignment = 1
+
+[node name="Back" type="Button" parent="Dim/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Back"

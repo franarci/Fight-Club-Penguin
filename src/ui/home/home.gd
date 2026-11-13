@@ -7,10 +7,15 @@ extends Control
 @onready var title_top: Label = $CenterContainer/VBoxContainer/Title/Top
 @onready var title_bottom: Label = $CenterContainer/VBoxContainer/Title/Bottom
 @onready var options_button: Button = $CenterContainer/VBoxContainer/OptionsButton
+@onready var audio_options: Control = $AudioOptions
+
+var menu_device := -1
 
 
 func _ready() -> void:
 	Music.play_menu()
+	options_button.pressed.connect(_open_options)
+	audio_options.closed.connect(options_button.grab_focus)
 	resized.connect(_layout_home)
 	_layout_home()
 	play_button.grab_focus()
@@ -33,7 +38,22 @@ func _on_play_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://Main.tscn")
 
 
+func _open_options() -> void:
+	audio_options.open(menu_device)
+
+
+func _input(event: InputEvent) -> void:
+	if audio_options.visible:
+		audio_options.handle_input(event)
+	elif event is InputEventKey or event is InputEventMouse:
+		menu_device = -1
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		menu_device = event.device
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if audio_options.visible:
+		return
 	if not event is InputEventJoypadButton:
 		return
 
@@ -50,4 +70,5 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		if focused_button != null and not focused_button.disabled:
 			get_viewport().set_input_as_handled()
+			menu_device = event.device
 			focused_button.pressed.emit()

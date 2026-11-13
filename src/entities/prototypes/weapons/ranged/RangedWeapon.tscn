@@ -17,5 +17,6 @@ scale = Vector2(0.06, 0.06)
 sprite_frames = ExtResource("3_frames")
 
 [node name="ShotAudio" type="AudioStreamPlayer" parent="." index="2" unique_id=111239072]
+bus = &"FX"
 volume_db = -15.048
 max_polyphony = 8
