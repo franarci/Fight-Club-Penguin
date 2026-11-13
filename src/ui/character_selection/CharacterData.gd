@@ -5,18 +5,25 @@ const SPEED_DISPLAY_MAX := 200.0
 const DAMAGE_DISPLAY_MAX := 50.0
 const MASS_DISPLAY_MAX := 2.0
 
+var cached_profile: Dictionary = {}
+
 @export var key: String
 @export var Img: Texture2D
 @export var selectable: bool = true
 
 @export_category("Selection profile")
-@export var character_scene: PackedScene
+@export var character_scene: PackedScene:
+	set(value):
+		character_scene = value
+		cached_profile.clear()
 @export_range(0, 100, 1) var selection_speed: float = 50.0
 @export_range(0, 100, 1) var selection_strength: float = 50.0
 @export_range(0, 100, 1) var selection_resistance: float = 50.0
 
 
 func get_selection_profile() -> Dictionary:
+	if not cached_profile.is_empty():
+		return cached_profile.duplicate()
 	var profile := {"speed": selection_speed, "strength": selection_strength, "resistance": selection_resistance}
 	if character_scene == null:
 		return profile
@@ -34,4 +41,5 @@ func get_selection_profile() -> Dictionary:
 	profile["strength"] = clampf(damage / DAMAGE_DISPLAY_MAX * 100.0, 0.0, 100.0)
 	profile["resistance"] = clampf(float(penguin.get("mass")) / MASS_DISPLAY_MAX * 100.0, 0.0, 100.0)
 	character.free()
+	cached_profile = profile.duplicate()
 	return profile

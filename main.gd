@@ -26,7 +26,7 @@ var round_finished := false
 ]
 func _ready() -> void:
 	Music.play_menu()
-	$SharedCamera.show_arena($Arena.world_size)
+	$SharedCamera.show_arena($Arena.world_size, $Arena.background_margin)
 	pre_match.completed.connect(_on_tutorial_completed)
 	match_clock.expired.connect(_on_time_limit_reached, CONNECT_DEFERRED)
 	round_result.replay_requested.connect(_replay_round)
@@ -107,7 +107,10 @@ func spawn_player(player_data: Dictionary) -> void:
 
 	penguin.global_position = spawn_points[slot].global_position
 	var player_body := penguin.get_child(0) as Penguin
-	player_body.configure_arena($Arena/IceArea/Ground)
+	var anchors := PackedVector2Array()
+	for marker in spawn_points:
+		anchors.append(marker.global_position)
+	player_body.configure_arena($Arena/IceArea/Ground, anchors)
 	player_body.eliminated.connect(_on_player_eliminated)
 
 
@@ -141,7 +144,7 @@ func _on_time_limit_reached() -> void:
 		var penguin := character.get_child(0) as Penguin
 		if penguin == null:
 			continue
-		var lives := PlayerManager.get_lives(penguin.player_index)
+		var lives: int = PlayerManager.get_lives(penguin.player_index)
 		if lives <= 0 or lives < most_lives:
 			continue
 		if lives > most_lives:

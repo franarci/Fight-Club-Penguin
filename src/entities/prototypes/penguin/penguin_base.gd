@@ -91,13 +91,9 @@ var weapon_attack_ready_at := 0
 var empty_weapon_attachment: Node2D
 
 @export_category("Player Identifier")
-## Automatically place and size P1/P2 and the triangle using the Body sprite bounds.
 ## Disable to position PlayerIndicator and its children manually.
 @export var auto_player_identifier: bool = true
-## First frame used to size the identifier, independently of the playing animation.
-@export var identifier_reference_animation: StringName = &"idle_right"
-## Identifier width as a fraction of the scaled reference frame width.
-@export_range(0.1, 1.5, 0.05) var identifier_width_ratio: float = 0.6
+@export_range(12, 48, 1) var identifier_font_size: int = 28
 ## Space from the top of Body to the triangle tip, in penguin-local pixels.
 @export_range(0.0, 50.0, 0.5) var identifier_head_gap: float = 4.0
 ## Space between the label and triangle, before identifier scaling.
@@ -121,71 +117,18 @@ func update_player_identifier() -> void:
 		return
 	if Engine.is_editor_hint() and player_label.text.is_empty():
 		player_label.text = "P%d" % (player_index + 1)
+	if player_label.get_theme_font_size("font_size") != identifier_font_size:
+		player_label.add_theme_font_size_override("font_size", identifier_font_size)
 	var label_size := player_label.get_minimum_size()
 	var arrow_bounds := Rect2(player_arrow.polygon[0], Vector2.ZERO)
 	for vertex in player_arrow.polygon:
 		arrow_bounds = arrow_bounds.expand(vertex)
-	var content_width := maxf(maxf(label_size.x, arrow_bounds.size.x), 1.0)
-	var reference_width := get_identifier_reference_width()
-	var indicator_scale := reference_width * identifier_width_ratio / content_width
-	player_indicator.scale = Vector2.ONE * indicator_scale
+	player_indicator.scale = Vector2.ONE / global_scale.abs().max(Vector2(0.001, 0.001))
 	player_indicator.position = Vector2(bounds.get_center().x, bounds.position.y - identifier_head_gap) + identifier_offset
 	# Put the triangle tip at the identifier origin, and center the label above it.
 	player_arrow.position = Vector2(-arrow_bounds.get_center().x, -arrow_bounds.end.y)
 	player_label.size = label_size
-	var label_offset := get_identifier_label_separation(label_size)
-	var label_local_offset := label_offset / maxf(absf(player_indicator.global_scale.x), 0.001)
-	player_label.position = Vector2(-label_size.x * 0.5 + label_local_offset, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
-
-func get_identifier_label_separation(label_size: Vector2) -> float:
-	var nearby: Array[Penguin] = [self]
-	var self_anchor := player_indicator.global_position
-	var self_width := label_size.x * absf(player_indicator.global_scale.x)
-	var self_height := label_size.y * absf(player_indicator.global_scale.y)
-	var cluster_width := self_width
-	for candidate in get_tree().get_nodes_in_group("active_penguins"):
-		var other := candidate as Penguin
-		if other == null or other == self or other.is_dead or other.is_eliminated:
-			continue
-		if not is_instance_valid(other.player_indicator) or not is_instance_valid(other.player_label):
-			continue
-		var other_size := other.player_label.get_minimum_size()
-		var other_width := other_size.x * absf(other.player_indicator.global_scale.x)
-		var other_height := other_size.y * absf(other.player_indicator.global_scale.y)
-		var anchor_delta := self_anchor - other.get_player_identifier_anchor_global()
-		var horizontal_limit := (self_width + other_width) * 0.5
-		var vertical_limit := maxf(self_height, other_height) * 1.2
-		if absf(anchor_delta.x) < horizontal_limit and absf(anchor_delta.y) < vertical_limit:
-			nearby.append(other)
-			cluster_width = maxf(cluster_width, other_width)
-	if nearby.size() == 1:
-		return 0.0
-	nearby.sort_custom(func(a: Penguin, b: Penguin) -> bool: return a.player_index < b.player_index)
-	var position_in_cluster := nearby.find(self)
-	var centered_position := float(position_in_cluster) - float(nearby.size() - 1) * 0.5
-	return centered_position * cluster_width * 1.1
-
-func get_player_identifier_anchor_global() -> Vector2:
-	var sprite_rect := get_body_display_rect()
-	if not sprite_rect.has_area():
-		return global_position
-	var bounds: Rect2 = body.transform * sprite_rect
-	var anchor := Vector2(bounds.get_center().x, bounds.position.y - identifier_head_gap) + identifier_offset
-	return to_global(anchor)
-
-func get_identifier_reference_width() -> float:
-	var frames := body.sprite_frames
-	if frames == null:
-		return 0.0
-	# Fallbacks remain independent of the current animation and frame.
-	var candidates: Array[StringName] = [identifier_reference_animation, &"idle_right", StringName(p_autoplay)]
-	for animation_name in candidates:
-		if not frames.has_animation(animation_name) or frames.get_frame_count(animation_name) == 0:
-			continue
-		var texture := frames.get_frame_texture(animation_name, 0)
-		if texture != null:
-			return texture.get_size().x * absf(body.scale.x)
-	return 1.0 * absf(body.scale.x)
+	player_label.position = Vector2(-label_size.x * 0.5, -arrow_bounds.size.y - identifier_label_gap - label_size.y)
 
 func get_body_display_rect() -> Rect2:
 	if body.sprite_frames == null or not body.sprite_frames.has_animation(body.animation):
@@ -258,17 +201,33 @@ func update_editor_preview() -> void:
 @export_category("Push")
 @export var push_speed: float = 375.0
 @export var push_friction: float = 600.0
+@export_range(0.0, 100.0) var contact_push_speed: float = 72.0
+@export_range(0.0, 500.0) var contact_push_acceleration: float = 300.0
+@export_range(0.0, 100.0) var respawn_margin: float = 36.0
+@export_range(0.0, 150.0) var respawn_clearance: float = 64.0
 
 var is_being_pushed := false
 var respawn_position: Vector2
+var preferred_respawn_position: Vector2
+var spawn_anchors := PackedVector2Array()
 var ice_boundary: CollisionPolygon2D
 var arena_configured := false
 
 
-func configure_arena(boundary: CollisionPolygon2D) -> void:
+func configure_arena(boundary: CollisionPolygon2D, anchors: PackedVector2Array = PackedVector2Array()) -> void:
 	ice_boundary = boundary
-	respawn_position = global_position
+	preferred_respawn_position = global_position
+	spawn_anchors = anchors
 	arena_configured = true
+	var safe: Variant = SafeSpawn.find_position(self, boundary, preferred_respawn_position, spawn_anchors, respawn_margin, respawn_clearance)
+	if safe != null:
+		global_position = safe
+		respawn_position = safe
+	else:
+		respawn_position = preferred_respawn_position
+		is_dead = true
+		hide()
+		respawn_timer.start(0.2)
 
 
 func play_dash_sound() -> void:
@@ -305,6 +264,7 @@ func _ready() -> void:
 	
 	if setup_completed:
 		initialize_player()
+	update_player_identifier()
 
 
 func _physics_process(delta: float) -> void:
@@ -339,10 +299,13 @@ func _physics_process(delta: float) -> void:
 		and movement_state_machine.current_state.name == &"Dash"
 	)
 
+	var intended_velocity := velocity
 	move_and_slide()
 
 	if is_dashing:
 		check_dash_impact()
+	else:
+		check_contact_push(intended_velocity, delta)
 		
 	check_arena_bounds()
 
@@ -661,6 +624,27 @@ func check_dash_impact() -> void:
 		return
 
 
+
+func check_contact_push(intended_velocity: Vector2, delta: float) -> void:
+	for index in range(get_slide_collision_count()):
+		var collision := get_slide_collision(index)
+		var other := collision.get_collider() as Penguin
+		if other == null or other == self:
+			continue
+		var direction := -collision.get_normal()
+		var closing_speed := (intended_velocity - other.velocity).dot(direction)
+		if closing_speed > 10.0:
+			other.receive_contact_push(direction, closing_speed, delta)
+
+
+func receive_contact_push(direction: Vector2, closing_speed: float, delta: float) -> void:
+	if is_dead or is_eliminated or protection_left > 0.0 or is_being_pushed:
+		return
+	var limit := minf(contact_push_speed, closing_speed * 0.5) / maxf(mass, 0.1)
+	var current := velocity.dot(direction)
+	if current < limit:
+		velocity += direction * minf(limit - current, contact_push_acceleration * maxf(delta, 0.0) / maxf(mass, 0.1))
+
 func receive_push(direction: Vector2, strength: float = -1.0) -> void:
 	if is_dead or protection_left > 0.0:
 		return
@@ -738,6 +722,12 @@ func lose_life(from_damage: bool = false) -> void:
 func _on_respawn_timer_timeout() -> void:
 	if is_eliminated:
 		return
+	if arena_configured and is_instance_valid(ice_boundary):
+		var safe: Variant = SafeSpawn.find_position(self, ice_boundary, preferred_respawn_position, spawn_anchors, respawn_margin, respawn_clearance)
+		if safe == null:
+			respawn_timer.start(0.2)
+			return
+		respawn_position = safe
 	death_animation_active = false
 	death_audio.stop()
 	if death_sprite_frames_active:

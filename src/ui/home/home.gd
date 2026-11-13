@@ -1,5 +1,7 @@
 extends Control
 
+const MATCH_SCENE: PackedScene = preload("res://Main.tscn")
+
 
 @onready var play_button: Button = $CenterContainer/VBoxContainer/PlayButton
 @onready var menu_layout: Control = $CenterContainer
@@ -35,7 +37,7 @@ func _layout_home() -> void:
 
 func _on_play_button_pressed() -> void:
 	PlayerManager.clear_players()
-	get_tree().change_scene_to_file("res://Main.tscn")
+	get_tree().change_scene_to_packed(MATCH_SCENE)
 
 
 func _open_options() -> void:

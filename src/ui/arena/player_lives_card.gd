@@ -39,9 +39,6 @@ func configure(player: Dictionary, p_right_side: bool) -> void:
 	var panel_style := get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	panel_style.border_color = color
 	add_theme_stylebox_override("panel", panel_style)
-	var portrait_style := portrait_frame.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-	portrait_style.border_color = color
-	portrait_frame.add_theme_stylebox_override("panel", portrait_style)
 	var health_fill := health_bar.get_theme_stylebox("fill").duplicate() as StyleBoxFlat
 	health_fill.bg_color = color
 	health_bar.add_theme_stylebox_override("fill", health_fill)

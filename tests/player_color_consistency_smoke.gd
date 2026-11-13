@@ -42,7 +42,6 @@ func run_checks() -> void:
 		var color: Color = PlayerManager.get_player_color(index)
 		var card: PlayerLivesCard = hud.cards[index]
 		assert(card.get_theme_stylebox("panel").border_color == color)
-		assert(card.portrait_frame.get_theme_stylebox("panel").border_color == color)
 		assert(card.health_bar.get_theme_stylebox("fill").bg_color == color)
 	var target: Penguin = characters[0].get_child(0)
 	var attacker: Penguin = characters[1].get_child(0)

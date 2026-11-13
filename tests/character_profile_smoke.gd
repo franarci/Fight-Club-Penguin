@@ -29,9 +29,9 @@ func run_checks() -> void:
 	assert(is_equal_approx(card.speed_stat.bar.value, 82.5))
 	assert(is_equal_approx(card.strength_stat.bar.value, 80.0))
 	assert(is_equal_approx(card.resistance_stat.bar.value, 50.0))
-	for i in range(2):
+	for strength in [70.0, 60.0]:
 		card.next()
-		assert(card.speed_stat.bar.value == 50 and card.strength_stat.bar.value == 50 and card.resistance_stat.bar.value == 50)
+		assert(card.speed_stat.bar.value == 90 and card.strength_stat.bar.value == strength and card.resistance_stat.bar.value == 50)
 	var character := Node2D.new()
 	var body := CharacterBody2D.new()
 	body.set_script(load("res://src/entities/prototypes/penguin/penguin_base.gd"))
@@ -51,6 +51,10 @@ func run_checks() -> void:
 	assert(is_equal_approx(profile["speed"], 50.0))
 	assert(is_equal_approx(profile["strength"], 50.0))
 	assert(is_equal_approx(profile["resistance"], 80.0))
+	profile["strength"] = 0.0
+	assert(data.get_selection_profile()["strength"] == 50.0)
+	data.character_scene = load("res://src/entities/prototypes/characters/Gunner.tscn")
+	assert(data.get_selection_profile()["strength"] == 20.0)
 	assert(card.characters[0].get_selection_profile()["strength"] == 20)
 	selector.free()
 	manager.clear_players()
