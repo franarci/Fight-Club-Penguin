@@ -19,7 +19,6 @@ projectile_range = 176.0
 projectile_speed = 640.0
 return_speed = 800.0
 pull_speed = 210.0
-stab_distance = 24.0
 stab_windup_distance = 6.0
 harpoon_projectile_scene = ExtResource("5_projectile")
 impact_sound = ExtResource("8_hit_sound")

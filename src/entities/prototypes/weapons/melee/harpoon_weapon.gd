@@ -8,7 +8,6 @@ class_name HarpoonWeapon
 @export_range(32.0, 1600.0, 16.0) var projectile_speed := 640.0
 @export_range(32.0, 1600.0, 16.0) var return_speed := 800.0
 @export_range(0.0, 1000.0, 10.0) var pull_speed := 210.0
-@export_range(0.0, 96.0, 1.0) var stab_distance := 24.0
 @export_range(0.0, 32.0, 1.0) var stab_windup_distance := 6.0
 @export var harpoon_projectile_scene: PackedScene
 
@@ -17,6 +16,7 @@ var stab_elapsed := 0.0
 var stab_windup := 0.0
 var stab_active_duration := 0.0
 var stab_total_duration := 0.0
+var stab_reach := 0.0
 var stab_active := false
 var resting_body_scale := Vector2.ONE
 var attack_body_position := Vector2.ZERO
@@ -58,6 +58,7 @@ func attack() -> void:
 	stab_windup = maxf(melee_data.windup_duration, 0.0)
 	stab_active_duration = maxf(melee_data.attack_duration, 0.001)
 	stab_total_duration = stab_windup + stab_active_duration + maxf(melee_data.recovery_duration, 0.0)
+	stab_reach = maxf(melee_data.attack_range, 0.0)
 	stab_elapsed = 0.0
 	swing_time_left = stab_total_duration
 	stab_active = false
@@ -164,7 +165,7 @@ func _update_stab_visual(elapsed: float) -> void:
 		var strike_progress := clampf((elapsed - stab_windup) / stab_active_duration, 0.0, 1.0)
 		displacement = lerpf(
 			-stab_windup_distance,
-			stab_distance,
+			stab_reach,
 			smoothstep(0.0, 1.0, strike_progress)
 		)
 	elif stab_total_duration > stab_windup + stab_active_duration:
@@ -173,7 +174,7 @@ func _update_stab_visual(elapsed: float) -> void:
 			0.0,
 			1.0
 		)
-		displacement = lerpf(stab_distance, 0.0, smoothstep(0.0, 1.0, recovery_progress))
+		displacement = lerpf(stab_reach, 0.0, smoothstep(0.0, 1.0, recovery_progress))
 	var local_offset := to_local(global_position + swing_direction * displacement)
 	body.position = attack_body_position + local_offset
 

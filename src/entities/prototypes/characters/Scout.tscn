@@ -14,6 +14,7 @@
 death_sprite_sheet = ExtResource("3_death")
 hand_positions = ExtResource("6_hands")
 starting_weapon_data = ExtResource("5_rifle_data")
+dash_speed = 400.0
 p_spriteframes = ExtResource("2_frames")
 p_autoplay = "idle_down"
 
