@@ -1,6 +1,64 @@
 [gd_scene format=3 uid="uid://e533e5cmr8e3"]
 
-[ext_resource type="Script" uid="uid://b8yjifi3w36jb" path="res://src/ui/home/home.gd" id="1_36quf"]
+[ext_resource type="Script" uid="uid://b8yjifi3w36jb" path="res://src/ui/home/home.gd" id="1_home"]
+[ext_resource type="PackedScene" path="res://src/ui/home/PolarBackground.tscn" id="2_background"]
+[ext_resource type="FontFile" path="res://assets/fonts/press_start_2p/PressStart2P-Regular.ttf" id="3_font"]
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+bg_color = Color(0.025, 0.075, 0.18, 1)
+shadow_color = Color(0.94, 0.12, 0.21, 0.95)
+shadow_size = 1
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+bg_color = Color(0.06, 0.17, 0.33, 1)
+shadow_color = Color(0.94, 0.12, 0.21, 1)
+shadow_size = 1
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
+bg_color = Color(0.015, 0.045, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.94, 0.12, 0.21, 1)
+
+[sub_resource type="StyleBoxFlat" id="ButtonFocus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.96, 0.93, 1)
+
+[sub_resource type="Theme" id="HomeTheme"]
+default_font = ExtResource("3_font")
+default_font_size = 24
+Label/colors/font_color = Color(0.025, 0.075, 0.18, 1)
+Label/colors/font_shadow_color = Color(0.94, 0.12, 0.21, 1)
+Label/constants/shadow_offset_x = 5
+Label/constants/shadow_offset_y = 5
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_focus_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
+Button/styles/normal = SubResource("ButtonNormal")
+Button/styles/hover = SubResource("ButtonHover")
+Button/styles/pressed = SubResource("ButtonPressed")
+Button/styles/focus = SubResource("ButtonFocus")
 
 [node name="Home" type="Control" unique_id=1380580027]
 layout_mode = 3
@@ -9,46 +67,45 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_36quf")
+theme = SubResource("HomeTheme")
+script = ExtResource("1_home")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1017668232]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Background" parent="." instance=ExtResource("2_background")]
+
+[node name="CenterContainer" type="MarginContainer" parent="." unique_id=172812648]
+layout_mode = 0
 mouse_filter = 2
-color = Color(0.1982064, 2.368033e-05, 0.7705582, 1)
-
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=172812648]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1327411650]
-custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 36
 
-[node name="Title" type="Label" parent="CenterContainer/VBoxContainer" unique_id=167348694]
+[node name="Title" type="VBoxContainer" parent="CenterContainer/VBoxContainer" unique_id=167348694]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Fight Club Penguin"
-horizontal_alignment = 1
+size_flags_horizontal = 0
+theme_override_constants/separation = 6
+
+[node name="Top" type="Label" parent="CenterContainer/VBoxContainer/Title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 58
+text = "FIGHT CLUB"
+
+[node name="Bottom" type="Label" parent="CenterContainer/VBoxContainer/Title"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 80
+text = "PENGUIN"
 
 [node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1724236112]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(380, 68)
 layout_mode = 2
-text = "Play"
+size_flags_horizontal = 0
+text = "PLAY"
 
 [node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1568705128]
 visible = false
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(380, 68)
 layout_mode = 2
-text = "Options"
+size_flags_horizontal = 0
+text = "OPTIONS"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
