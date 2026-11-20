@@ -37,6 +37,10 @@ func _layout_home() -> void:
 
 func _on_play_button_pressed() -> void:
 	PlayerManager.clear_players()
+	if menu_device >= 0:
+		var starting_slot := PlayerManager.assign_device_slot(menu_device)
+		if starting_slot >= 0:
+			PlayerManager.join_player(menu_device, starting_slot)
 	get_tree().change_scene_to_packed(MATCH_SCENE)
 
 

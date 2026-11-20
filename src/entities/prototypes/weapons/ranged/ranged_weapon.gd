@@ -9,6 +9,7 @@ var ranged_data: RangedWeaponData
 @export var shot_sound: AudioStream
 @export var muzzle_flash_scene: PackedScene
 @onready var shot_audio: AudioStreamPlayer = $ShotAudio
+@onready var reload_audio: AudioStreamPlayer = $ReloadAudio
 var current_ammo := 0
 var burst_shots_left := 0
 var burst_recovery_left := 0.0
@@ -26,6 +27,7 @@ func setup(p_device: int, p_weapon_data: WeaponData) -> void:
 		burst_shots_left = 0
 		burst_recovery_left = 0.0
 		reload_time_left = 0.0
+		reload_audio.stop()
 		ammo_changed.emit(current_ammo, ranged_data.magazine_capacity)
 		reload_changed.emit(false, 0.0)
 
@@ -50,10 +52,13 @@ func _process(delta: float) -> void:
 
 func _process_magazine(delta: float) -> void:
 	if reload_time_left > 0.0:
+		if reload_audio.stream != null and not reload_audio.playing:
+			reload_audio.play()
 		reload_time_left = maxf(reload_time_left - delta, 0.0)
 		var progress := 1.0 - reload_time_left / ranged_data.reload_duration
 		reload_changed.emit(true, progress)
 		if reload_time_left == 0.0:
+			reload_audio.stop()
 			current_ammo = ranged_data.magazine_capacity
 			ammo_changed.emit(current_ammo, ranged_data.magazine_capacity)
 			reload_changed.emit(false, 1.0)
@@ -149,6 +154,8 @@ func begin_reload() -> void:
 	burst_shots_left = 0
 	burst_recovery_left = 0.0
 	reload_time_left = maxf(ranged_data.reload_duration, 0.1)
+	if reload_audio.stream != null:
+		reload_audio.play()
 	reload_changed.emit(true, 0.0)
 
 func get_muzzle_global_position() -> Vector2:
