@@ -2,7 +2,7 @@ extends Node2D
 
 ## Arena size in world pixels; independent of the window and camera zoom.
 @export var world_size := Vector2(1843.2, 1036.8)
-@export var background_margin: float = 1536.0
+@export var background_margin: float = 0.0
 
 func _ready() -> void:
 	_apply_world_size()
