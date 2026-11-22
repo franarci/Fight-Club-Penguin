@@ -361,10 +361,8 @@ func update_facing(input_dir: Vector2) -> void:
 		&"left", &"up_left", &"up", &"up_right",
 	]
 	if is_instance_valid(current_weapon):
-		# Keep the actual attack angle in sync with the 8-way pose. Passing the
-		# raw stick vector here lets small axis noise make shots look diagonal
-		# while the penguin and weapon sprites are still facing horizontally.
-		current_weapon.set_aim_direction(Vector2(current_weapon.snap_to_8_directions(input_dir)))
+		# Keep the 8-way artwork, but preserve the analog angle for attacks.
+		current_weapon.set_aim_direction(input_dir)
 	facing = directions[sector]
 	if arm != null:
 		arm.visible = facing == &"right"
