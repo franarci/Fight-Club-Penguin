@@ -2,7 +2,7 @@ extends Node
 
 const MAX_PLAYERS := 4
 const STARTING_LIVES := 3
-const SLOT_ASSIGNMENTS_PATH := "user://player_slot_assignments_v2.cfg"
+const SLOT_ASSIGNMENTS_PATH := "user://player_slot_assignments_v3.cfg"
 
 signal lives_changed(slot: int, lives: int)
 
