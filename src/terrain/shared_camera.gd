@@ -14,6 +14,8 @@ var round_anchors: Array[Vector2] = []
 var zoom_in_wait := 0.0
 var arena_size := Vector2.ZERO
 var background_margin := 0.0
+var has_event_focus := false
+var event_focus_point := Vector2.ZERO
 var shake_strength := 0.0
 var shake_duration := 0.0
 var shake_time_left := 0.0
@@ -33,6 +35,15 @@ func follow_players(container: Node2D) -> void:
 		if penguin != null:
 			round_anchors.append(penguin.respawn_position)
 	_update_frame(0.0, true)
+
+
+func set_event_focus(point: Vector2) -> void:
+	event_focus_point = point
+	has_event_focus = true
+
+
+func clear_event_focus() -> void:
+	has_event_focus = false
 
 
 func _process(delta: float) -> void:
@@ -73,6 +84,8 @@ func _update_frame(delta: float, snap: bool) -> void:
 			continue
 		# Keep respawn locations framed while a penguin is temporarily dead.
 		points.append(penguin.respawn_position if penguin.is_dead else penguin.global_position)
+	if has_event_focus:
+		points.append(event_focus_point)
 	if not points.is_empty():
 		frame_points(points, delta, snap)
 

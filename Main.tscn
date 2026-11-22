@@ -10,11 +10,15 @@
 [ext_resource type="PackedScene" path="res://src/ui/pause/PauseMenu.tscn" id="5_pause"]
 [ext_resource type="Script" path="res://src/input/gamepad_recovery.gd" id="6_recovery"]
 [ext_resource type="PackedScene" path="res://src/ui/tutorial/PreMatch.tscn" id="7_prematch"]
+[ext_resource type="Script" path="res://src/terrain/orca_emergence.gd" id="8_orca"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
 
 [node name="Arena" parent="." unique_id=459240053 instance=ExtResource("2_fos0i")]
+
+[node name="OrcaEmergence" type="Node" parent="."]
+script = ExtResource("8_orca")
 
 [node name="MenuLayer" type="CanvasLayer" parent="." unique_id=65484925]
 layer = 11
