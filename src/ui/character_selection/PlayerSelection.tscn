@@ -20,6 +20,8 @@
 [ext_resource type="FontFile" path="res://assets/fonts/press_start_2p/PressStart2P-Regular.ttf" id="13_font"]
 [ext_resource type="Script" path="res://src/ui/character_selection/join_badge.gd" id="14_join"]
 
+[ext_resource type="PackedScene" path="res://src/ui/character_selection/ArenaCharacterPreview.tscn" id="15_arena_preview"]
+
 [sub_resource type="ShaderMaterial" id="PortraitMaterial"]
 resource_local_to_scene = true
 shader = ExtResource("10_portrait")
@@ -77,7 +79,7 @@ metadata/_custom_type_script = "uid://dqa0d1iiigmpy"
 font = ExtResource("13_font")
 font_size = 12
 
-[node name="PlayerSelection" type="PanelContainer" unique_id=576206770]
+[node name="PlayerSelection" type="VBoxContainer" unique_id=576206770]
 light_mask = 4
 visibility_layer = 4
 custom_minimum_size = Vector2(220, 460)
@@ -86,68 +88,74 @@ offset_bottom = 460.0
 size_flags_vertical = 3
 theme = ExtResource("11_theme")
 theme_override_styles/panel = SubResource("StyleBoxFlat_kktns")
+theme_override_constants/separation = 8
 script = ExtResource("1_jce1r")
 characters = Array[ExtResource("2_7cru3")]([SubResource("Resource_672rp"), SubResource("Resource_h2xqw"), SubResource("Resource_5aohr"), SubResource("Resource_yla77")])
 
-[node name="Decoration" type="Control" parent="."]
+[node name="Card" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kktns")
+
+[node name="Decoration" type="Control" parent="Card"]
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("12_decoration")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1682365352]
+[node name="VBoxContainer" type="VBoxContainer" parent="Card" unique_id=1682365352]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="SlotHeader" type="PanelContainer" parent="VBoxContainer"]
+[node name="SlotHeader" type="PanelContainer" parent="Card/VBoxContainer"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("Header")
 
-[node name="SlotNumber" type="Label" parent="VBoxContainer/SlotHeader"]
+[node name="SlotNumber" type="Label" parent="Card/VBoxContainer/SlotHeader"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_font")
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 text = "PLAYER 1"
 
-[node name="EmptyState" type="VBoxContainer" parent="VBoxContainer"]
+[node name="EmptyState" type="VBoxContainer" parent="Card/VBoxContainer"]
 custom_minimum_size = Vector2(0, 340)
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 theme_override_constants/separation = 18
 
-[node name="JoinIcon" type="Control" parent="VBoxContainer/EmptyState"]
+[node name="JoinIcon" type="Control" parent="Card/VBoxContainer/EmptyState"]
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("14_join")
 
-[node name="Join" type="Label" parent="VBoxContainer/EmptyState"]
+[node name="Join" type="Label" parent="Card/VBoxContainer/EmptyState"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("13_font")
 theme_override_font_sizes/font_size = 15
 text = "PRESS\nSTART"
 horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="VBoxContainer/EmptyState"]
+[node name="Hint" type="Label" parent="Card/VBoxContainer/EmptyState"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.86, 1)
 theme_override_font_sizes/font_size = 14
 text = "Join the squad"
 horizontal_alignment = 1
 
-[node name="CharacterCenter" type="CenterContainer" parent="VBoxContainer" unique_id=1317168388]
-custom_minimum_size = Vector2(0, 144)
+[node name="CharacterCenter" type="CenterContainer" parent="Card/VBoxContainer" unique_id=1317168388]
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 
-[node name="Character" type="TextureRect" parent="VBoxContainer/CharacterCenter" unique_id=713989201]
-custom_minimum_size = Vector2(180, 144)
+[node name="Character" type="TextureRect" parent="Card/VBoxContainer/CharacterCenter" unique_id=713989201]
+custom_minimum_size = Vector2(180, 96)
 layout_mode = 2
 material = SubResource("PortraitMaterial")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PlayerLabel" type="Label" parent="VBoxContainer" unique_id=1492488716]
+[node name="PlayerLabel" type="Label" parent="Card/VBoxContainer" unique_id=1492488716]
 custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
@@ -157,7 +165,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="ReadyBadge" type="Label" parent="VBoxContainer"]
+[node name="ReadyBadge" type="Label" parent="Card/VBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.92, 1, 1)
@@ -166,47 +174,62 @@ theme_override_font_sizes/font_size = 11
 text = "READY"
 horizontal_alignment = 1
 
-[node name="StatsMargin" type="MarginContainer" parent="VBoxContainer" unique_id=2010885332]
+[node name="StatsMargin" type="MarginContainer" parent="Card/VBoxContainer" unique_id=2010885332]
 layout_mode = 2
 theme_override_constants/margin_bottom = 10
 
-[node name="StatsContainer" type="VBoxContainer" parent="VBoxContainer/StatsMargin" unique_id=624110200]
+[node name="StatsContainer" type="VBoxContainer" parent="Card/VBoxContainer/StatsMargin" unique_id=624110200]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="SpeedStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=615272567 instance=ExtResource("7_kktns")]
+[node name="SpeedStat" parent="Card/VBoxContainer/StatsMargin/StatsContainer" unique_id=615272567 instance=ExtResource("7_kktns")]
 layout_mode = 2
 
-[node name="StrengthStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=176041905 instance=ExtResource("7_kktns")]
+[node name="StrengthStat" parent="Card/VBoxContainer/StatsMargin/StatsContainer" unique_id=176041905 instance=ExtResource("7_kktns")]
 layout_mode = 2
 
-[node name="ResistanceStat" parent="VBoxContainer/StatsMargin/StatsContainer" unique_id=1240575531 instance=ExtResource("7_kktns")]
+[node name="ResistanceStat" parent="Card/VBoxContainer/StatsMargin/StatsContainer" unique_id=1240575531 instance=ExtResource("7_kktns")]
 layout_mode = 2
 
-[node name="Navigation" type="HBoxContainer" parent="VBoxContainer" unique_id=227364430]
+[node name="Navigation" type="HBoxContainer" parent="Card/VBoxContainer" unique_id=227364430]
 layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Prev" type="Button" parent="VBoxContainer/Navigation" unique_id=949271258]
+[node name="Prev" type="Button" parent="Card/VBoxContainer/Navigation" unique_id=949271258]
 layout_mode = 2
 focus_mode = 0
 text = "<"
 
-[node name="Select" type="Button" parent="VBoxContainer/Navigation" unique_id=1158604813]
+[node name="Select" type="Button" parent="Card/VBoxContainer/Navigation" unique_id=1158604813]
 layout_mode = 2
 focus_mode = 0
 text = "Select"
 
-[node name="Next" type="Button" parent="VBoxContainer/Navigation" unique_id=701563577]
+[node name="Next" type="Button" parent="Card/VBoxContainer/Navigation" unique_id=701563577]
 layout_mode = 2
 focus_mode = 0
 text = ">"
 
+[node name="PreviewArea" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 104)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ArenaPreview" parent="PreviewArea" instance=ExtResource("15_arena_preview")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="BorderBlinkTimer" type="Timer" parent="." unique_id=511547008]
 wait_time = 0.4
 
-[connection signal="pressed" from="VBoxContainer/Navigation/Prev" to="." method="prev"]
-[connection signal="pressed" from="VBoxContainer/Navigation/Select" to="." method="_on_select_pressed"]
-[connection signal="pressed" from="VBoxContainer/Navigation/Next" to="." method="next"]
+[connection signal="pressed" from="Card/VBoxContainer/Navigation/Prev" to="." method="prev"]
+[connection signal="pressed" from="Card/VBoxContainer/Navigation/Select" to="." method="_on_select_pressed"]
+[connection signal="pressed" from="Card/VBoxContainer/Navigation/Next" to="." method="next"]
 [connection signal="timeout" from="BorderBlinkTimer" to="." method="_on_border_blink_timer_timeout"]
