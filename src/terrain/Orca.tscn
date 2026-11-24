@@ -4,5 +4,4 @@
 
 [node name="Orca" type="Node" unique_id=1510244318]
 script = ExtResource("1_orca")
-minimum_attack_interval = 20.0
 orca_scale = 1.9
