@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/terrain/orca_attack.gd" id="1_attack"]
+
+[node name="OrcaAttack" type="Node2D"]
+script = ExtResource("1_attack")
+ice_entry_margin = 40.0
+far_side_clearance = 144.0
+crossing_speed = 620.0
+hit_radius = 66.0
+jump_start_frame = 16
+jump_frame_count = 8
+sprite_scale = 1.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 4095

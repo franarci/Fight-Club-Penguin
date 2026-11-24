@@ -8,6 +8,12 @@ func _ready() -> void:
 	_apply_world_size()
 
 
+func set_background_margin(value: float) -> void:
+	background_margin = maxf(value, 0.0)
+	if is_node_ready():
+		_apply_world_size()
+
+
 func _apply_world_size() -> void:
 	# The artwork and polygon share the image's original pixel coordinates.
 	# Scale their common parent together, independently of camera zoom.
@@ -17,4 +23,8 @@ func _apply_world_size() -> void:
 	var ocean: ColorRect = $OceanBackdrop
 	ocean.position = -margin
 	ocean.size = image_size + margin * 2.0
-	(ocean.material as ShaderMaterial).set_shader_parameter("world_dimensions", world_size + Vector2.ONE * background_margin * 2.0)
+	var ocean_material := ocean.material as ShaderMaterial
+	ocean_material.set_shader_parameter("world_dimensions", world_size + Vector2.ONE * background_margin * 2.0)
+	ocean_material.set_shader_parameter("arena_dimensions", world_size)
+	ocean_material.set_shader_parameter("background_margin", background_margin)
+	ocean_material.set_shader_parameter("source_texture", $TextureRect.texture)

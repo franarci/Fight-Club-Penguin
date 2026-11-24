@@ -45,6 +45,7 @@ shader_parameter/highlight_color = Color(0, 0.6509804, 1, 1)
 z_index = -8
 scale = Vector2(0.3538491, 0.32079208)
 script = ExtResource("2_arena")
+background_margin = 96.0
 
 [node name="OceanBackdrop" type="ColorRect" parent="."]
 z_index = -1

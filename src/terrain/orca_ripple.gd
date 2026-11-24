@@ -16,6 +16,7 @@ var _emitting := true
 var _ring_birth_times: Array[float] = [0.0]
 var draw_front_half := false
 var surface_amount := 0.0
+var ripple_scale := 1.0
 
 
 func _process(delta: float) -> void:
@@ -47,7 +48,7 @@ func _draw() -> void:
 		var age := _elapsed - birth_time
 		var progress := clampf(age / RING_LIFETIME, 0.0, 1.0)
 		var eased_progress := 1.0 - pow(1.0 - progress, 2.0)
-		var radius := lerpf(START_RADIUS, MAX_RADIUS, eased_progress) * surface_scale
+		var radius := lerpf(START_RADIUS, MAX_RADIUS, eased_progress) * surface_scale * ripple_scale
 		var opacity := sin(progress * PI)
 		var points := PackedVector2Array()
 		var first_segment := 0 if draw_front_half else HALF_SEGMENTS
@@ -56,7 +57,7 @@ func _draw() -> void:
 			var angle := TAU * float(point_index) / RING_SEGMENTS
 			var wobble := sin(angle * 4.0 + _elapsed * 3.0) * 2.4
 			wobble += sin(angle * 7.0 - _elapsed * 2.2) * 1.2
-			var wave_radius := radius + wobble * surface_scale
+			var wave_radius := radius + wobble * surface_scale * ripple_scale
 			points.append(Vector2(cos(angle) * wave_radius, sin(angle) * wave_radius * VERTICAL_SCALE))
-		draw_polyline(points, Color(0.58, 0.88, 1.0, opacity * 0.10), 4.0, true)
-		draw_polyline(points, Color(0.86, 0.97, 1.0, opacity * 0.34), 1.5, true)
+		draw_polyline(points, Color(0.58, 0.88, 1.0, opacity * 0.10), 4.0 * ripple_scale, true)
+		draw_polyline(points, Color(0.86, 0.97, 1.0, opacity * 0.34), 1.5 * ripple_scale, true)

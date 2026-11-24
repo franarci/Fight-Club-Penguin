@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://4ronbt3ymv2m"]
+
+[ext_resource type="Script" uid="uid://bmgfsxmpug5i2" path="res://src/terrain/orca_emergence.gd" id="1_orca"]
+
+[node name="Orca" type="Node" unique_id=1510244318]
+script = ExtResource("1_orca")
+minimum_attack_interval = 20.0
+orca_scale = 1.9
