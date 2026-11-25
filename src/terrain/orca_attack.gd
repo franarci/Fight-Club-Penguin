@@ -2,8 +2,6 @@ extends Node2D
 
 signal finished
 
-const FRAME_COLUMNS := 8
-const FRAME_SIZE := Vector2(256.0, 224.0)
 const VISUAL_PADDING := Vector2(136.0, 120.0)
 const PLAYER_DEPTH_Z := 4095
 
@@ -17,9 +15,17 @@ enum Phase { JUMPING, CROSSING, DIVING }
 @export_range(24.0, 180.0, 2.0) var hit_radius := 66.0
 
 @export_group("Animación")
-@export_range(0, 31, 1) var jump_start_frame := 16
-@export_range(1, 16, 1) var jump_frame_count := 8
-@export_range(12.0, 60.0, 1.0) var dive_animation_fps := 24.0
+@export_range(0, 255, 1) var jump_start_frame := 16
+@export_range(1, 32, 1) var jump_frame_count := 8
+@export_group("Animaciones editables")
+@export var attack_sprite_frames: SpriteFrames
+@export_group("Audio del ataque")
+@export var loop_alarm := true
+@export var use_ice_crack_layer := true
+@export var duck_music_during_attack := true
+@export_range(-60.0, 0.0, 1.0) var music_duck_db := -12.0
+@export_range(0.0, 2.0, 0.05) var music_duck_fade_seconds := 0.25
+@export_range(0.0, 2.0, 0.05) var music_restore_fade_seconds := 0.45
 @export_group("Presentación")
 @export_range(0.25, 2.0, 0.05) var sprite_scale := 1.0:
 	set(value):
@@ -28,6 +34,11 @@ enum Phase { JUMPING, CROSSING, DIVING }
 			_sprite.scale = Vector2.ONE * sprite_scale
 
 @onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var _alarm_audio: AudioStreamPlayer = $AlarmAudio
+@onready var _jump_audio: AudioStreamPlayer = $JumpAudio
+@onready var _slide_audio: AudioStreamPlayer = $SlideAudio
+@onready var _ice_crack_audio: AudioStreamPlayer = $IceCrackAudio
+@onready var _dive_audio: AudioStreamPlayer = $DiveAudio
 
 var _direction_name := ""
 var _direction := Vector2.ZERO
@@ -43,11 +54,20 @@ var _crossing_end := Vector2.ZERO
 var _phase_elapsed := 0.0
 var _phase_duration := 1.0
 var _hit_slots: Dictionary = {}
+var _attack_audio_active := false
+var _music_duck_applied := false
+var _attack_finished := false
 
 
 func _ready() -> void:
 	_sprite.scale = Vector2.ONE * sprite_scale
 	_sprite.animation_finished.connect(_on_animation_finished)
+	_alarm_audio.finished.connect(_on_alarm_audio_finished)
+
+
+func _exit_tree() -> void:
+	_attack_audio_active = false
+	_restore_music_volume()
 
 
 func begin(
@@ -94,13 +114,15 @@ func begin(
 	_phase_elapsed = 0.0
 	_phase_duration = maxf(_jump_start.distance_to(_jump_end) / maxf(jump_speed, 1.0), 0.05)
 	_sprite.z_index = PLAYER_DEPTH_Z
-	_play_action(
-		"salto",
-		float(jump_frame_count) / _phase_duration,
-		false,
-		jump_frame_count,
-		jump_start_frame
-	)
+	var jump_frames := _make_action_frames("salto", jump_frame_count, jump_start_frame)
+	if jump_frames == null:
+		_finish_attack()
+		return
+	var jump_duration := _get_animation_duration(jump_frames, "salto")
+	jump_frames.set_animation_speed("salto", jump_duration / _phase_duration)
+	_start_attack_audio()
+	_jump_audio.play()
+	_play_frames(jump_frames, "salto")
 
 
 func _process(delta: float) -> void:
@@ -182,12 +204,16 @@ func _begin_crossing() -> void:
 	_phase = Phase.CROSSING
 	_phase_elapsed = 0.0
 	_phase_duration = maxf(_crossing_start.distance_to(_crossing_end) / maxf(crossing_speed, 1.0), 0.05)
-	var slide_frames := _make_action_frames("arrastre", false)
+	var slide_frames := _make_action_frames("arrastre")
 	if slide_frames == null:
-		finished.emit()
+		_finish_attack()
 		return
-	var slide_frame_count := slide_frames.get_frame_count("arrastre")
-	slide_frames.set_animation_speed("arrastre", float(slide_frame_count) / _phase_duration)
+	var slide_duration := _get_animation_duration(slide_frames, "arrastre")
+	slide_frames.set_animation_speed("arrastre", slide_duration / _phase_duration)
+	_jump_audio.stop()
+	_slide_audio.play()
+	if use_ice_crack_layer:
+		_ice_crack_audio.play()
 	_play_frames(slide_frames, "arrastre")
 
 
@@ -196,58 +222,56 @@ func _begin_dive() -> void:
 		return
 	_phase = Phase.DIVING
 	global_position = _crossing_end
-	_play_action("zambullida", dive_animation_fps, false)
+	_slide_audio.stop()
+	_ice_crack_audio.stop()
+	_play_action("zambullida")
 
 
-func _play_action(
-	action: String,
-	frame_rate: float,
-	loop: bool,
-	frame_limit: int = -1,
-	frame_start: int = 0
-) -> void:
-	var sprite_frames := _make_action_frames(action, loop, frame_limit, frame_start)
+func _play_action(action: String) -> void:
+	var sprite_frames := _make_action_frames(action)
 	if sprite_frames == null:
-		finished.emit()
+		_finish_attack()
 		return
-	sprite_frames.set_animation_speed(action, frame_rate)
 	_play_frames(sprite_frames, action)
+	if action == "zambullida":
+		_dive_audio.play()
 
 
-func _make_action_frames(
-	action: String,
-	loop: bool,
-	frame_limit: int = -1,
-	frame_start: int = 0
-) -> SpriteFrames:
-	var texture_path := "res://assets/textures/entities/orca/attack/%s/%s.png" % [_direction_name, action]
-	var sheet := load(texture_path) as Texture2D
-	if sheet == null or sheet.get_width() % int(FRAME_SIZE.x) != 0 or sheet.get_height() % int(FRAME_SIZE.y) != 0:
-		push_warning("No se pudo cargar la hoja de ataque de la orca: %s" % texture_path)
+func _make_action_frames(action: String, frame_limit: int = -1, frame_start: int = 0) -> SpriteFrames:
+	if attack_sprite_frames == null:
+		push_warning("No se asignó el recurso SpriteFrames editable para el ataque de la orca.")
 		return null
-	var columns := sheet.get_width() / int(FRAME_SIZE.x)
-	var rows := sheet.get_height() / int(FRAME_SIZE.y)
-	if columns != FRAME_COLUMNS:
-		push_warning("La hoja de ataque de la orca no tiene 8 columnas: %s" % texture_path)
+	var source_animation := "%s_%s" % [_direction_name, action]
+	if not attack_sprite_frames.has_animation(source_animation):
+		push_warning("Falta la animación editable %s en los SpriteFrames de la orca." % source_animation)
 		return null
-	var sprite_frames := SpriteFrames.new()
-	sprite_frames.remove_animation("default")
-	sprite_frames.add_animation(action)
-	sprite_frames.set_animation_loop(action, loop)
-	var total_frames := columns * rows
+	var total_frames := attack_sprite_frames.get_frame_count(source_animation)
+	if total_frames == 0:
+		push_warning("La animación editable %s de la orca no tiene cuadros." % source_animation)
+		return null
 	var first_frame := clampi(frame_start, 0, total_frames - 1)
 	var last_frame := total_frames
 	if frame_limit > 0:
 		last_frame = mini(first_frame + frame_limit, total_frames)
+	var sprite_frames := SpriteFrames.new()
+	sprite_frames.remove_animation("default")
+	sprite_frames.add_animation(action)
+	sprite_frames.set_animation_loop(action, attack_sprite_frames.get_animation_loop(source_animation))
+	sprite_frames.set_animation_speed(action, attack_sprite_frames.get_animation_speed(source_animation))
 	for index in range(first_frame, last_frame):
-		var atlas_frame := AtlasTexture.new()
-		atlas_frame.atlas = sheet
-		atlas_frame.region = Rect2(
-			Vector2((index % columns) * FRAME_SIZE.x, floori(float(index) / columns) * FRAME_SIZE.y),
-			FRAME_SIZE
+		sprite_frames.add_frame(
+			action,
+			attack_sprite_frames.get_frame_texture(source_animation, index),
+			attack_sprite_frames.get_frame_duration(source_animation, index)
 		)
-		sprite_frames.add_frame(action, atlas_frame)
 	return sprite_frames
+
+
+func _get_animation_duration(sprite_frames: SpriteFrames, animation: StringName) -> float:
+	var duration := 0.0
+	for index in range(sprite_frames.get_frame_count(animation)):
+		duration += sprite_frames.get_frame_duration(animation, index)
+	return maxf(duration, 0.001)
 
 
 func _play_frames(sprite_frames: SpriteFrames, action: String) -> void:
@@ -278,4 +302,40 @@ func _on_animation_finished() -> void:
 			global_position = _crossing_end
 			_begin_dive()
 		Phase.DIVING:
-			finished.emit()
+			_finish_attack()
+
+
+func _start_attack_audio() -> void:
+	_attack_audio_active = true
+	if _alarm_audio.stream != null:
+		_alarm_audio.play()
+	if duck_music_during_attack:
+		_music_duck_applied = true
+		Music.set_orca_attack_ducked(true, music_duck_db, music_duck_fade_seconds)
+
+
+func _on_alarm_audio_finished() -> void:
+	if _attack_audio_active and loop_alarm and _alarm_audio.stream != null:
+		_alarm_audio.play()
+
+
+func _stop_attack_sounds() -> void:
+	for player in [_alarm_audio, _jump_audio, _slide_audio, _ice_crack_audio, _dive_audio]:
+		player.stop()
+
+
+func _restore_music_volume() -> void:
+	if not _music_duck_applied:
+		return
+	_music_duck_applied = false
+	Music.set_orca_attack_ducked(false, 0.0, music_restore_fade_seconds)
+
+
+func _finish_attack() -> void:
+	if _attack_finished:
+		return
+	_attack_finished = true
+	_attack_audio_active = false
+	_stop_attack_sounds()
+	_restore_music_volume()
+	finished.emit()

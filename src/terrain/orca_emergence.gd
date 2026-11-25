@@ -1,29 +1,12 @@
 extends Node
 
-const FRAME_COLUMNS := 8
-const FRAME_ROWS := 8
-const FRAME_COUNT := FRAME_COLUMNS * FRAME_ROWS
-const FULL_SURFACE_FRAME := 16
-const SUBMERGE_START_FRAME := 48
-const DIRECTIONS := ["E", "SE", "S", "SO", "O", "NO", "N", "NE"]
+const DIRECTIONS: Array[String] = ["E", "SE", "S", "SO", "O", "NO", "N", "NE"]
 const ANGLE_STEP := TAU / 8.0
-const FRAME_RATE := 18.0
 const SOUTH_WALL_CLEARANCE := 64.0
 const ATTACK_VISUAL_PADDING := Vector2(136.0, 120.0)
 const ORCA_RIPPLE_SCRIPT = preload("res://src/terrain/orca_ripple.gd")
 const ORCA_ATTACK_SCENE = preload("res://src/terrain/OrcaAttack.tscn")
 const DANGER_VIGNETTE_SHADER = preload("res://src/terrain/orca_danger_vignette.gdshader")
-
-const ORCA_SHEETS := {
-	"E": preload("res://assets/textures/entities/orca/orca_E.png"),
-	"N": preload("res://assets/textures/entities/orca/orca_N.png"),
-	"NE": preload("res://assets/textures/entities/orca/orca_NE.png"),
-	"NO": preload("res://assets/textures/entities/orca/orca_NO.png"),
-	"O": preload("res://assets/textures/entities/orca/orca_O.png"),
-	"S": preload("res://assets/textures/entities/orca/orca_S.png"),
-	"SE": preload("res://assets/textures/entities/orca/orca_SE.png"),
-	"SO": preload("res://assets/textures/entities/orca/orca_SO.png"),
-}
 
 @export_range(4.0, 60.0, 1.0) var minimum_interval := 10.0
 @export_range(4.0, 60.0, 1.0) var maximum_interval := 18.0
@@ -37,9 +20,16 @@ const ORCA_SHEETS := {
 		if is_node_ready():
 			_apply_scale_settings()
 
+@export_group("Animaciones editables")
+@export var surface_sprite_frames: SpriteFrames
+@export_range(0, 512, 1) var full_surface_frame := 16
+@export_range(0, 512, 1) var submerge_start_frame := 48
+
 @onready var arena: Node2D = get_node("../Arena")
 @onready var ice_boundary: CollisionPolygon2D = get_node("../Arena/IceArea/Ground")
 @onready var players: Node2D = get_node("../Players")
+@onready var _asomo_audio: AudioStreamPlayer = $AsomoAudio
+@onready var _inmersion_audio: AudioStreamPlayer = $InmersionAudio
 
 var _event_timer: Timer
 var _attack_timer: Timer
@@ -55,8 +45,6 @@ var _last_attack_direction := ""
 var _attack_pending := false
 var _attack_active := false
 var _events_active := false
-var _base_background_margin := 0.0
-var _attack_exit_clearance := 144.0
 
 
 func _ready() -> void:
@@ -68,11 +56,7 @@ func _ready() -> void:
 	_attack_timer.one_shot = true
 	_attack_timer.timeout.connect(_on_attack_timer_timeout)
 	add_child(_attack_timer)
-	_sprite_frames = _make_sprite_frames()
-	_base_background_margin = float(arena.get("background_margin"))
-	var attack_settings := ORCA_ATTACK_SCENE.instantiate() as Node2D
-	_attack_exit_clearance = float(attack_settings.get("far_side_clearance"))
-	attack_settings.free()
+	_sprite_frames = surface_sprite_frames
 	_apply_scale_settings()
 	_create_danger_overlay()
 
@@ -117,6 +101,8 @@ func stop_events() -> void:
 	_events_active = false
 	_event_timer.stop()
 	_attack_timer.stop()
+	_asomo_audio.stop()
+	_inmersion_audio.stop()
 	_attack_pending = false
 	_attack_active = false
 	if is_instance_valid(_active_orca):
@@ -144,6 +130,10 @@ func _show_orca() -> void:
 	if not _events_active or _attack_active or is_instance_valid(_active_orca):
 		return
 	var direction_index := randi_range(0, DIRECTIONS.size() - 1)
+	var animation_name: String = DIRECTIONS[direction_index]
+	if not _sprite_frames.has_animation(animation_name) or _sprite_frames.get_frame_count(animation_name) == 0:
+		push_warning("Falta una animación de asomo editable para la dirección %s." % animation_name)
+		return
 	var facing_direction := Vector2.RIGHT.rotated(direction_index * ANGLE_STEP)
 	var outward := -facing_direction
 	var spawn_position := _get_shoreline_position(outward)
@@ -152,7 +142,7 @@ func _show_orca() -> void:
 
 	_active_orca = AnimatedSprite2D.new()
 	_active_orca.sprite_frames = _sprite_frames
-	_active_orca.animation = DIRECTIONS[direction_index]
+	_active_orca.animation = animation_name
 	_active_orca.centered = true
 	_active_orca.position = spawn_position
 	_active_orca.scale = Vector2.ONE * orca_scale
@@ -160,9 +150,16 @@ func _show_orca() -> void:
 	_active_orca.frame_changed.connect(_on_orca_frame_changed.bind(_active_orca))
 	_active_orca.animation_finished.connect(_on_orca_animation_finished.bind(_active_orca), CONNECT_ONE_SHOT)
 	add_child(_active_orca)
+	_asomo_audio.stop()
+	_inmersion_audio.stop()
+	if not _attack_pending:
+		_asomo_audio.play()
 	_active_ripples.append(_create_ripple_half(spawn_position, false, -8))
 	_active_ripples.append(_create_ripple_half(spawn_position, true, -6))
-	_update_ripple_surface(_get_surface_amount(_active_orca.frame))
+	_update_ripple_surface(_get_surface_amount(
+		_active_orca.frame,
+		_sprite_frames.get_frame_count(_active_orca.animation)
+	))
 	var camera := get_node_or_null("../SharedCamera")
 	if camera != null:
 		camera.call("set_event_focus", spawn_position)
@@ -203,12 +200,6 @@ func _get_shoreline_position(outward: Vector2) -> Vector2:
 func _apply_scale_settings() -> void:
 	if not is_instance_valid(arena):
 		return
-	var required_margin := _calculate_background_margin()
-	if not is_equal_approx(float(arena.get("background_margin")), required_margin):
-		arena.call("set_background_margin", required_margin)
-	var camera := get_node_or_null("../SharedCamera")
-	if camera != null:
-		camera.call("set_background_margin", required_margin)
 	if is_instance_valid(_active_orca):
 		_active_orca.scale = Vector2.ONE * orca_scale
 	for ripple in _active_ripples:
@@ -216,62 +207,6 @@ func _apply_scale_settings() -> void:
 			ripple.set("ripple_scale", orca_scale)
 	if is_instance_valid(_active_attack):
 		_active_attack.set("sprite_scale", orca_scale)
-
-
-func _calculate_background_margin() -> float:
-	var arena_origin := arena.global_position
-	var arena_size: Vector2 = arena.get("world_size")
-	var arena_end := arena_origin + arena_size
-	var arena_center := arena_origin + arena_size * 0.5
-	var boundary_points: Array[Vector2] = []
-	for point in ice_boundary.polygon:
-		boundary_points.append(ice_boundary.to_global(point))
-	var visual_padding := ATTACK_VISUAL_PADDING * orca_scale
-	var needed_margin := _base_background_margin
-	for direction_index in range(DIRECTIONS.size()):
-		var outward := -Vector2.RIGHT.rotated(direction_index * ANGLE_STEP)
-		var shore_distance := _ray_distance_to_polygon(arena_center, outward, boundary_points)
-		if shore_distance == INF:
-			continue
-		var shoreline_point := arena_center + outward * shore_distance
-		var south_weight := _smooth_unit(clampf((outward.y - 0.15) / 0.85, 0.0, 1.0))
-		var surface_offset := (shoreline_offset + SOUTH_WALL_CLEARANCE * south_weight) * orca_scale
-		var surface_position := shoreline_point + outward * surface_offset
-		needed_margin = maxf(needed_margin, _margin_for_visual_bounds(surface_position, visual_padding, arena_origin, arena_end))
-
-		var attack_direction := -outward
-		var attack_distances := _ray_distances_to_polygon(surface_position, attack_direction, boundary_points)
-		if attack_distances.size() < 2:
-			continue
-		var crossing_end := surface_position + attack_direction * (attack_distances[-1] + _attack_exit_clearance * orca_scale)
-		needed_margin = maxf(needed_margin, _margin_for_visual_bounds(crossing_end, visual_padding, arena_origin, arena_end))
-	return needed_margin
-
-
-func _margin_for_visual_bounds(position: Vector2, padding: Vector2, arena_origin: Vector2, arena_end: Vector2) -> float:
-	var visual_min := position - padding
-	var visual_max := position + padding
-	return maxf(
-		maxf(arena_origin.x - visual_min.x, arena_end.x - visual_max.x),
-		maxf(arena_origin.y - visual_min.y, arena_end.y - visual_max.y)
-	)
-
-
-func _ray_distances_to_polygon(origin: Vector2, direction: Vector2, points: Array[Vector2]) -> Array[float]:
-	var distances: Array[float] = []
-	for index in range(points.size()):
-		var start := points[index]
-		var edge := points[(index + 1) % points.size()] - start
-		var denominator := direction.cross(edge)
-		if absf(denominator) < 0.0001:
-			continue
-		var offset := start - origin
-		var ray_distance := offset.cross(edge) / denominator
-		var edge_progress := offset.cross(direction) / denominator
-		if ray_distance >= 0.0 and edge_progress >= 0.0 and edge_progress <= 1.0:
-			distances.append(ray_distance)
-	distances.sort()
-	return distances
 
 
 func _ray_distance_to_polygon(origin: Vector2, direction: Vector2, points: Array[Vector2]) -> float:
@@ -328,6 +263,8 @@ func _begin_attack() -> void:
 	_attack_pending = false
 	_attack_active = true
 	_event_timer.stop()
+	_asomo_audio.stop()
+	_inmersion_audio.stop()
 	_clear_surface_visuals()
 	_active_attack = ORCA_ATTACK_SCENE.instantiate() as Node2D
 	_active_attack.set("sprite_scale", orca_scale)
@@ -359,13 +296,23 @@ func _on_attack_finished(attack: Node2D) -> void:
 func _on_orca_frame_changed(orca: AnimatedSprite2D) -> void:
 	if not is_instance_valid(orca):
 		return
-	_update_ripple_surface(_get_surface_amount(orca.frame))
+	if not _attack_pending and not _attack_active and orca.frame == submerge_start_frame:
+		_inmersion_audio.play()
+	_update_ripple_surface(_get_surface_amount(
+		orca.frame,
+		orca.sprite_frames.get_frame_count(orca.animation)
+	))
 	if _attack_pending and _active_orca == orca and _is_attack_window(orca):
 		_begin_attack()
 
 
 func _is_attack_window(orca: AnimatedSprite2D) -> bool:
-	return orca.frame >= FULL_SURFACE_FRAME and orca.frame < SUBMERGE_START_FRAME
+	var frame_count := orca.sprite_frames.get_frame_count(orca.animation)
+	if frame_count < 2:
+		return false
+	var fully_emerged_at := clampi(full_surface_frame, 0, frame_count - 1)
+	var submerge_at := clampi(submerge_start_frame, fully_emerged_at + 1, frame_count)
+	return orca.frame >= fully_emerged_at and orca.frame < submerge_at
 
 
 func _clear_surface_visuals() -> void:
@@ -381,13 +328,17 @@ func _clear_surface_visuals() -> void:
 	_clear_camera_focus()
 
 
-func _get_surface_amount(frame: int) -> float:
-	if frame < FULL_SURFACE_FRAME:
-		return _smooth_unit(float(frame) / FULL_SURFACE_FRAME)
-	if frame < SUBMERGE_START_FRAME:
+func _get_surface_amount(frame: int, frame_count: int) -> float:
+	if frame_count < 2:
+		return 0.0
+	var fully_emerged_at := clampi(full_surface_frame, 1, frame_count - 1)
+	var submerge_at := clampi(submerge_start_frame, fully_emerged_at + 1, frame_count - 1)
+	if frame < fully_emerged_at:
+		return _smooth_unit(float(frame) / fully_emerged_at)
+	if frame < submerge_at:
 		return 1.0
-	var submerge_length := FRAME_COUNT - 1 - SUBMERGE_START_FRAME
-	var submerge_progress := float(frame - SUBMERGE_START_FRAME) / submerge_length
+	var submerge_length := maxi(frame_count - 1 - submerge_at, 1)
+	var submerge_progress := float(frame - submerge_at) / submerge_length
 	return 1.0 - _smooth_unit(submerge_progress)
 
 
@@ -400,28 +351,6 @@ func _update_ripple_surface(surface_amount: float) -> void:
 	for ripple in _active_ripples:
 		if is_instance_valid(ripple):
 			ripple.call("set_surface_amount", surface_amount)
-
-
-func _make_sprite_frames() -> SpriteFrames:
-	var frames := SpriteFrames.new()
-	frames.remove_animation("default")
-	for direction in DIRECTIONS:
-		var sheet := ORCA_SHEETS[direction] as Texture2D
-		if sheet == null:
-			return null
-		var frame_size := Vector2(sheet.get_width() / FRAME_COLUMNS, sheet.get_height() / FRAME_ROWS)
-		frames.add_animation(direction)
-		frames.set_animation_speed(direction, FRAME_RATE)
-		frames.set_animation_loop(direction, false)
-		for index in range(FRAME_COUNT):
-			var atlas_frame := AtlasTexture.new()
-			atlas_frame.atlas = sheet
-			atlas_frame.region = Rect2(
-				Vector2((index % FRAME_COLUMNS) * frame_size.x, floori(float(index) / FRAME_COLUMNS) * frame_size.y),
-				frame_size
-			)
-			frames.add_frame(direction, atlas_frame)
-	return frames
 
 
 func _on_orca_animation_finished(orca: AnimatedSprite2D) -> void:

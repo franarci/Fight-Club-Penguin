@@ -44,7 +44,7 @@ func run_checks() -> void:
 			camera._clamp_view_to_arena()
 			var half_view: Vector2 = camera.get_viewport_rect().size / (camera.zoom * 2.0)
 			var visible_area := Rect2(camera.global_position + camera.offset - half_view, half_view * 2.0)
-			var ocean: ColorRect = main.get_node("Arena/OceanBackdrop")
+			var ocean: TextureRect = main.get_node("Arena/TextureRect")
 			var ocean_bounds: Rect2 = ocean.get_global_transform() * Rect2(Vector2.ZERO, ocean.size)
 			assert(ocean_bounds.grow(0.01).encloses(visible_area))
 	main.free()
