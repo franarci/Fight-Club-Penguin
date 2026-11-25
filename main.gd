@@ -3,6 +3,9 @@ extends Node
 const PLAYER_DEPTH_Z_PER_PIXEL := 3.0
 const PLAYER_DEPTH_Z_LIMIT := 4090
 
+@export_group("Ambiente")
+@export var loop_ocean_audio := true
+
 @onready var character_select = $MenuLayer/CharacterSelect
 @onready var players: Node2D = $Players
 @onready var round_result = $RoundResult
@@ -11,6 +14,7 @@ const PLAYER_DEPTH_Z_LIMIT := 4090
 @onready var pre_match = $PreMatch
 @onready var match_clock = $ArenaHUD/MatchClock
 @onready var orca_emergence = $OrcaEmergence
+@onready var ocean_audio: AudioStreamPlayer = $OceanAudio
 
 var round_started := false
 var round_finished := false
@@ -27,6 +31,10 @@ var round_finished := false
 ]
 func _ready() -> void:
 	Music.play_menu()
+	ocean_audio.process_mode = Node.PROCESS_MODE_ALWAYS
+	if ocean_audio.stream is AudioStreamMP3:
+		var ocean_stream := ocean_audio.stream as AudioStreamMP3
+		ocean_stream.loop = loop_ocean_audio
 	$SharedCamera.show_arena($Arena.world_size, $Arena.background_margin)
 	pre_match.completed.connect(_on_tutorial_completed)
 	match_clock.expired.connect(_on_time_limit_reached, CONNECT_DEFERRED)
@@ -67,6 +75,8 @@ func prepare_match(skip_tutorial: bool = false) -> void:
 func _on_tutorial_completed() -> void:
 	if not round_finished and not gamepad_recovery.has_missing_players():
 		Music.play_combat()
+		if not ocean_audio.playing:
+			ocean_audio.play()
 		match_clock.start()
 		orca_emergence.start_events()
 		get_tree().paused = false
@@ -176,6 +186,7 @@ func _finish_round(winner_slot: int, reason: String = "") -> void:
 	if round_finished:
 		return
 	round_finished = true
+	ocean_audio.stop()
 	match_clock.stop()
 	gamepad_recovery.stop()
 	orca_emergence.stop_events()
