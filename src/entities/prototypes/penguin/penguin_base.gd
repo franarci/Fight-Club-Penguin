@@ -52,6 +52,7 @@ var is_dead := false
 var is_eliminated := false
 var protection_left := 0.0
 var hit_animation_active := false
+var original_penguin_scale := Vector2.ONE
 
 
 @onready var body: AnimatedSprite2D = $Body
@@ -250,6 +251,7 @@ func check_arena_bounds() -> void:
 	lose_life()
 
 func _ready() -> void:
+	original_penguin_scale = scale
 	if Engine.is_editor_hint():
 		update_editor_preview()
 		update_equipment_preview()
@@ -675,7 +677,7 @@ func set_health(value: float) -> void:
 	health_changed.emit(current_health, max_health)
 
 
-func lose_life(from_damage: bool = false) -> void:
+func lose_life(from_damage: bool = false, squashed: bool = false) -> void:
 	if is_dead:
 		return
 	# Set the guard before signals/overlaps can cause a second death this frame.
@@ -695,7 +697,26 @@ func lose_life(from_damage: bool = false) -> void:
 			current_weapon.cancel_attack()
 		current_weapon.can_attack = false
 		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
-	if (from_damage or animate_death_on_life_loss) and death_sprite_sheet != null:
+	if squashed:
+		death_visibility_saved = true
+		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
+		weapon_was_visible_before_death = weapon_socket.visible
+		indicator_was_visible_before_death = player_indicator.visible
+		weapon_socket.hide()
+		player_indicator.hide()
+		if is_instance_valid(arm):
+			arm.hide()
+		body.visible = true
+		var foot_offset := feet_marker.global_position.y - global_position.y
+		var squash_ratio := 0.035
+		var squash_target_scale := Vector2(scale.x, scale.y * squash_ratio)
+		var squash_target_position := global_position + Vector2(0.0, foot_offset * (1.0 - squash_ratio))
+		var squash_tween := create_tween()
+		squash_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		squash_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		squash_tween.tween_property(self, "global_position", squash_target_position, 0.45)
+		squash_tween.parallel().tween_property(self, "scale", squash_target_scale, 0.45)
+	elif (from_damage or animate_death_on_life_loss) and death_sprite_sheet != null:
 		death_visibility_saved = true
 		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
 		weapon_was_visible_before_death = weapon_socket.visible
@@ -731,16 +752,17 @@ func _on_respawn_timer_timeout() -> void:
 	if death_sprite_frames_active:
 		body.sprite_frames = p_spriteframes
 		body.visible = true
-		if death_visibility_saved:
-			player_indicator.visible = indicator_was_visible_before_death
-			weapon_socket.visible = weapon_was_visible_before_death
-			if is_instance_valid(arm):
-				arm.visible = arm_was_visible_before_death
 		death_sprite_frames_active = false
+	if death_visibility_saved:
+		player_indicator.visible = indicator_was_visible_before_death
+		weapon_socket.visible = weapon_was_visible_before_death
+		if is_instance_valid(arm):
+			arm.visible = arm_was_visible_before_death
 		death_visibility_saved = false
 	damage_feedback.reset()
 	weapon_attack_ready_at = 0
 	global_position = respawn_position
+	scale = original_penguin_scale
 	velocity = Vector2.ZERO
 	is_being_pushed = false
 	can_dash = true

@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/terrain/airdrop_manager.gd" id="1_script"]
+[ext_resource type="AudioStream" path="res://assets/field_objects/airplane.mp3" id="2_airplane"]
+[ext_resource type="AudioStream" path="res://assets/field_objects/box_hit_ground.mp3" id="3_box_land"]
+[ext_resource type="AudioStream" path="res://assets/field_objects/apertura_caja_pescado.wav" id="4_box_open"]
+
+[node name="AirDropManager" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="AirplaneAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_airplane")
+volume_db = 6.0
+bus = &"FX"
+
+[node name="BoxLandAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_box_land")
+bus = &"FX"
+
+[node name="BoxOpenAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_box_open")
+bus = &"FX"

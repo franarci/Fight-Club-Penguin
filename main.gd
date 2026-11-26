@@ -14,6 +14,7 @@ const PLAYER_DEPTH_Z_LIMIT := 4090
 @onready var pre_match = $PreMatch
 @onready var match_clock = $ArenaHUD/MatchClock
 @onready var orca_emergence = $OrcaEmergence
+@onready var airdrop_manager = $AirDropManager
 @onready var ocean_audio: AudioStreamPlayer = $OceanAudio
 
 var round_started := false
@@ -79,6 +80,7 @@ func _on_tutorial_completed() -> void:
 			ocean_audio.play()
 		match_clock.start()
 		orca_emergence.start_events()
+		airdrop_manager.start_events()
 		get_tree().paused = false
 
 
@@ -190,6 +192,7 @@ func _finish_round(winner_slot: int, reason: String = "") -> void:
 	match_clock.stop()
 	gamepad_recovery.stop()
 	orca_emergence.stop_events()
+	airdrop_manager.stop_events()
 	pause_menu.dismiss()
 	get_tree().paused = true
 	round_result.show_result(winner_slot, reason)

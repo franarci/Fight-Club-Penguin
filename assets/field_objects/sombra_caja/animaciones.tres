@@ -1,0 +1,72 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://oekwmic0cdmr"]
+
+[ext_resource type="Texture2D" uid="uid://ctx0wdkxsorc8" path="res://assets/field_objects/sombra_caja/sombra_caja.png" id="Tex0"]
+
+[sub_resource type="AtlasTexture" id="F7"]
+atlas = ExtResource("Tex0")
+region = Rect2(400, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F1"]
+atlas = ExtResource("Tex0")
+region = Rect2(0, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F2"]
+atlas = ExtResource("Tex0")
+region = Rect2(80, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F3"]
+atlas = ExtResource("Tex0")
+region = Rect2(160, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F4"]
+atlas = ExtResource("Tex0")
+region = Rect2(240, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F5"]
+atlas = ExtResource("Tex0")
+region = Rect2(320, 0, 80, 56)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="F6"]
+atlas = ExtResource("Tex0")
+region = Rect2(400, 0, 80, 56)
+filter_clip = true
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F7")
+}],
+"loop": 0,
+"name": &"contacto",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F3")
+}, {
+"duration": 1.0,
+"texture": SubResource("F4")
+}, {
+"duration": 1.0,
+"texture": SubResource("F5")
+}, {
+"duration": 1.0,
+"texture": SubResource("F6")
+}],
+"loop": 0,
+"name": &"descenso",
+"speed": 6.0
+}]

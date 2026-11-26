@@ -17,3 +17,4 @@ Las tareas ya implementadas se quitaron de esta lista. El orden va de menor a ma
 9. [ ] Crear una animación al caer al agua: que el personaje se ahogue o que se lo coma otro animal.
 10. [ ] Diseñar una identidad visual común para las pantallas y revisar paleta, tipografías, fondos, tarjetas, contraste y estados interactivos.
 11. [ ] Diseñar e implementar otros eventos sorpresa para la arena, como movimiento del piso o aparición de vidas; ajustar su impacto en el balance.
+12. Poner sonido en el contador al iniciar la partida

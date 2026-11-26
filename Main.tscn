@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/tutorial/PreMatch.tscn" id="7_prematch"]
 [ext_resource type="PackedScene" uid="uid://4ronbt3ymv2m" path="res://src/terrain/Orca.tscn" id="8_orca"]
 [ext_resource type="AudioStream" uid="uid://c4sho3suydcl5" path="res://assets/audio/ambience/ocean.mp3" id="9_ocean"]
+[ext_resource type="PackedScene" path="res://src/terrain/AirDropManager.tscn" id="10_airdrop_scene"]
 
 [node name="Main" type="Node" unique_id=532874773]
 script = ExtResource("1_r0du0")
@@ -22,6 +23,11 @@ volume_db = 4.353
 bus = &"FX"
 
 [node name="Arena" parent="." unique_id=459240053 instance=ExtResource("2_fos0i")]
+
+[node name="AirDropManager" parent="." unique_id=650098278 instance=ExtResource("10_airdrop_scene")]
+
+[node name="AirplaneAudio" parent="AirDropManager" index="0"]
+volume_db = 24.0
 
 [node name="OrcaEmergence" parent="." unique_id=459433702 instance=ExtResource("8_orca")]
 
@@ -63,3 +69,5 @@ script = ExtResource("6_recovery")
 [node name="PreMatch" parent="." unique_id=856190414 instance=ExtResource("7_prematch")]
 
 [connection signal="selection_finished" from="MenuLayer/CharacterSelect" to="." method="prepare_match"]
+
+[editable path="AirDropManager"]
