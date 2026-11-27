@@ -118,6 +118,7 @@ func run_checks() -> void:
 	assert(paused and next_main.pause_menu.active)
 	manager.set_lives(0, 0)
 	next_main._check_round_result()
+	next_main.round_result._on_presentation_timeout()
 	assert(next_main.round_finished and next_main.round_result.active)
 	assert(not next_main.pause_menu.active and not next_main.pause_menu.visible)
 	next_main.round_result._on_replay_pressed()

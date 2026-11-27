@@ -3,24 +3,26 @@ class_name PlayerSelection
 var device: int = -99
 var player_index: int
 var slot_index := -1
-@onready var player_label: Label = $VBoxContainer/PlayerLabel
-@onready var character_container: CenterContainer = $VBoxContainer/CharacterCenter
-@onready var navigation: HBoxContainer = $VBoxContainer/Navigation
-#@onready var character: Sprite2D = $VBoxContainer/CharacterCenter/CharacterArea/Character
-@onready var character: TextureRect = $VBoxContainer/CharacterCenter/Character
+@onready var card_panel: PanelContainer = $Card
+@onready var player_label: Label = $Card/VBoxContainer/PlayerLabel
+@onready var character_container: CenterContainer = $Card/VBoxContainer/CharacterCenter
+@onready var preview_area: Control = $PreviewArea
+@onready var arena_preview = $PreviewArea/ArenaPreview
+@onready var navigation: HBoxContainer = $Card/VBoxContainer/Navigation
+@onready var character: TextureRect = $Card/VBoxContainer/CharacterCenter/Character
 @onready var border_blink_timer: Timer = $BorderBlinkTimer
-@onready var stats_container: VBoxContainer = $VBoxContainer/StatsMargin/StatsContainer
-@onready var speed_stat: StatRow = $VBoxContainer/StatsMargin/StatsContainer/SpeedStat
-@onready var strength_stat: StatRow = $VBoxContainer/StatsMargin/StatsContainer/StrengthStat
-@onready var resistance_stat: StatRow = $VBoxContainer/StatsMargin/StatsContainer/ResistanceStat
+@onready var stats_container: VBoxContainer = $Card/VBoxContainer/StatsMargin/StatsContainer
+@onready var speed_stat: StatRow = $Card/VBoxContainer/StatsMargin/StatsContainer/SpeedStat
+@onready var strength_stat: StatRow = $Card/VBoxContainer/StatsMargin/StatsContainer/StrengthStat
+@onready var resistance_stat: StatRow = $Card/VBoxContainer/StatsMargin/StatsContainer/ResistanceStat
 @onready var selected_character:int = 0
-@onready var select_button: Button = $VBoxContainer/Navigation/Select
-@onready var prev_button: Button = $VBoxContainer/Navigation/Prev
-@onready var next_button: Button = $VBoxContainer/Navigation/Next
-@onready var slot_number: Label = $VBoxContainer/SlotHeader/SlotNumber
-@onready var slot_header: PanelContainer = $VBoxContainer/SlotHeader
-@onready var empty_state: Control = $VBoxContainer/EmptyState
-@onready var ready_badge: Label = $VBoxContainer/ReadyBadge
+@onready var select_button: Button = $Card/VBoxContainer/Navigation/Select
+@onready var prev_button: Button = $Card/VBoxContainer/Navigation/Prev
+@onready var next_button: Button = $Card/VBoxContainer/Navigation/Next
+@onready var slot_number: Label = $Card/VBoxContainer/SlotHeader/SlotNumber
+@onready var slot_header: PanelContainer = $Card/VBoxContainer/SlotHeader
+@onready var empty_state: Control = $Card/VBoxContainer/EmptyState
+@onready var ready_badge: Label = $Card/VBoxContainer/ReadyBadge
 var is_ready := false
 
 @export var characters: Array[CharacterData] = []
@@ -51,6 +53,8 @@ func activate(p_device: int, player_number: int) -> void:
 	player_label.show()
 	ready_badge.hide()
 	character_container.visible = true
+	preview_area.show()
+	arena_preview.show()
 	stats_container.show()
 	navigation.visible = true
 	prev_button.show()
@@ -74,6 +78,9 @@ func deactivate() -> void:
 	player_label.hide()
 	ready_badge.hide()
 	character_container.visible = false
+	preview_area.hide()
+	arena_preview.hide()
+	arena_preview.clear_character()
 	stats_container.hide()
 	navigation.visible = false
 	border_blink_timer.stop()
@@ -89,6 +96,7 @@ func _ready() -> void:
 	border_style.content_margin_bottom = 20
 
 	add_theme_stylebox_override("panel", border_style)
+	card_panel.add_theme_stylebox_override("panel", border_style)
 
 
 func next() -> void:
@@ -174,6 +182,7 @@ func configure_slot(index: int) -> void:
 func set_player_color(color: Color) -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	player_border_color = color
+	arena_preview.set_player_color(color)
 	border_style.bg_color = Color(0.035, 0.085, 0.16, 0.97)
 	var header_style := slot_header.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	header_style.bg_color = color.darkened(0.35)
@@ -186,6 +195,7 @@ func set_player_color(color: Color) -> void:
 	border_style.border_width_bottom = 3
 
 	add_theme_stylebox_override("panel", border_style)
+	card_panel.add_theme_stylebox_override("panel", border_style)
 	set_border_visible(border_visible)
 
 func set_border_visible(value: bool) -> void:
@@ -223,6 +233,7 @@ func update_character_preview() -> void:
 
 	player_label.text = data.key
 	character.texture = data.Img
+	arena_preview.show_character(data.character_scene, player_border_color)
 	var portrait_material := character.material as ShaderMaterial
 	portrait_material.set_shader_parameter("saturation", 1.0 if data.selectable else 0.0)
 	select_button.disabled = not data.selectable

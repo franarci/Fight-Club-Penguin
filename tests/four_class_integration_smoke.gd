@@ -32,6 +32,7 @@ func run_checks() -> void:
 	assert(main.players.get_child_count() == 4 and main.pre_match.active and get_tree().paused)
 	main.pre_match.advance()
 	main.pre_match.advance()
+	main.pre_match.advance()
 	for step in range(4):
 		main.pre_match._on_countdown_timeout()
 	assert(not get_tree().paused)
@@ -70,6 +71,7 @@ func run_checks() -> void:
 	assert(scout_weapon.current_ammo == 1 and scout_weapon.reload_time_left == 0.0)
 	assert(Geometry2D.is_point_in_polygon(boundary.to_local(penguins[2].feet_marker.global_position), boundary.polygon))
 	main._finish_round(0)
+	main.round_result._on_presentation_timeout()
 	main.round_result._on_replay_pressed()
 	await get_tree().process_frame
 	await get_tree().process_frame

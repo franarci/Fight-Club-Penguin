@@ -4,6 +4,10 @@
 [ext_resource type="PackedScene" path="res://src/ui/character_selection/CountdownOverlay.tscn" id="2_countdown"]
 [ext_resource type="Script" path="res://src/ui/shared/action_button.gd" id="3_action"]
 
+[ext_resource type="PackedScene" path="res://src/ui/tutorial/ChargeAttackDemo.tscn" id="4_demo"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Hunter.tscn" id="5_hunter"]
+[ext_resource type="PackedScene" path="res://src/entities/prototypes/characters/Demolisher.tscn" id="6_demolisher"]
+
 [sub_resource type="StyleBoxFlat" id="Panel"]
 bg_color = Color(0.025, 0.05, 0.12, 0.96)
 border_width_left = 2
@@ -78,6 +82,44 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 28
+
+[node name="ChargeTutorial" type="VBoxContainer" parent="Background/Center/Panel/Margin/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Instructions" type="Label" parent="Background/Center/Panel/Margin/Content/ChargeTutorial"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Hold the attack button until the meter is full. Then release."
+horizontal_alignment = 1
+
+[node name="Demonstrations" type="HBoxContainer" parent="Background/Center/Panel/Margin/Content/ChargeTutorial"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Hunter" parent="Background/Center/Panel/Margin/Content/ChargeTutorial/Demonstrations" instance=ExtResource("4_demo")]
+layout_mode = 2
+character_scene = ExtResource("5_hunter")
+character_name = "Hunter"
+attack_description = "Throw the harpoon"
+player_slot = 0
+actor_position = Vector2(-85, 5)
+
+[node name="Demolisher" parent="Background/Center/Panel/Margin/Content/ChargeTutorial/Demonstrations" instance=ExtResource("4_demo")]
+layout_mode = 2
+character_scene = ExtResource("6_demolisher")
+character_name = "Demolisher"
+attack_description = "Unleash a shockwave"
+player_slot = 1
+
+[node name="EarlyRelease" type="Label" parent="Background/Center/Panel/Margin/Content/ChargeTutorial"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.86, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Release early for a normal attack.
+Charged attacks are available to Hunter and Demolisher."
+horizontal_alignment = 1
 
 [node name="Navigation" type="HBoxContainer" parent="Background/Center/Panel/Margin/Content"]
 layout_mode = 2
