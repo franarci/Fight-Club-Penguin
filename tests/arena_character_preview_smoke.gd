@@ -15,6 +15,8 @@ func run_checks() -> void:
 	selection.set_process(false)
 	for card in selection.player_slots:
 		card.set_process(false)
+		assert(card.border_style.draw_center)
+		assert(card.card_panel.get_theme_stylebox("panel").draw_center)
 		assert(not card.arena_preview.visible)
 		assert(not card.preview_area.visible)
 	await get_tree().process_frame

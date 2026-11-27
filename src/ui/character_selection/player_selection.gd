@@ -89,6 +89,7 @@ func deactivate() -> void:
 
 func _ready() -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	border_style.draw_center = true
 
 	border_style.content_margin_left = 12
 	border_style.content_margin_right = 12
@@ -181,6 +182,7 @@ func configure_slot(index: int) -> void:
 
 func set_player_color(color: Color) -> void:
 	border_style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+	border_style.draw_center = true
 	player_border_color = color
 	arena_preview.set_player_color(color)
 	border_style.bg_color = Color(0.035, 0.085, 0.16, 0.97)
