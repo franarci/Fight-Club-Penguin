@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://src/ui/results/round_result.gd" id="1_result"]
+
+[ext_resource type="FontFile" path="res://assets/fonts/iceberg/Iceberg-Regular.ttf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.025, 0.05, 0.12, 1)
@@ -70,3 +72,36 @@ text = "Play again"
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "Main menu"
+
+[node name="Announcement" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.08)
+
+[node name="Title" type="Label" parent="Announcement"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 36.0
+offset_right = -24.0
+offset_bottom = 156.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 64
+theme_override_colors/font_color = Color(0.89, 0.98, 1, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.20, 0.31, 1)
+theme_override_colors/font_shadow_color = Color(0.25, 0.70, 0.90, 0.8)
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "PLAYER 1 WINS!"
+
+[node name="PresentationTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true

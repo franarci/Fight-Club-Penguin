@@ -52,6 +52,7 @@ func run_checks() -> void:
 			gunner._on_respawn_timer_timeout()
 	await process_frame
 	await process_frame
+	main.round_result._on_presentation_timeout()
 	assert(main.round_finished and main.round_result.active and paused)
 	assert(main.round_result.title.text == "Player 2 wins!")
 	main.round_result._on_replay_pressed()

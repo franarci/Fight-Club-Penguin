@@ -61,6 +61,7 @@ func run_checks() -> void:
 	PlayerManager.set_lives(3, 1)
 	last.lose_life()
 	await get_tree().process_frame
+	main.round_result._on_presentation_timeout()
 	assert(main.round_finished and main.round_result.active)
 	assert(main.round_result.title.text == "Player 2 wins!")
 	assert(hud.cards[3].elimination_status.visible)

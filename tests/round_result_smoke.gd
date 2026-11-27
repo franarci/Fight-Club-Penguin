@@ -54,11 +54,13 @@ func run_checks() -> void:
 	assert(main.round_finished and paused)
 	assert(main.round_result.title.text == "Player 2 wins!")
 	assert(target.is_eliminated)
+	main.round_result._on_presentation_timeout()
 	assert(main.round_result.replay_button.has_focus())
 	var stale := Node.new()
 	stale.name = "PreviousRoundObject"
 	main.add_child(stale)
 	var previous_id: int = main.get_instance_id()
+	main.round_result._on_presentation_timeout()
 	main.round_result._on_replay_pressed()
 	await settle()
 	main = current_scene
@@ -98,6 +100,7 @@ func run_checks() -> void:
 	assert(paused)
 	main._check_round_result()
 	assert(main.round_result.title.text == "Draw!")
+	main.round_result._on_presentation_timeout()
 	main.round_result._on_menu_pressed()
 	await settle()
 	assert(not paused)

@@ -178,7 +178,14 @@ func _finish_round(winner_slot: int, reason: String = "") -> void:
 	gamepad_recovery.stop()
 	pause_menu.dismiss()
 	get_tree().paused = true
-	round_result.show_result(winner_slot, reason)
+	var winner: Penguin
+	for character in players.get_children():
+		var penguin := character.get_child(0) as Penguin
+		if penguin != null and penguin.player_index == winner_slot:
+			winner = penguin
+			break
+	$ArenaHUD.hide()
+	round_result.show_result(winner_slot, reason, $SharedCamera, winner)
 
 
 func _replay_round() -> void:

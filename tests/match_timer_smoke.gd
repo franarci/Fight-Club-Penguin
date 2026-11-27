@@ -55,6 +55,7 @@ func run_checks() -> void:
 	main._on_time_limit_reached()
 	main._check_round_result()
 	assert(main.round_result.title.text == "Player 1 wins!")
+	main.round_result._on_presentation_timeout()
 	main.round_result._on_replay_pressed()
 	await get_tree().process_frame
 	await get_tree().process_frame

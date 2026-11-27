@@ -1,5 +1,38 @@
 # Fight Club Penguin — tareas pendientes
 
+## Audio futuro — registrado el 27/11/2026
+
+- [ ] Agregar música de victoria a la presentación/resultados.
+- [ ] Agregar sonidos de salto y aterrizaje a los festejos, sincronizados con la animación y controlados por FX.
+- [ ] Estas dos tareas quedan para más adelante; no se implementan al guardar esta feature.
+
+## F3 — presentación del ganador, 27/11/2026
+
+Trabajo en feature/winner-presentation desde el tutorial aprobado cb9b3b4, en la carpeta habitual. El usuario aprobó la versión de saltitos y autorizó expresamente crear su commit y hacer push.
+
+- [x] Congelar el combate y ocultar el HUD al terminar la ronda.
+- [x] Mostrar Player N wins! con color del slot y fuente de juego con contorno, sin presentar todavía los botones de resultados.
+- [x] Acercar y centrar suavemente la cámara en el cuerpo del ganador durante 1,2 segundos; la animación continúa con la partida pausada.
+- [x] Al terminar el zoom, iniciar el anuncio y el festejo al mismo tiempo. Mantener el anuncio durante cinco segundos completos desde ese momento y luego habilitar el cartel de revancha/menú. Bloquear las acciones de esos botones antes de tiempo.
+- [x] En empate, mostrar Draw durante el mismo intervalo sin enfocar un ganador inexistente.
+- [x] Si el ganador por tiempo estaba esperando respawn, mostrarlo en su punto de reaparición para la presentación, sin cambiar vidas, HP ni puntuación.
+- [x] Restaurar el flujo y el encuadre inicial con la revancha y su countdown; preservar regreso a Home.
+- [x] Verificar en Godot sin ventana: espera real de cinco segundos, zoom gradual y centrado, pausa, bloqueo de acciones anticipadas, resultado único, empate, ganador temporalmente muerto y reset en revancha. También pasan timer, resultados, integración, flujo completo, pausa y eliminación.
+- [x] Ajuste solicitado: reducir a la mitad el zoom final de la primera propuesta y ampliar el anuncio de 32 a 64 px. Incorporar Iceberg con licencia OFL, color blanco hielo, contorno azul y sombra celeste.
+- [ ] Prueba visual del usuario y comprobación web.
+- [x] Autorización expresa del usuario para commitear y pushear los cambios aprobados.
+- [x] Ocultar el identificador del ganador desde el inicio de la presentación.
+- [x] Implementar festejos distintos, autorizados por el usuario, iniciados al terminar el zoom:
+  - [x] Gunner: dos saltitos rápidos, sin levantar el arma.
+  - [x] Demolisher: salto pesado y pequeña nube de nieve al aterrizar, sin levantar el martillo.
+  - [x] Hunter: salto corto manteniendo la pose original del arpón.
+  - [x] Scout: dos saltitos laterales manteniendo la pose original del rifle.
+- [x] Revisión del usuario: descartar los gestos independientes de las armas. Cuerpo, arma y aleta se trasladan juntos con el mismo salto y conservan su agarre; sin giros ni elevación adicional del arma. Mantener la nieve de Demolisher.
+- [x] Repetir el festejo de fondo mientras se muestran las opciones de revancha y menú.
+- [x] Animar solo los sprites y el arma, sin mover el cuerpo físico ni modificar HP/vidas. Restaurar poses y limpiar efectos al salir.
+- [x] Pruebas en Godot sin ventana: cuatro gestos distintos, movimiento visual con partida pausada, limpieza de nieve, identificador oculto, inicio luego del zoom, cinco segundos completos de anuncio, festejo continuo detrás del menú y reset en revancha.
+- [x] Aprobación del usuario de la versión simplificada a saltitos.
+
 ## F2 — tutorial visual de ataques cargados, 27/11/2026
 
 Desarrollo retomado por indicación del usuario el 27/11. La explicación solo textual de Controls fue rechazada y se reemplaza por una tercera pantalla. Trabajo en feature/charged-attack-tutorial, en la carpeta habitual. El usuario aprobó la vista y autorizó expresamente al asistente a crear el commit y hacer push de esta feature.
@@ -14,7 +47,7 @@ Desarrollo retomado por indicación del usuario el 27/11. La explicación solo t
 - [x] Verificar en Godot sin ventana: aparición del proyectil real de arpón y de la onda de choque durante la pausa, navegación de tres páginas, suspensión/reanudación, limpieza, iconos y distribución dentro de 1152×648. También pasan integración de cuatro clases, flujo hasta revancha/Home, countdown con reconexión y timer.
 - [x] Revisión visual del usuario: aprobada.
 - [ ] Validación en exportación web.
-- [x] Autorización expresa del usuario para que el asistente guarde y pushee esta feature.
+- [x] Tutorial aprobado, commit cb9b3b4 creado y pusheado a origin/feature/charged-attack-tutorial por autorización expresa del usuario.
 
 ## Historial F2 — explicación textual descartada
 
