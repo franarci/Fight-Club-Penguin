@@ -32,6 +32,10 @@ func _ready() -> void:
 		slot.configure_slot(index)
 		slot.preview_changed.connect(_update_footer)
 		slot.deactivate()
+	for player in PlayerManager.players.duplicate():
+		var slot_index := int(player["slot"])
+		if slot_index >= 0 and slot_index < player_slots.size():
+			player_slots[slot_index].activate(int(player["device"]), slot_index)
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	ready_accept.pressed.connect(finish_character_selection)
 	ready_cancel.pressed.connect(_dismiss_ready_dialog)
@@ -69,20 +73,15 @@ func check_gamepads_join() -> void:
 func activate_player_slot(device: int) -> void:
 	if returning_to_menu or game_starting or ready_dialog.visible:
 		return
-	var free_slot := get_free_slot()
-	if free_slot == -1:
+	var slot_index := PlayerManager.get_assigned_slot(device)
+	if slot_index < 0:
+		slot_index = PlayerManager.assign_device_slot(device)
+	if slot_index < 0 or slot_index >= player_slots.size() or player_slots[slot_index].active:
 		return
-	if PlayerManager.join_player(device, free_slot):
-		player_slots[free_slot].activate(device, free_slot)
+	if PlayerManager.join_player(device, slot_index):
+		player_slots[slot_index].activate(device, slot_index)
 		dialog_dismissed = false
 		_refresh_selection()
-
-
-func get_free_slot() -> int:
-	for i in range(player_slots.size()):
-		if not player_slots[i].active:
-			return i
-	return -1
 
 
 func are_all_players_ready() -> bool:
@@ -116,7 +115,17 @@ func _available_devices() -> Array:
 
 
 func _refresh_selection() -> void:
-	minimum_players_hint.visible = PlayerManager.players.size() < 2
+	if PlayerManager.get_available_slot() < 0:
+		minimum_players_hint.text = "ALL PLAYER SLOTS ARE ASSIGNED"
+		minimum_players_hint.visible = true
+	elif PlayerManager.players.size() < 2:
+		minimum_players_hint.text = "AT LEAST 2 PLAYERS TO START"
+		minimum_players_hint.visible = true
+	elif PlayerManager.players.size() >= player_slots.size():
+		minimum_players_hint.text = "ALL PLAYER SLOTS ARE ASSIGNED"
+		minimum_players_hint.visible = true
+	else:
+		minimum_players_hint.visible = false
 	if ready_dialog.visible and not are_all_players_ready():
 		_close_ready_dialog()
 	_update_footer()
@@ -143,10 +152,13 @@ func _update_footer() -> void:
 		_add_prompt(footer_actions, "Main menu", _available_devices(), ["selection_cancel"])
 	if are_all_players_ready():
 		_add_prompt(footer_actions, "Start match", participants, ["player_join"])
-	elif get_free_slot() >= 0:
+	else:
 		var unjoined: Array = []
 		for device in _available_devices():
-			if not PlayerManager.is_device_joined(device):
+			var assigned_slot := PlayerManager.get_assigned_slot(device)
+			if assigned_slot < 0:
+				assigned_slot = PlayerManager.get_available_slot()
+			if not PlayerManager.is_device_joined(device) and assigned_slot >= 0 and assigned_slot < player_slots.size() and not player_slots[assigned_slot].active:
 				unjoined.append(device)
 		if not unjoined.is_empty():
 			_add_prompt(footer_actions, "Join", unjoined, ["player_join"])

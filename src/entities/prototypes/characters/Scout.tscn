@@ -35,13 +35,13 @@ shape = SubResource("BodyContactShape")
 
 [node name="PlayerIndicator" parent="PenguinBase" index="4" unique_id=287483043]
 position = Vector2(0, -24.02)
-scale = Vector2(1.7949474, 1.7949474)
 
 [node name="Label" parent="PenguinBase/PlayerIndicator" index="0" unique_id=214354687]
-offset_left = -9.5
-offset_top = -33.0
-offset_right = 9.5
+offset_left = -16.5
+offset_top = -49.0
+offset_right = 16.5
 offset_bottom = -10.0
+theme_override_font_sizes/font_size = 28
 text = "P1"
 
 [node name="Arrow" parent="PenguinBase/PlayerIndicator" index="1" unique_id=1252359202]

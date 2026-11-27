@@ -4,7 +4,7 @@ class_name HarpoonWeapon
 
 @export_category("Harpoon")
 @export_range(1.0, 32.0, 1.0) var projectile_radius := 6.0
-@export_range(32.0, 512.0, 8.0) var projectile_range := 176.0
+@export_range(32.0, 512.0, 8.0) var projectile_range := 256.0
 @export_range(32.0, 1600.0, 16.0) var projectile_speed := 640.0
 @export_range(32.0, 1600.0, 16.0) var return_speed := 800.0
 @export_range(0.0, 1000.0, 10.0) var pull_speed := 210.0

@@ -12,6 +12,7 @@ const MATCH_SCENE: PackedScene = preload("res://Main.tscn")
 @onready var audio_options: Control = $AudioOptions
 
 var menu_device := -1
+var keyboard_started_play := false
 
 
 func _ready() -> void:
@@ -37,6 +38,11 @@ func _layout_home() -> void:
 
 func _on_play_button_pressed() -> void:
 	PlayerManager.clear_players()
+	if menu_device >= 0 or keyboard_started_play:
+		var starting_slot := PlayerManager.assign_device_slot(menu_device, 0)
+		if starting_slot >= 0:
+			PlayerManager.join_player(menu_device, starting_slot)
+	keyboard_started_play = false
 	get_tree().change_scene_to_packed(MATCH_SCENE)
 
 
@@ -47,10 +53,15 @@ func _open_options() -> void:
 func _input(event: InputEvent) -> void:
 	if audio_options.visible:
 		audio_options.handle_input(event)
-	elif event is InputEventKey or event is InputEventMouse:
+	elif event is InputEventKey:
 		menu_device = -1
+		keyboard_started_play = event.is_action_pressed("ui_accept") and not event.is_echo()
+	elif event is InputEventMouse:
+		menu_device = -1
+		keyboard_started_play = false
 	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		menu_device = event.device
+		keyboard_started_play = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -73,4 +84,5 @@ func _unhandled_input(event: InputEvent) -> void:
 		if focused_button != null and not focused_button.disabled:
 			get_viewport().set_input_as_handled()
 			menu_device = event.device
+			keyboard_started_play = false
 			focused_button.pressed.emit()

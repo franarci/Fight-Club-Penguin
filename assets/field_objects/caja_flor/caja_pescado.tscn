@@ -1,0 +1,126 @@
+[gd_scene load_steps="11" format=3]
+
+[ext_resource type="Texture2D" path="texturas/sombra.png" id="1"]
+[ext_resource type="Texture2D" path="texturas/paracaidas.png" id="2"]
+[ext_resource type="Texture2D" path="texturas/base.png" id="3"]
+[ext_resource type="Texture2D" path="texturas/pared_trasera.png" id="4"]
+[ext_resource type="Texture2D" path="texturas/pared_izquierda.png" id="5"]
+[ext_resource type="Texture2D" path="texturas/tapa.png" id="6"]
+[ext_resource type="Texture2D" path="texturas/pared_derecha.png" id="7"]
+[ext_resource type="Texture2D" path="texturas/frente_pescado.png" id="8"]
+
+[sub_resource type="Animation" id="Apertura"]
+resource_name = "abrir"
+length = 0.7777778
+step = 0.0555556
+tracks/0/type = "value"
+tracks/0/path = NodePath("PlanoTrasero/Sombra:frame")
+tracks/0/interp = 0
+tracks/0/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("PlanoTrasero/Paracaidas:frame")
+tracks/1/interp = 0
+tracks/1/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/2/type = "value"
+tracks/2/path = NodePath("PlanoTrasero/Base:frame")
+tracks/2/interp = 0
+tracks/2/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/3/type = "value"
+tracks/3/path = NodePath("PlanoTrasero/ParedTrasera:frame")
+tracks/3/interp = 0
+tracks/3/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/4/type = "value"
+tracks/4/path = NodePath("PlanoTrasero/ParedIzquierda:frame")
+tracks/4/interp = 0
+tracks/4/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/5/type = "value"
+tracks/5/path = NodePath("PlanoTrasero/Tapa:frame")
+tracks/5/interp = 0
+tracks/5/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/6/type = "value"
+tracks/6/path = NodePath("PlanoDelantero/ParedDerecha:frame")
+tracks/6/interp = 0
+tracks/6/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/7/type = "value"
+tracks/7/path = NodePath("PlanoDelantero/FrentePescado:frame")
+tracks/7/interp = 0
+tracks/7/keys = {"times": PackedFloat32Array(0.0000000, 0.0555556, 0.1111111, 0.1666667, 0.2222222, 0.2777778, 0.3333333, 0.3888889, 0.4444444, 0.5000000, 0.5555556, 0.6111111, 0.6666667, 0.7222222), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 1, "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Recompensa:visible")
+tracks/8/interp = 0
+tracks/8/keys = {"times": PackedFloat32Array(0, 0.3333333), "transitions": PackedFloat32Array(1, 1), "update": 1, "values": [false, true]}
+
+[sub_resource type="AnimationLibrary" id="Biblioteca"]
+_data = {&"abrir": SubResource("Apertura")}
+
+[node name="CajaPescado" type="Node2D"]
+texture_filter = 1
+
+[node name="PlanoTrasero" type="Node2D" parent="."]
+
+[node name="Sombra" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("1")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="Paracaidas" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("2")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="Base" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("3")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="ParedTrasera" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("4")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="ParedIzquierda" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("5")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="Tapa" type="Sprite2D" parent="PlanoTrasero"]
+texture = ExtResource("6")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="Recompensa" type="Node2D" parent="."]
+position = Vector2(0, -2)
+z_index = 1
+visible = false
+
+[node name="PlanoDelantero" type="Node2D" parent="."]
+z_index = 2
+
+[node name="ParedDerecha" type="Sprite2D" parent="PlanoDelantero"]
+texture = ExtResource("7")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="FrentePescado" type="Sprite2D" parent="PlanoDelantero"]
+texture = ExtResource("8")
+centered = false
+offset = Vector2(-96, -120)
+hframes = 7
+vframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("Biblioteca")}

@@ -20,3 +20,7 @@ sprite_frames = ExtResource("3_frames")
 bus = &"FX"
 volume_db = -15.048
 max_polyphony = 8
+
+[node name="ReloadAudio" type="AudioStreamPlayer" parent="." index="3"]
+bus = &"FX"
+volume_db = -15.0

@@ -25,6 +25,9 @@ uniform sampler2D water_noise : repeat_enable, filter_linear;
 uniform sampler2D water_noise2 : repeat_enable, filter_linear;
 // White ocean receives waves; black ice remains unchanged.
 uniform sampler2D water_mask : repeat_disable, filter_linear;
+uniform vec2 terrain_dimensions = vec2(6489.0, 4512.0);
+uniform vec2 mask_content_offset = vec2(640.0, 640.0);
+uniform vec2 mask_content_dimensions = vec2(5209.0, 3232.0);
 uniform vec2 water_noise_scale = vec2(1.0, 1.0);
 uniform vec2 water_noise_scale2 = vec2(1.0, 1.0);
 // The amount of mixing between the two water noise textures
@@ -58,8 +61,16 @@ void fragment() {
 		// Calculates the luminance of the current pixel and uses it to determine how much to mix the highlight color.
 		// More luminance will result in less highlight color being applied.
 		float luminance = smoothstep(0.0, 1.0, 1.0 - get_luminance(COLOR));
-		// Reject JPEG compression speckles while keeping a soft shoreline edge.
-		float ocean = smoothstep(0.05, 0.95, texture(water_mask, UV).r);
+		// The mask belongs to the original centered terrain. The added image border
+		// is ocean, so it receives waves without stretching the old mask.
+		vec2 mask_position = UV * terrain_dimensions - mask_content_offset;
+		float ocean = 1.0;
+		bool inside_mask = mask_position.x >= 0.0 && mask_position.y >= 0.0;
+		inside_mask = inside_mask && mask_position.x <= mask_content_dimensions.x && mask_position.y <= mask_content_dimensions.y;
+		if (inside_mask) {
+			vec2 mask_uv = mask_position / mask_content_dimensions;
+			ocean = smoothstep(0.05, 0.95, texture(water_mask, mask_uv).r);
+		}
 		COLOR.rgb = mix(COLOR.rgb, highlight_color.rgb, factor.rgb * luminance * intensity * ocean);
 	}
 }

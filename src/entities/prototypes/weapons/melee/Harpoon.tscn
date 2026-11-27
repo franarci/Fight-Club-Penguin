@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://b6eph1rwjt5c2" path="res://src/entities/prototypes/weapons/melee/MeleeWeapon.tscn" id="1_base"]
 [ext_resource type="Script" uid="uid://baj4acture8si" path="res://src/entities/prototypes/weapons/melee/harpoon_weapon.gd" id="2_script"]
-[ext_resource type="Resource" path="res://src/entities/prototypes/weapons/melee/harpoon_data.tres" id="3_data"]
+[ext_resource type="Resource" uid="uid://kd8rcoxbdu8w" path="res://src/entities/prototypes/weapons/melee/harpoon_data.tres" id="3_data"]
 [ext_resource type="Resource" uid="uid://cmexb1unf0lj8" path="res://src/entities/prototypes/weapons/melee/harpoon_visual_profile.tres" id="4_profile"]
 [ext_resource type="PackedScene" path="res://src/entities/prototypes/weapons/melee/HarpoonProjectile.tscn" id="5_projectile"]
 [ext_resource type="SpriteFrames" uid="uid://ba38qk5k7t44n" path="res://src/entities/prototypes/weapons/melee/harpoon_frames.tres" id="6_frames"]
@@ -15,10 +15,10 @@
 scale = Vector2(0.24, 0.24)
 script = ExtResource("2_script")
 projectile_radius = 6.0
-projectile_range = 176.0
+projectile_range = 256.0
 projectile_speed = 640.0
 return_speed = 800.0
-pull_speed = 210.0
+pull_speed = 370.0
 stab_windup_distance = 6.0
 harpoon_projectile_scene = ExtResource("5_projectile")
 impact_sound = ExtResource("8_hit_sound")
@@ -46,7 +46,7 @@ volume_db = 4.326
 
 [node name="SwingAudio" parent="." index="4"]
 stream = ExtResource("7_stab_sound")
-volume_db = 4.326
+volume_db = -1.561
 
 [node name="ChargedAudio" parent="." index="6"]
 stream = ExtResource("10_rt2w3")

@@ -14,6 +14,8 @@ var round_anchors: Array[Vector2] = []
 var zoom_in_wait := 0.0
 var arena_size := Vector2.ZERO
 var background_margin := 0.0
+var has_event_focus := false
+var event_focus_point := Vector2.ZERO
 var shake_strength := 0.0
 var shake_duration := 0.0
 var shake_time_left := 0.0
@@ -25,6 +27,11 @@ func show_arena(size: Vector2, margin: float = 0.0) -> void:
 	frame_points([Vector2.ZERO, size], 0.0, true)
 
 
+func set_background_margin(margin: float) -> void:
+	background_margin = maxf(margin, 0.0)
+	_clamp_view_to_arena()
+
+
 func follow_players(container: Node2D) -> void:
 	players = container
 	round_anchors.clear()
@@ -33,6 +40,15 @@ func follow_players(container: Node2D) -> void:
 		if penguin != null:
 			round_anchors.append(penguin.respawn_position)
 	_update_frame(0.0, true)
+
+
+func set_event_focus(point: Vector2) -> void:
+	event_focus_point = point
+	has_event_focus = true
+
+
+func clear_event_focus() -> void:
+	has_event_focus = false
 
 
 func _process(delta: float) -> void:
@@ -73,6 +89,8 @@ func _update_frame(delta: float, snap: bool) -> void:
 			continue
 		# Keep respawn locations framed while a penguin is temporarily dead.
 		points.append(penguin.respawn_position if penguin.is_dead else penguin.global_position)
+	if has_event_focus:
+		points.append(event_focus_point)
 	if not points.is_empty():
 		frame_points(points, delta, snap)
 
@@ -91,7 +109,8 @@ func frame_points(points: Array[Vector2], delta: float, snap: bool = false) -> v
 	var target_zoom := minf(close_zoom, fit_zoom)
 	var minimum_zoom := 0.0
 	if arena_size.x > 0.0 and arena_size.y > 0.0:
-		var background_size := arena_size + Vector2.ONE * background_margin * 2.0
+		var active_background_margin := background_margin if has_event_focus else 0.0
+		var background_size := arena_size + Vector2.ONE * active_background_margin * 2.0
 		minimum_zoom = maxf(viewport_size.x / background_size.x, viewport_size.y / background_size.y) * 1.001
 		target_zoom = maxf(target_zoom, minimum_zoom)
 	var center := bounds.get_center()
@@ -121,8 +140,9 @@ func _clamp_view_to_arena() -> void:
 	if arena_size.x <= 0.0 or arena_size.y <= 0.0:
 		return
 	var half_view := get_viewport_rect().size / (zoom * 2.0)
-	var start := Vector2.ONE * -background_margin
-	var end := arena_size + Vector2.ONE * background_margin
+	var active_background_margin := background_margin if has_event_focus else 0.0
+	var start := Vector2.ONE * -active_background_margin
+	var end := arena_size + Vector2.ONE * active_background_margin
 	global_position = Vector2(
 		clampf(global_position.x, start.x + half_view.x, end.x - half_view.x),
 		clampf(global_position.y, start.y + half_view.y, end.y - half_view.y)

@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://4ronbt3ymv2m"]
+
+[ext_resource type="Script" uid="uid://bmgfsxmpug5i2" path="res://src/terrain/orca_emergence.gd" id="1_orca"]
+[ext_resource type="SpriteFrames" path="res://assets/textures/entities/orca/orca_surface_frames.tres" id="2_surface_frames"]
+[ext_resource type="AudioStream" path="res://assets/audio/orca/orca_asomo.wav" id="3_asomo"]
+[ext_resource type="AudioStream" path="res://assets/audio/orca/orca_inmersion.wav" id="4_inmersion"]
+
+[node name="Orca" type="Node" unique_id=1510244318]
+script = ExtResource("1_orca")
+surface_sprite_frames = ExtResource("2_surface_frames")
+orca_scale = 1.9
+
+[node name="AsomoAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_asomo")
+volume_db = -4.0
+bus = &"FX"
+
+[node name="InmersionAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_inmersion")
+volume_db = -4.0
+bus = &"FX"
