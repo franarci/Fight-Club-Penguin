@@ -2,6 +2,8 @@
 extends CharacterBody2D
 class_name Penguin
 
+signal squash_finished
+
 signal health_changed(current: float, maximum: float)
 signal eliminated(slot: int)
 
@@ -40,6 +42,21 @@ var player_palette_instance: ShaderMaterial
 @export_range(1.0, 10000.0) var max_health: float = 100.0
 @export_range(0.01, 10.0) var respawn_delay: float = 0.8
 @export_range(0.0, 10.0) var respawn_protection: float = 1.0
+@export_range(0.05, 2.0, 0.05) var squash_animation_duration := 0.45
+
+@export_category("Field Reward Shield")
+@export var shield_damage_sheet: Texture2D = preload("res://assets/field_rewards/escudo_dano.png")
+@export_range(1, 16, 1) var shield_damage_columns := 4
+@export_range(1, 16, 1) var shield_damage_rows := 4
+@export var shield_damage_cell_size := Vector2i(80, 80)
+@export var shield_damage_margin := Vector2i.ZERO
+@export var shield_damage_separation := Vector2i.ZERO
+## Zero-based sheet index; 4 means the fifth cell starts the breaking animation.
+@export_range(1, 255, 1) var shield_break_animation_start_frame := 4
+@export var shield_visual_scale := Vector2.ONE
+@export var shield_visual_offset := Vector2(0.0, -2.0)
+@export_range(0, 64, 1) var shield_visual_z_index := 12
+@export_range(1.0, 60.0, 1.0) var shield_break_animation_fps := 14.0
 
 @onready var respawn_timer: Timer = $RespawnTimer
 @onready var original_collision_layer: int = collision_layer
@@ -50,7 +67,15 @@ var player_palette_instance: ShaderMaterial
 var current_health: float
 var is_dead := false
 var is_eliminated := false
+var squash_animation_finished := false
 var protection_left := 0.0
+var shield_active := false
+var _shield_visual_ready := false
+var _shield_time_left := 0.0
+var _shield_hits_to_break := 5
+var _shield_hits_received := 0
+var _shield_visual: AnimatedSprite2D
+var _shield_duration_timer: Timer
 var hit_animation_active := false
 var original_penguin_scale := Vector2.ONE
 
@@ -68,6 +93,7 @@ var original_penguin_scale := Vector2.ONE
 @onready var dash_audio: AudioStreamPlayer = $DashAudio
 @onready var dash_push_audio: AudioStreamPlayer = $DashPushAudio
 @onready var death_audio: AudioStreamPlayer = $DeathAudio
+@onready var shield_break_audio: AudioStreamPlayer = $ShieldBreakAudio
 @onready var standing_weapon_position: Vector2 = $Weapon.position
 @onready var standing_arm_position: Vector2 = arm.position if arm != null else Vector2.ZERO
 
@@ -258,6 +284,7 @@ func _ready() -> void:
 		return
 	if not body.animation_finished.is_connected(_on_body_animation_finished):
 		body.animation_finished.connect(_on_body_animation_finished)
+	_setup_shield()
 	set_health(max_health)
 	body.sprite_frames = p_spriteframes
 	body.play(p_autoplay)
@@ -274,6 +301,8 @@ func _physics_process(delta: float) -> void:
 		return
 
 	protection_left = maxf(0.0, protection_left - delta)
+	if shield_active:
+		_shield_time_left = maxf(0.0, _shield_time_left - delta)
 	body.self_modulate.a = 0.5 if protection_left > 0.0 else 1.0
 	update_dash_cooldown(delta)
 
@@ -660,6 +689,9 @@ func receive_push(direction: Vector2, strength: float = -1.0) -> void:
 func receive_damage(amount: float, source: Node2D = null, direction: Vector2 = Vector2.ZERO) -> bool:
 	if is_dead or protection_left > 0.0 or amount <= 0.0 or source == self:
 		return false
+	if shield_active:
+		_absorb_shield_hit()
+		return false
 	set_health(current_health - amount)
 	damage_feedback.play_hit_sound()
 	if current_health <= 0.0:
@@ -680,6 +712,10 @@ func set_health(value: float) -> void:
 func lose_life(from_damage: bool = false, squashed: bool = false) -> void:
 	if is_dead:
 		return
+	if shield_active and (from_damage or squashed):
+		_absorb_shield_hit()
+		return
+	_clear_shield()
 	# Set the guard before signals/overlaps can cause a second death this frame.
 	is_dead = true
 	hit_animation_active = false
@@ -698,6 +734,7 @@ func lose_life(from_damage: bool = false, squashed: bool = false) -> void:
 		current_weapon.can_attack = false
 		current_weapon.process_mode = Node.PROCESS_MODE_DISABLED
 	if squashed:
+		squash_animation_finished = false
 		death_visibility_saved = true
 		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
 		weapon_was_visible_before_death = weapon_socket.visible
@@ -714,8 +751,9 @@ func lose_life(from_damage: bool = false, squashed: bool = false) -> void:
 		var squash_tween := create_tween()
 		squash_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 		squash_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-		squash_tween.tween_property(self, "global_position", squash_target_position, 0.45)
-		squash_tween.parallel().tween_property(self, "scale", squash_target_scale, 0.45)
+		squash_tween.tween_property(self, "global_position", squash_target_position, squash_animation_duration)
+		squash_tween.parallel().tween_property(self, "scale", squash_target_scale, squash_animation_duration)
+		squash_tween.finished.connect(_on_squash_tween_finished, CONNECT_ONE_SHOT)
 	elif (from_damage or animate_death_on_life_loss) and death_sprite_sheet != null:
 		death_visibility_saved = true
 		arm_was_visible_before_death = is_instance_valid(arm) and arm.visible
@@ -735,7 +773,139 @@ func lose_life(from_damage: bool = false, squashed: bool = false) -> void:
 		is_eliminated = true
 		eliminated.emit(player_index)
 	else:
-		respawn_timer.start(respawn_delay)
+		respawn_timer.start(maxf(respawn_delay, squash_animation_duration) if squashed else respawn_delay)
+
+
+func _on_squash_tween_finished() -> void:
+	squash_animation_finished = true
+	if is_dead:
+		hide()
+	squash_finished.emit()
+
+
+func activate_shield(duration: float, hits_to_break: int = 5, hide_until_formed: bool = false) -> void:
+	if not is_node_ready() or is_dead or is_eliminated:
+		return
+	if not is_instance_valid(_shield_visual):
+		_setup_shield()
+	shield_active = true
+	_shield_time_left = maxf(duration, 0.1)
+	_shield_hits_to_break = maxi(hits_to_break, 1)
+	_shield_hits_received = 0
+	_shield_visual_ready = not hide_until_formed
+	shield_break_audio.stop()
+	_shield_visual.show()
+	_shield_visual.speed_scale = 0.0
+	_shield_visual.play(&"integridad")
+	_shield_visual.frame = 0
+	if hide_until_formed:
+		_shield_visual.hide()
+	_shield_duration_timer.start(_shield_time_left)
+
+
+func reveal_shield() -> void:
+	if not is_instance_valid(_shield_visual):
+		return
+	_shield_visual_ready = true
+	if not shield_active:
+		if _shield_visual.animation == &"rotura" and _shield_visual.is_playing():
+			_shield_visual.show()
+		return
+	_shield_visual.animation = &"integridad"
+	_shield_visual.speed_scale = 0.0
+	_shield_visual.frame = mini(_shield_hits_received, 3)
+	_shield_visual.show()
+
+
+func _setup_shield() -> void:
+	if not is_instance_valid(_shield_visual):
+		var shield_frames := SpriteFrames.new()
+		shield_frames.add_animation(&"integridad")
+		shield_frames.set_animation_loop(&"integridad", false)
+		shield_frames.set_animation_speed(&"integridad", 1.0)
+		shield_frames.add_animation(&"rotura")
+		shield_frames.set_animation_loop(&"rotura", false)
+		shield_frames.set_animation_speed(&"rotura", shield_break_animation_fps)
+		var columns := maxi(shield_damage_columns, 1)
+		var rows := maxi(shield_damage_rows, 1)
+		var frame_count := columns * rows
+		var break_start := clampi(shield_break_animation_start_frame, 1, frame_count - 1)
+		for frame_index in range(frame_count):
+			var atlas_frame := AtlasTexture.new()
+			atlas_frame.atlas = shield_damage_sheet
+			atlas_frame.filter_clip = true
+			var column := frame_index % columns
+			var row := floori(float(frame_index) / float(columns))
+			var origin := shield_damage_margin + Vector2i(column, row) * (shield_damage_cell_size + shield_damage_separation)
+			atlas_frame.region = Rect2(origin, shield_damage_cell_size)
+			if frame_index < break_start:
+				shield_frames.add_frame(&"integridad", atlas_frame)
+			else:
+				shield_frames.add_frame(&"rotura", atlas_frame)
+		_shield_visual = AnimatedSprite2D.new()
+		_shield_visual.name = "ShieldVisual"
+		_shield_visual.sprite_frames = shield_frames
+		_shield_visual.animation = &"integridad"
+		_shield_visual.speed_scale = 0.0
+		_shield_visual.position = shield_visual_offset
+		_shield_visual.scale = shield_visual_scale
+		_shield_visual.z_index = shield_visual_z_index
+		_shield_visual.hide()
+		add_child(_shield_visual)
+		_shield_visual.animation_finished.connect(_on_shield_animation_finished)
+	else:
+		_shield_visual.position = shield_visual_offset
+		_shield_visual.scale = shield_visual_scale
+		_shield_visual.z_index = shield_visual_z_index
+	if not is_instance_valid(_shield_duration_timer):
+		_shield_duration_timer = Timer.new()
+		_shield_duration_timer.name = "ShieldDurationTimer"
+		_shield_duration_timer.one_shot = true
+		_shield_duration_timer.timeout.connect(_on_shield_duration_timeout)
+		add_child(_shield_duration_timer)
+
+
+func _absorb_shield_hit() -> void:
+	if not shield_active:
+		return
+	_shield_hits_received += 1
+	if _shield_hits_received >= _shield_hits_to_break:
+		shield_active = false
+		_shield_time_left = 0.0
+		_shield_duration_timer.stop()
+		_shield_visual.visible = _shield_visual_ready
+		_shield_visual.speed_scale = 1.0
+		_shield_visual.play(&"rotura")
+		shield_break_audio.play()
+		return
+	_shield_visual.speed_scale = 0.0
+	_shield_visual.play(&"integridad")
+	_shield_visual.frame = mini(_shield_hits_received, 3)
+
+
+func _on_shield_duration_timeout() -> void:
+	shield_active = false
+	_shield_time_left = 0.0
+	if is_instance_valid(_shield_visual) and _shield_visual.animation != &"rotura":
+		_shield_visual.hide()
+
+
+func _on_shield_animation_finished() -> void:
+	if is_instance_valid(_shield_visual) and _shield_visual.animation == &"rotura":
+		_shield_visual.hide()
+		_shield_visual_ready = false
+
+
+func _clear_shield() -> void:
+	shield_active = false
+	_shield_visual_ready = false
+	_shield_time_left = 0.0
+	if is_instance_valid(_shield_duration_timer):
+		_shield_duration_timer.stop()
+	if is_instance_valid(_shield_visual):
+		_shield_visual.hide()
+	if is_instance_valid(shield_break_audio):
+		shield_break_audio.stop()
 
 
 func _on_respawn_timer_timeout() -> void:

@@ -2,6 +2,7 @@ extends Node
 
 const MAX_PLAYERS := 4
 const STARTING_LIVES := 3
+const MAX_LIVES := 4
 const SLOT_ASSIGNMENTS_PATH := "user://player_slot_assignments_v4.cfg"
 
 signal lives_changed(slot: int, lives: int)
@@ -294,7 +295,7 @@ func reset_lives() -> void:
 func set_lives(slot: int, lives: int) -> void:
 	for player in players:
 		if player["slot"] == slot:
-			var remaining := clampi(lives, 0, STARTING_LIVES)
+			var remaining := clampi(lives, 0, MAX_LIVES)
 			if player.get("lives", STARTING_LIVES) != remaining:
 				player["lives"] = remaining
 				lives_changed.emit(slot, remaining)

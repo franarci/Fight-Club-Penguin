@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://bcpbt78i0wiac" path="res://assets/audio/penguin_dash.wav" id="9_dash_sound"]
 [ext_resource type="AudioStream" uid="uid://ct2m2vld531ti" path="res://assets/audio/penguin-explosion.mp3" id="10_death_sound"]
 [ext_resource type="AudioStream" uid="uid://bwnopwnja7nqb" path="res://assets/audio/penguin_dash_push.wav" id="11_dash_push_sound"]
+[ext_resource type="AudioStream" path="res://assets/field_rewards/audio/shield_broken.mp3" id="12_shield_broken"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3sbks"]
 radius = 4.0
@@ -111,6 +112,10 @@ volume_db = 6.22
 bus = &"FX"
 stream = ExtResource("10_death_sound")
 volume_db = -15.029
+
+[node name="ShieldBreakAudio" type="AudioStreamPlayer" parent="."]
+bus = &"FX"
+stream = ExtResource("12_shield_broken")
 
 [connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]
 [connection signal="timeout" from="DashCooldown" to="." method="_on_dash_cooldown_timeout"]

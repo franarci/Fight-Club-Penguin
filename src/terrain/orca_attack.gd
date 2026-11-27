@@ -1,3 +1,4 @@
+@tool
 extends Node2D
 
 signal finished
@@ -12,13 +13,24 @@ enum Phase { JUMPING, CROSSING, DIVING }
 @export_range(120.0, 1200.0, 10.0) var crossing_speed := 620.0
 @export_range(0.0, 120.0, 4.0) var ice_entry_margin := 40.0
 @export_range(0.0, 240.0, 4.0) var far_side_clearance := 144.0
-@export_range(24.0, 180.0, 2.0) var hit_radius := 66.0
+@export_range(24.0, 180.0, 2.0) var hitbox_half_length := 78.0:
+	set(value):
+		hitbox_half_length = value
+		_refresh_hitbox_preview()
+
+@export_range(12.0, 100.0, 2.0) var hitbox_half_width := 32.0:
+	set(value):
+		hitbox_half_width = value
+		_refresh_hitbox_preview()
 
 @export_group("Animación")
 @export_range(0, 255, 1) var jump_start_frame := 16
 @export_range(1, 32, 1) var jump_frame_count := 8
 @export_group("Animaciones editables")
-@export var attack_sprite_frames: SpriteFrames
+@export var attack_sprite_frames: SpriteFrames:
+	set(value):
+		attack_sprite_frames = value
+		_refresh_editor_preview()
 @export_group("Audio del ataque")
 @export var loop_alarm := true
 @export var use_ice_crack_layer := true
@@ -32,8 +44,37 @@ enum Phase { JUMPING, CROSSING, DIVING }
 		sprite_scale = clampf(value, 0.25, 2.0)
 		if is_instance_valid(_sprite):
 			_sprite.scale = Vector2.ONE * sprite_scale
+		_refresh_hitbox_preview()
+
+@export_group("Previsualización en editor")
+@export_enum("E", "SE", "S", "SO", "O", "NO", "N", "NE") var preview_direction := "E":
+	set(value):
+		preview_direction = value
+		_refresh_editor_preview()
+		_refresh_hitbox_preview()
+@export_enum("salto", "arrastre", "mordida", "zambullida") var preview_action := "arrastre":
+	set(value):
+		preview_action = value
+		_refresh_editor_preview()
+@export var preview_playing := false:
+	set(value):
+		preview_playing = value
+		_refresh_editor_preview()
+@export_range(0, 255, 1) var preview_frame := 0:
+	set(value):
+		preview_frame = value
+		_refresh_editor_preview(true)
+@export var show_hitbox_preview := true:
+	set(value):
+		show_hitbox_preview = value
+		_refresh_hitbox_preview()
+@export var show_hitbox_in_gameplay := false:
+	set(value):
+		show_hitbox_in_gameplay = value
+		_refresh_hitbox_preview()
 
 @onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var _hitbox_preview: Node2D = $HitboxPreview
 @onready var _alarm_audio: AudioStreamPlayer = $AlarmAudio
 @onready var _jump_audio: AudioStreamPlayer = $JumpAudio
 @onready var _slide_audio: AudioStreamPlayer = $SlideAudio
@@ -61,6 +102,12 @@ var _attack_finished := false
 
 func _ready() -> void:
 	_sprite.scale = Vector2.ONE * sprite_scale
+	_refresh_hitbox_preview()
+	if Engine.is_editor_hint():
+		_sprite.animation_finished.connect(_on_editor_preview_animation_finished)
+		_refresh_hitbox_preview()
+		_refresh_editor_preview(true)
+		return
 	_sprite.animation_finished.connect(_on_animation_finished)
 	_alarm_audio.finished.connect(_on_alarm_audio_finished)
 
@@ -80,6 +127,7 @@ func begin(
 ) -> void:
 	_direction_name = direction_name
 	_direction = _direction_from_name(direction_name)
+	_refresh_hitbox_preview()
 	_boundary = boundary
 	_players = players
 	_arena = arena
@@ -126,6 +174,8 @@ func begin(
 
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	match _phase:
 		Phase.JUMPING:
 			_advance_along_line(_jump_start, _jump_end, delta)
@@ -177,9 +227,8 @@ func _distance_to_safe_edge(origin: Vector2, direction: Vector2, safe_min: Vecto
 
 
 func _check_crossed_players(from: Vector2, to: Vector2) -> void:
-	var segment := to - from
-	var segment_length_squared := segment.length_squared()
-	var scaled_hit_radius := hit_radius * sprite_scale
+	var scaled_half_length := hitbox_half_length * sprite_scale
+	var scaled_half_width := hitbox_half_width * sprite_scale
 	for character in _players.get_children():
 		if character.get_child_count() == 0:
 			continue
@@ -189,13 +238,27 @@ func _check_crossed_players(from: Vector2, to: Vector2) -> void:
 		var slot := penguin.player_index
 		if _hit_slots.has(slot):
 			continue
-		var closest_point := from
-		if segment_length_squared > 0.0001:
-			var projection := clampf((penguin.global_position - from).dot(segment) / segment_length_squared, 0.0, 1.0)
-			closest_point = from + segment * projection
-		if closest_point.distance_squared_to(penguin.global_position) <= scaled_hit_radius * scaled_hit_radius:
+		if _point_intersects_swept_hitbox(penguin.global_position, from, to, scaled_half_length, scaled_half_width):
 			_hit_slots[slot] = true
 			penguin.lose_life(true)
+
+
+func _point_intersects_swept_hitbox(point: Vector2, from: Vector2, to: Vector2, half_length: float, half_width: float) -> bool:
+	var axis := _direction.normalized()
+	if axis.is_zero_approx():
+		return false
+	var side_axis := axis.orthogonal()
+	var relative := point - from
+	var along := relative.dot(axis)
+	var across := relative.dot(side_axis)
+	var segment_length := maxf((to - from).dot(axis), 0.0)
+	if along >= 0.0 and along <= segment_length:
+		return absf(across) <= half_width
+	var cap_center := from if along < 0.0 else to
+	var cap_offset := point - cap_center
+	var normalized_along := cap_offset.dot(axis) / maxf(half_length, 0.001)
+	var normalized_across := cap_offset.dot(side_axis) / maxf(half_width, 0.001)
+	return normalized_along * normalized_along + normalized_across * normalized_across <= 1.0
 
 
 func _begin_crossing() -> void:
@@ -278,6 +341,43 @@ func _play_frames(sprite_frames: SpriteFrames, action: String) -> void:
 	_sprite.sprite_frames = sprite_frames
 	_sprite.animation = action
 	_sprite.play()
+
+
+func _refresh_editor_preview(force_frame: bool = false) -> void:
+	if not Engine.is_editor_hint() or not is_instance_valid(_sprite) or attack_sprite_frames == null:
+		return
+	var animation_name := StringName("%s_%s" % [preview_direction, preview_action])
+	if not attack_sprite_frames.has_animation(animation_name):
+		return
+	var animation_changed := _sprite.sprite_frames != attack_sprite_frames or _sprite.animation != animation_name
+	_sprite.sprite_frames = attack_sprite_frames
+	_sprite.scale = Vector2.ONE * sprite_scale
+	if animation_changed:
+		_sprite.animation = animation_name
+	if preview_playing:
+		if animation_changed or not _sprite.is_playing():
+			_sprite.play(animation_name)
+		if force_frame:
+			_sprite.frame = clampi(preview_frame, 0, attack_sprite_frames.get_frame_count(animation_name) - 1)
+	else:
+		_sprite.stop()
+		_sprite.animation = animation_name
+		_sprite.frame = clampi(preview_frame, 0, attack_sprite_frames.get_frame_count(animation_name) - 1)
+
+
+func _refresh_hitbox_preview() -> void:
+	if not is_instance_valid(_hitbox_preview):
+		return
+	_hitbox_preview.visible = show_hitbox_preview if Engine.is_editor_hint() else show_hitbox_in_gameplay
+	var hitbox_direction := _direction_from_name(preview_direction) if Engine.is_editor_hint() or _direction.is_zero_approx() else _direction
+	_hitbox_preview.rotation = hitbox_direction.angle()
+	_hitbox_preview.set("half_length", hitbox_half_length * sprite_scale)
+	_hitbox_preview.set("half_width", hitbox_half_width * sprite_scale)
+
+
+func _on_editor_preview_animation_finished() -> void:
+	if Engine.is_editor_hint() and preview_playing:
+		_sprite.play(StringName("%s_%s" % [preview_direction, preview_action]))
 
 
 func _direction_from_name(direction_name: String) -> Vector2:

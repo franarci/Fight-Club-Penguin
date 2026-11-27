@@ -210,3 +210,10 @@ custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("3_heart")
+
+[node name="Heart4" type="Control" parent="MarginContainer/Content/Info/Hearts"]
+visible = false
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_heart")

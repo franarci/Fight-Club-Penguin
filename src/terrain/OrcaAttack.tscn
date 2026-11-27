@@ -1,54 +1,53 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://m16xb0rekkyq"]
 
-[ext_resource type="Script" path="res://src/terrain/orca_attack.gd" id="1_attack"]
-[ext_resource type="SpriteFrames" path="res://assets/textures/entities/orca/orca_attack_frames.tres" id="2_attack_frames"]
-[ext_resource type="AudioStream" path="res://assets/audio/orca/alarm-9.mp3" id="3_alarm"]
-[ext_resource type="AudioStream" path="res://assets/audio/orca/water-emerging.mp3" id="4_jump"]
-[ext_resource type="AudioStream" path="res://assets/audio/orca/slide.mp3" id="5_slide"]
-[ext_resource type="AudioStream" path="res://assets/audio/orca/slide-2.mp3" id="6_crack"]
-[ext_resource type="AudioStream" path="res://assets/audio/orca/water-diving.mp3" id="7_dive"]
+[ext_resource type="Script" uid="uid://dsnqxnjlanlq4" path="res://src/terrain/orca_attack.gd" id="1_attack"]
+[ext_resource type="SpriteFrames" uid="uid://n088ys3xte63" path="res://assets/textures/entities/orca/orca_attack_frames.tres" id="2_attack_frames"]
+[ext_resource type="AudioStream" uid="uid://bn36wdatkpxpk" path="res://assets/audio/orca/alarm-9.mp3" id="3_alarm"]
+[ext_resource type="AudioStream" uid="uid://cjkpuikh5342h" path="res://assets/audio/orca/water-emerging.mp3" id="4_jump"]
+[ext_resource type="AudioStream" uid="uid://c3bkvwgqx45dx" path="res://assets/audio/orca/slide.mp3" id="5_slide"]
+[ext_resource type="AudioStream" uid="uid://bxnkt8lfxdlf6" path="res://assets/audio/orca/slide-2.mp3" id="6_crack"]
+[ext_resource type="AudioStream" uid="uid://bcmafac3yq0da" path="res://assets/audio/orca/water-diving.mp3" id="7_dive"]
+[ext_resource type="Script" uid="uid://c5dy4x1h65h4l" path="res://src/terrain/orca_hitbox_preview.gd" id="8_hitbox_preview"]
 
-[node name="OrcaAttack" type="Node2D"]
+[node name="OrcaAttack" type="Node2D" unique_id=899774740]
 script = ExtResource("1_attack")
 attack_sprite_frames = ExtResource("2_attack_frames")
-ice_entry_margin = 40.0
-far_side_clearance = 144.0
-crossing_speed = 620.0
-hit_radius = 66.0
-jump_start_frame = 16
-jump_frame_count = 8
-sprite_scale = 1.0
-loop_alarm = true
-use_ice_crack_layer = true
-duck_music_during_attack = true
-music_duck_db = -12.0
-music_duck_fade_seconds = 0.25
-music_restore_fade_seconds = 0.45
+sprite_scale = 1.9
+show_hitbox_in_gameplay = true
 
-[node name="AlarmAudio" type="AudioStreamPlayer" parent="."]
+[node name="AlarmAudio" type="AudioStreamPlayer" parent="." unique_id=311297176]
 stream = ExtResource("3_alarm")
-volume_db = -8.0
+volume_db = -10.08
 bus = &"FX"
 
-[node name="JumpAudio" type="AudioStreamPlayer" parent="."]
+[node name="JumpAudio" type="AudioStreamPlayer" parent="." unique_id=1659323671]
 stream = ExtResource("4_jump")
-volume_db = -4.0
+volume_db = 0.507
 bus = &"FX"
 
-[node name="SlideAudio" type="AudioStreamPlayer" parent="."]
+[node name="SlideAudio" type="AudioStreamPlayer" parent="." unique_id=1840589655]
 stream = ExtResource("5_slide")
 volume_db = -5.0
 bus = &"FX"
 
-[node name="IceCrackAudio" type="AudioStreamPlayer" parent="."]
+[node name="IceCrackAudio" type="AudioStreamPlayer" parent="." unique_id=1354155925]
 stream = ExtResource("6_crack")
-volume_db = -10.0
+volume_db = 1.44
 bus = &"FX"
 
-[node name="DiveAudio" type="AudioStreamPlayer" parent="."]
+[node name="DiveAudio" type="AudioStreamPlayer" parent="." unique_id=795793615]
 stream = ExtResource("7_dive")
-volume_db = -4.0
+volume_db = 6.797
 bus = &"FX"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1547574536]
 z_index = 4095
+scale = Vector2(1.9, 1.9)
+sprite_frames = ExtResource("2_attack_frames")
+animation = &"E_arrastre"
+
+[node name="HitboxPreview" type="Node2D" parent="." unique_id=542678805]
+z_index = 4096
+script = ExtResource("8_hitbox_preview")
+half_length = 148.2
+half_width = 60.8

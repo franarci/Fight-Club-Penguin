@@ -24,6 +24,9 @@ var observed_ranged_weapon: RangedWeapon
 var observed_melee_weapon: MeleeWeapon
 var right_side := false
 var eliminated := false
+@export_range(1, 8, 1) var gained_life_blink_count := 3
+@export_range(0.05, 1.0, 0.05) var gained_life_blink_half_period := 0.16
+var _displayed_lives := -1
 
 
 func _ready() -> void:
@@ -70,7 +73,17 @@ func set_lives(lives: int) -> void:
 	eliminated = lives <= 0
 	_update_elimination_status()
 	for index in hearts.size():
+		var is_bonus_heart := index >= PlayerManager.STARTING_LIVES
+		hearts[index].visible = not is_bonus_heart or lives > index
 		hearts[index].set("filled", index < lives)
+		if index >= lives:
+			if hearts[index].has_method("stop_blink"):
+				hearts[index].stop_blink()
+	if lives > _displayed_lives and _displayed_lives >= 0 and lives - 1 < hearts.size():
+		var new_heart := hearts[lives - 1]
+		if new_heart.has_method("blink"):
+			new_heart.blink(gained_life_blink_count, gained_life_blink_half_period)
+	_displayed_lives = lives
 
 
 func bind_penguin(penguin: Penguin) -> void:

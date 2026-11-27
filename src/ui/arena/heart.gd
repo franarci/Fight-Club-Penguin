@@ -7,6 +7,23 @@ var filled := true:
 		filled = value
 		queue_redraw()
 
+var _blink_tween: Tween
+
+
+func blink(times: int = 3, half_period: float = 0.16) -> void:
+	stop_blink()
+	modulate = Color.WHITE
+	_blink_tween = create_tween()
+	_blink_tween.set_loops(maxi(times, 1))
+	_blink_tween.tween_property(self, "modulate:a", 0.12, half_period)
+	_blink_tween.tween_property(self, "modulate:a", 1.0, half_period)
+
+
+func stop_blink() -> void:
+	if is_instance_valid(_blink_tween) and _blink_tween.is_running():
+		_blink_tween.kill()
+	modulate = Color.WHITE
+
 
 func _init() -> void:
 	custom_minimum_size = Vector2(26, 26)
