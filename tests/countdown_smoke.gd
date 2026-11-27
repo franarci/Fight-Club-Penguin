@@ -79,6 +79,8 @@ func run_checks() -> void:
 	assert(tutorial.page == 1)
 	assert(tutorial.controls.get_child_count() == 2)
 	tutorial._input(key_event())
+	assert(tutorial.page == 2 and tutorial.countdown_step == -1)
+	tutorial._input(key_event())
 	assert(tutorial.countdown_step == 0)
 	assert(tutorial.countdown_overlay.number_label.text == "3")
 	tutorial._input(key_event())

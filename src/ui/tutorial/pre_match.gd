@@ -10,6 +10,8 @@ const STEP_DURATION := 1.0
 @onready var background: ColorRect = $Background
 @onready var title: Label = $Background/Center/Panel/Margin/Content/Title
 @onready var objective: Label = $Background/Center/Panel/Margin/Content/Objective
+@onready var charge_tutorial: VBoxContainer = $Background/Center/Panel/Margin/Content/ChargeTutorial
+@onready var demonstrations: HBoxContainer = $Background/Center/Panel/Margin/Content/ChargeTutorial/Demonstrations
 @onready var controls: HBoxContainer = $Background/Center/Panel/Margin/Content/Controls
 @onready var back_button: ActionButton = $Background/Center/Panel/Margin/Content/Navigation/BackButton
 @onready var next_button: ActionButton = $Background/Center/Panel/Margin/Content/Navigation/NextButton
@@ -35,6 +37,7 @@ func open(skip_tutorial: bool = false) -> void:
 	page = 0
 	countdown_step = -1
 	show()
+	_set_demonstrations_running(false)
 	if skip_tutorial:
 		start_countdown()
 	else:
@@ -71,7 +74,7 @@ func _update_navigation_actions() -> void:
 	var devices: Array = []
 	for player in PlayerManager.players:
 		devices.append(player["device"])
-	next_button.configure("Next" if page == 0 else "Start countdown", devices, ["menu_confirm"])
+	next_button.configure("Start countdown" if page == 2 else "Next", devices, ["menu_confirm"])
 	back_button.configure("Back", devices, ["selection_cancel"])
 
 
@@ -83,9 +86,11 @@ func _clear_children(parent: Node) -> void:
 
 func _show_page() -> void:
 	background.show()
-	title.text = "How to win" if page == 0 else "Controls"
+	title.text = ["How to win", "Controls", "Charged attacks"][page]
 	objective.visible = page == 0
 	controls.visible = page == 1
+	charge_tutorial.visible = page == 2
+	_set_demonstrations_running(page == 2)
 	back_button.visible = page > 0
 	_update_navigation_actions()
 	next_button.grab_focus()
@@ -94,8 +99,8 @@ func _show_page() -> void:
 func advance() -> void:
 	if not active or suspended or countdown_step >= 0:
 		return
-	if page == 0:
-		page = 1
+	if page < 2:
+		page += 1
 		_show_page()
 	else:
 		start_countdown()
@@ -111,6 +116,7 @@ func go_back() -> void:
 func start_countdown() -> void:
 	if not active or suspended or countdown_step >= 0:
 		return
+	_set_demonstrations_running(false)
 	background.hide()
 	countdown_step = 0
 	_show_countdown_step()
@@ -164,6 +170,7 @@ func suspend() -> void:
 	if not active:
 		return
 	suspended = true
+	_set_demonstrations_running(false)
 	countdown.stop()
 	countdown_overlay.cancel()
 	hide()
@@ -180,3 +187,12 @@ func resume() -> void:
 		_show_countdown_step()
 	else:
 		_show_page()
+
+func _set_demonstrations_running(value: bool) -> void:
+	var devices: Array = []
+	for player in PlayerManager.players:
+		devices.append(player["device"])
+	for demo in demonstrations.get_children():
+		if value:
+			demo.configure_devices(devices)
+		demo.set_running(value)

@@ -32,6 +32,7 @@ func run_checks() -> void:
 	assert(main.players.get_child_count() == 4 and main.pre_match.active and get_tree().paused)
 	main.pre_match.advance()
 	main.pre_match.advance()
+	main.pre_match.advance()
 	for step in range(4):
 		main.pre_match._on_countdown_timeout()
 	assert(not get_tree().paused)

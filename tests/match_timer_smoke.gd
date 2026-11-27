@@ -35,6 +35,7 @@ func run_checks() -> void:
 	assert(get_tree().paused and main.pre_match.active)
 	main.pre_match.advance()
 	main.pre_match.advance()
+	main.pre_match.advance()
 	for step in range(3):
 		main.pre_match._on_countdown_timeout()
 		assert(not main.match_clock.started)

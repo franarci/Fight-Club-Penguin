@@ -34,6 +34,7 @@ func run_checks() -> void:
 	assert(music.active_player == music.menu_player)
 	main.pre_match.advance()
 	main.pre_match.advance()
+	main.pre_match.advance()
 	for i in range(4):
 		main.pre_match._on_countdown_timeout()
 	assert(not paused and not main.pre_match.active)
